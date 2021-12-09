@@ -49,4 +49,4 @@ local opts = {
    status_formatter = nil, -- Use default
 }
 
--- gitsigns.setup(opts)
+gitsigns.setup(opts)
