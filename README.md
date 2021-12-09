@@ -2,5 +2,5 @@
 
 ```shell
 # for code formatting and check
-yay -S black stylua luacheck shfmt shellcheck
+yay -S black yapf stylua luacheck shfmt shellcheck
 ```

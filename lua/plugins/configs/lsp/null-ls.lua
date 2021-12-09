@@ -17,7 +17,7 @@ local sources = {
    b.diagnostics.shellcheck.with { diagnostics_format = "#{m} [#{c}]" },
 
    -- python
-   b.formatting.black,
+   b.formatting.yapf,
 
    -- latex
    b.diagnostics.chktex,
