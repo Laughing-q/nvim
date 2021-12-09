@@ -18,15 +18,14 @@ return packer.startup(function()
 
    use {
       "kyazdani42/nvim-web-devicons",
-      -- after = "nvim-base16.lua",
-      -- config = override_req("nvim_web_devicons", "plugins.configs.icons"),
+      event = "BufRead",
    }
 
    use {
       "famiu/feline.nvim",
       -- after = "nvim-web-devicons",
       config = function ()
-        require("plugins.configs.simplifyline")
+        require("plugins.configs.statusline.simplifyline")
       end,
    }
 
@@ -60,7 +59,6 @@ return packer.startup(function()
    }
 
    -- lsp stuff
-
    use {
       "neovim/nvim-lspconfig",
       opt = true,
@@ -72,7 +70,23 @@ return packer.startup(function()
          end, 0)
       end,
       config = function ()
-        require("plugins.configs.lspconfig")
+        require("plugins.configs.lsp.lspconfig")
+      end,
+   }
+
+   use {
+      "williamboman/nvim-lsp-installer",
+      -- opt = true,
+      -- setup = function()
+      --    require("utils").packer_lazy_load "nvim-lsp-installer"
+      -- end,
+   }
+
+   use {
+      "jose-elias-alvarez/null-ls.nvim",
+      after = "nvim-lspconfig",
+      config = function()
+         require("plugins.configs.lsp.null-ls").setup()
       end,
    }
 
@@ -184,6 +198,7 @@ return packer.startup(function()
          },
          {
             "nvim-telescope/telescope-media-files.nvim",
+            disable = true,
          },
       },
       config = function ()
@@ -205,21 +220,6 @@ return packer.startup(function()
       event = "BufRead",
       config = function()
          require("plugins.configs.which-key").setup()
-      end,
-   }
-   -- lsp
-   use {
-      "williamboman/nvim-lsp-installer",
-      -- opt = true,
-      -- setup = function()
-      --    require("utils").packer_lazy_load "nvim-lsp-installer"
-      -- end,
-   }
-   use {
-      "jose-elias-alvarez/null-ls.nvim",
-      after = "nvim-lspconfig",
-      config = function()
-         require("plugins.configs.null-ls").setup()
       end,
    }
    -- colorscheme
@@ -274,14 +274,22 @@ return packer.startup(function()
       cmd = { "Antovim" },
    }
    -- show color, `nvim-colorizer` is another option
+   -- use {
+   --    "RRethy/vim-hexokinase",
+   --    run = "make hexokinase",
+   --    opt = true,
+   --    setup = function()
+   --       require("utils").packer_lazy_load "vim-hexokinase"
+   --    end,
+   -- }
    use {
-      "RRethy/vim-hexokinase",
-      run = "make hexokinase",
-      opt = true,
-      setup = function()
-         require("utils").packer_lazy_load "vim-hexokinase"
+      "norcalli/nvim-colorizer.lua",
+      event = "BufRead",
+      config = function ()
+        require("plugins.configs.others").colorizer()
       end,
    }
+
    -- undotree
    use {
       "Laughing-q/undotree",
@@ -313,7 +321,7 @@ return packer.startup(function()
       "kevinhwang91/rnvimr",
       command = "RnvimrToggle",
       config = function()
-         require("plugins.configs.rnvimr").setup()
+         require("plugins.configs.others").rnvimr()
       end,
       opt = true,
       setup = function()

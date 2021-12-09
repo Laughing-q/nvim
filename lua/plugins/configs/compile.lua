@@ -41,9 +41,3 @@ func! CompileRunGcc()
 	endif
 endfunc
 ]]
-
--- elseif &filetype == 'python'
---   set splitbelow
---   :sp
---   :term python3 %
---   :$

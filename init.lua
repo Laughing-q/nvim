@@ -3,7 +3,7 @@ local core_modules = {
    "options",
    "mappings",
 }
-
+require('impatient')
 require "plugins.configs.global".setup()
 
 for _, module in ipairs(core_modules) do
@@ -14,7 +14,7 @@ for _, module in ipairs(core_modules) do
 end
 
 -- colorscheme
-local ok, err = pcall(require, 'tokyonight')
+local ok, _ = pcall(require, 'tokyonight')
 if ok then
   vim.cmd("colorscheme " .. "tokyonight")
 end

@@ -1,5 +1,5 @@
 local M = {}
-require("plugins.configs.vimfunc")
+require("plugins.configs.compile")
 local laughing_key = {}
 
 laughing_key = {

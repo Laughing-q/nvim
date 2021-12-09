@@ -127,7 +127,7 @@ vim.notify = function(msg, log_level, _opts)
    end
 end
 
-addlsp_confs = "plugins.configs.lspinstaller"
+addlsp_confs = "plugins.configs.lsp.lspinstaller"
 
 if string.len(addlsp_confs) ~= 0 then
    require(addlsp_confs).setup_lsp(on_attach, capabilities)

@@ -21,6 +21,8 @@ vim.cmd [[ autocmd BufEnter * silent! lcd %:p:h ]]
 
 -- keep cursor at the same position
 -- vim.cmd [[au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif]]
+
+-- clear tex compile stuff
 vim.cmd [[ autocmd BufWinLeave *.tex silent !texclear %; ]]
 
 -- markdown snippets
