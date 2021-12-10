@@ -1,4 +1,4 @@
-30ms~ startup time.
+23~30ms startup time.
 
 ```shell
 # for code formatting and check
