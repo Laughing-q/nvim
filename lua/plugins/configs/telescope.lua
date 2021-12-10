@@ -67,6 +67,9 @@ telescope.setup {
           ["<C-n>"] = actions.move_selection_next,
           ["<C-p>"] = actions.move_selection_previous,
           ["<C-q>"] = actions.smart_send_to_qflist + actions.open_qflist,
+
+          ["k"] = actions.move_selection_next,
+          ["i"] = actions.move_selection_previous,
           -- ["<c-t>"] = trouble.open_with_trouble,
           -- ["<C-i>"] = my_cool_custom_action,
         },
@@ -87,16 +90,17 @@ telescope.setup {
    },
 }
 
-local extensions = { "themes", "terms", "fzf", 'projects' }
+local extensions = { "fzf", 'projects' }
 local packer_repos = [["extensions", "telescope-fzf-native.nvim"]]
 
-if vim.fn.executable "ueberzug" == 1 then
-   table.insert(extensions, "media_files")
-   packer_repos = packer_repos .. ', "telescope-media-files.nvim"'
-end
+-- telescope media_files
+-- if vim.fn.executable "ueberzug" == 1 then
+--    table.insert(extensions, "media_files")
+--    packer_repos = packer_repos .. ', "telescope-media-files.nvim"'
+-- end
 
-pcall(function()
-   for _, ext in ipairs(extensions) do
-      telescope.load_extension(ext)
-   end
-end)
+-- pcall(function()
+for _, ext in ipairs(extensions) do
+  telescope.load_extension(ext)
+end
+-- end)

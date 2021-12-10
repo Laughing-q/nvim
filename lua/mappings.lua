@@ -80,17 +80,6 @@ map("n", "<Esc>", ":noh <CR>")
 -- map("n", "sj", ":set nosplitright<CR>:vsplit<CR>:set splitright<CR>")
 -- map("n", "si", ":set nosplitbelow<CR>:split<CR>:set splitbelow<CR>")
 
--- move window
-map("n", "<leader>j", "<C-w>h")
-map("n", "<leader>l", "<C-w>l")
-map("n", "<leader>i", "<C-w>k")
-map("n", "<leader>k", "<C-w>j")
-
--- spell
-map("n", "<LEADER>ss", ":set spell!<CR>")
--- wrap line
-map("n", "<LEADER>sw", ":set wrap!<CR>")
-
 -- file path
 map("n", "\\p", ":echo expand('%:p')<CR>")
 -- <++>
@@ -119,17 +108,8 @@ map({"n", "v"}, "<LEADER>S", "<Plug>Lightspeed_S", { noremap=false })
 map({"n", "v"}, "<LEADER>c", ":CommentToggle <CR>")
 -- nvimtree
 map("n", "<C-n>", ":NvimTreeToggle <CR>")
-map("n", "<LEADER>e", ":NvimTreeFocus <CR>")
--- telescope
-map("n", "<LEADER>fb", ":Telescope buffers <CR>")
-map("n", "<LEADER>ff", ":Telescope find_files <CR>")
-map("n", "<LEADER>fa", ":Telescope find_files hidden=true <CR>")
-map("n", "<LEADER>gc", ":Telescope git_commits <CR>")
-map("n", "<LEADER>gt", ":Telescope git_status <CR>")
-map("n", "<LEADER>fo", ":Telescope help_tags <CR>")
-map("n", "<LEADER>fw", ":Telescope live_grep <CR>")
-map("n", "<LEADER>fh", ":Telescope oldfiles <CR>")
--- map("n", "<LEADER>fp", ":Telescope media_files <CR>")  -- telescope_media
+
+-- others keymapping in which-key setting
 
 -- Add Packer commands because we are not loading it at startup
 local cmd = vim.cmd

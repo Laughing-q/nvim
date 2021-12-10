@@ -1,8 +1,8 @@
 local M = {}
 require("plugins.configs.compile")
-local laughing_key = {}
+local leader_key = {}
 
-laughing_key = {
+leader_key = {
    ---@usage disable which-key completely [not recommeded]
    active = true,
    on_config_done = nil,
@@ -59,15 +59,30 @@ laughing_key = {
       -- f = { "<cmd>Telescope find_files<CR>", "Find File" },
       ["<CR>"] = { "<cmd>nohlsearch<CR>", "No Highlight" },
 
-      -- window move
-      w = { "<C-w>w", "window previous" },
+      -- window move stuff
+      w = { "<C-w>w", "Window previous" },
+      j = { "<C-w>h", "Window left" },
+      l = { "<C-w>l", "Window left" },
+      i = { "<C-w>k", "Window left" },
+      k = { "<C-w>j", "Window left" },
+
+      -- spell and wrap stuff
+      s = {
+        name = "spell and wrap",
+        s = { ":set spell!<CR>", "Spell check" },
+        w = { ":set wrap!<CR>", "Spell check" },
+      },
+
+      -- nvimtree
+      e = { ":NvimTreeFocus <CR>", "NvimTree Focus" },
 
       -- functions and values
       v = { "<cmd>Vista!!<CR>", "Vista" },
       -- Compile file
       r = { "<cmd>call CompileRunGcc()<CR>", "Compile file" },
       -- transparency
-      t = { "<cmd>call TransparentToggle<CR>", "Compile file" },
+      -- t = { "<cmd>call TransparentToggle<CR>", "Compile file" },
+
       -- fold
       o = { "za", "Fold" },
       -- markdown
@@ -79,7 +94,7 @@ laughing_key = {
       b = {
          name = "Buffers",
          g = { "<cmd>BufferPick<cr>", "Jump" },
-         f = { "<cmd>Telescope buffers<cr>", "Find" },
+         -- f = { "<cmd>Telescope buffers<cr>", "Find" },
          b = { "<cmd>b#<cr>", "Previous" },
          w = { "<cmd>BufferWipeout<cr>", "Wipeout" },
          e = {
@@ -111,8 +126,8 @@ laughing_key = {
 
       g = {
          name = "Git",
-         j = { "<cmd>lua require 'gitsigns'.next_hunk()<cr>", "Next Hunk" },
-         k = { "<cmd>lua require 'gitsigns'.prev_hunk()<cr>", "Prev Hunk" },
+         k = { "<cmd>lua require 'gitsigns'.next_hunk()<cr>", "Next Hunk" },
+         i = { "<cmd>lua require 'gitsigns'.prev_hunk()<cr>", "Prev Hunk" },
          l = { "<cmd>lua require 'gitsigns'.blame_line()<cr>", "Blame" },
          p = { "<cmd>lua require 'gitsigns'.preview_hunk()<cr>", "Preview Hunk" },
          r = { "<cmd>lua require 'gitsigns'.reset_hunk()<cr>", "Reset Hunk" },
@@ -124,7 +139,8 @@ laughing_key = {
          },
          o = { "<cmd>Telescope git_status<cr>", "Open changed file" },
          b = { "<cmd>Telescope git_branches<cr>", "Checkout branch" },
-         -- c = { "<cmd>Telescope git_commits<cr>", "Checkout commit" },
+         c = { "<cmd>Telescope git_commits<cr>", "Checkout commit" },
+         t = { "<cmd>Telescope git_commits<cr>", "Status" },
          C = {
             "<cmd>Telescope git_bcommits<cr>",
             "Checkout commit(for current file)",
@@ -168,18 +184,21 @@ laughing_key = {
       },
       f = {
          name = "Find",
-         -- b = { "<cmd>Telescope git_branches<cr>", "Checkout branch" },
+         b = { "<cmd>Telescope buffers<cr>", "Buffers" },
          C = { "<cmd>Telescope colorscheme<cr>", "Colorscheme" },
-         -- f = { "<cmd>Telescope find_files<cr>", "Find File" },
-         -- h = { "<cmd>Telescope help_tags<cr>", "Find Help" },
+         f = { "<cmd>Telescope find_files<cr>", "Find File" },
+         a = { "<cmd>Telescope hidden=true<cr>", "Find Hidden File" },
+         w = { "<cmd>Telescope live_grep<cr>", "Find Word" },
+         o = { "<cmd>Telescope oldfiles<cr>", "Find Old File" },
          M = { "<cmd>Telescope man_pages<cr>", "Man Pages" },
-         -- r = { "<cmd>Telescope oldfiles<cr>", "Open Recent File" },
+         h = { "<cmd>Telescope help_tags<cr>", "Find Help" },
          r = { "<cmd>Telescope registers<cr>", "Registers" },
-         -- t = { "<cmd>Telescope live_grep<cr>", "Text" },
          k = { "<cmd>Telescope keymaps<cr>", "Keymaps" },
          c = { "<cmd>Telescope commands<cr>", "Commands" },
          s = { "<cmd>Telescope spell_suggest<cr>", "Spell" },
          p = { "<cmd>Telescope projects<cr>", "Projects" },
+         n = { "<cmd>Telescope current_buffer_fuzzy_find<cr>", "Find Word in current buffer" },
+         -- m = { "<cmd>Telescope media_files<cr>", "Media" },
       },
       T = {
          name = "Treesitter",
@@ -193,11 +212,11 @@ laughing_key = {
 M.setup = function()
    local which_key = require "which-key"
 
-   which_key.setup(laughing_key.setup)
+   which_key.setup(leader_key.setup)
 
-   local opts = laughing_key.opts
+   local opts = leader_key.opts
 
-   local mappings = laughing_key.mappings
+   local mappings = leader_key.mappings
 
    which_key.register(mappings, opts)
 end
