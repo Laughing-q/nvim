@@ -1,4 +1,4 @@
-23~30ms startup time.
+23~30ms startup time, with 51 plugins.
 
 ```shell
 # for code formatting and check
