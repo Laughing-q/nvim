@@ -1,9 +1,6 @@
-local lsp = require "feline.providers.lsp"
-
--- if show short statusline on small screens
-local shortline = true
-
 -- Initialize the components table
+local component = require "plugins.configs.statusline.components"
+
 local components = {
    active = {},
    inactive = {},
@@ -14,221 +11,33 @@ table.insert(components.active, {})
 table.insert(components.active, {})
 table.insert(components.active, {})
 
-components.active[1][1] = {
-   provider = "git_branch",
-   icon = " 🐯 ",
-   hl = {
-      -- fg = "gray",
-      bg = "#3d59a1",
-   },
-   right_sep = {'block', 'slant_right'},
-}
-
-components.active[1][2] = {
-   provider = "git_diff_added",
-   icon = "  ",
-   hl = {
-      fg = "#45b97c",
-   },
-}
+components.active[1][1] = component.git.git_branch
+components.active[1][2] = component.python
+-- diffAdded
+components.active[1][3] = component.git.git_diff_added
 -- diffModfified
-components.active[1][3] = {
-   provider = "git_diff_changed",
-   icon = "  ",
-   hl = {
-      fg = "#dea32c",
-   },
-}
+components.active[1][4] = component.git.git_diff_changed
 -- diffRemove
-components.active[1][4] = {
-   provider = "git_diff_removed",
-   icon = "  ",
-   hl = {
-      fg = "#f15b6c",
-   },
-}
+components.active[1][5] = component.git.git_diff_removed
+-- components.active[1][5] = component.python
 
+-- lsp
+components.active[2][1] = component.lsp.progress
 
-components.active[2][1] = {
-   provider = function()
-      local Lsp = vim.lsp.util.get_progress_messages()[1]
-      if Lsp then
-         local msg = Lsp.message or ""
-         local percentage = Lsp.percentage or 0
-         local title = Lsp.title or ""
-         local spinners = {
-            "",
-            "",
-            "",
-         }
+components.active[3][1] = component.lsp.diagnostic_errors
+components.active[3][2] = component.lsp.diagnostic_warnings
+components.active[3][3] = component.lsp.diagnostic_hints
+components.active[3][4] = component.lsp.diagnostic_info
+components.active[3][5] = component.lsp.client1
 
-         local success_icon = {
-            "",
-            "",
-            "",
-         }
+-- info
+-- components.active[3][6] = component.info.icon1
+-- components.active[3][7] = component.info.file_encoding
+components.active[3][6] = component.info.icon2
+components.active[3][7] = component.info.position
+components.active[3][8] = component.info.icon3
 
-         local ms = vim.loop.hrtime() / 1000000
-         local frame = math.floor(ms / 120) % #spinners
-
-         if percentage >= 70 then
-            return string.format(" %%<%s %s %s (%s%%%%) ", success_icon[frame + 1], title, msg, percentage)
-         else
-            return string.format(" %%<%s %s %s (%s%%%%) ", spinners[frame + 1], title, msg, percentage)
-         end
-      end
-      return ""
-   end,
-   enabled = shortline or function(winid)
-      return vim.api.nvim_win_get_width(winid) > 80
-   end,
-   hl = { fg = 'green' },
-}
-
-components.active[3][1] = {
-   provider = "diagnostic_errors",
-   enabled = function()
-      return lsp.diagnostics_exist "Error"
-   end,
-   icon = "  ",
-   hl = {
-      fg = "red",
-   },
-}
-
-components.active[3][2] = {
-   provider = "diagnostic_warnings",
-   enabled = function()
-      return lsp.diagnostics_exist "Warning"
-   end,
-   icon = "  ",
-   hl = {
-      fg = "#dea32c",
-   },
-}
-
-components.active[3][3] = {
-   provider = "diagnostic_hints",
-   enabled = function()
-      return lsp.diagnostics_exist "Hint"
-   end,
-   icon = "  ",
-   hl = {
-      fg = "#009ad6",
-   },
-}
-
-components.active[3][4] = {
-   provider = "diagnostic_info",
-   enabled = function()
-      return lsp.diagnostics_exist "Information"
-   end,
-   icon = "  ",
-   hl = {
-      fg = "#009ad6",
-   },
-}
-
-components.active[3][5] = {
-   provider = function()
-      if next(vim.lsp.buf_get_clients()) ~= nil then
-         return "🦁 LSP "
-      else
-         return ""
-      end
-   end,
-   -- provider = 'lsp_client_names',
-   enabled = shortline or function(winid)
-      return vim.api.nvim_win_get_width(winid) > 70
-   end,
-   left_sep = ' ',
-   -- right_sep = {
-   --   str = 'vertical_bar_thin',
-   --   hl = {
-   --     fg = 'gray',
-   --   }
-   -- },
-   hl = {
-     fg = 'gray',
-   }
-}
-
-components.active[3][6] = {
-   provider = " 🐻 ",
-   enabled = shortline or function(winid)
-      return vim.api.nvim_win_get_width(winid) > 90
-   end,
-   hl = {
-      -- fg = "gray",
-      bg = "#3d59a1",
-   },
-   left_sep = 'slant_left',
-}
-
-components.active[3][7] = {
-   provider = 'file_encoding',
-   -- hl = {
-   --    fg = "gray",
-   -- },
-   hl = {
-      -- fg = "gray",
-      bg = "#3d59a1",
-   },
-   right_sep = 'block',
-}
-
-components.active[3][8] = {
-   provider = "🐨",
-   enabled = shortline or function(winid)
-      return vim.api.nvim_win_get_width(winid) > 90
-   end,
-   hl = {
-      -- fg = "gray",
-      bg = "#3d59a1",
-   },
-}
-
-components.active[3][9] = {
-   provider = 'position',
-   hl = {
-      -- fg = "gray",
-      bg = "#3d59a1",
-   },
-}
-
-components.active[3][10] = {
-   provider = "🐼",
-   enabled = shortline or function(winid)
-      return vim.api.nvim_win_get_width(winid) > 90
-   end,
-   hl = {
-      -- fg = "gray",
-      bg = "#3d59a1",
-   },
-}
-
-components.active[3][11] = {
-   provider = function()
-      local current_line = vim.fn.line "."
-      local total_line = vim.fn.line "$"
-
-      if current_line == 1 then
-         return " Top "
-      elseif current_line == vim.fn.line "$" then
-         return " Bot "
-      end
-      local result, _ = math.modf((current_line / total_line) * 100)
-      return " " .. result .. "%% "
-   end,
-
-   enabled = shortline or function(winid)
-      return vim.api.nvim_win_get_width(winid) > 90
-   end,
-   hl = {
-      -- fg = "gray",
-      bg = "#3d59a1",
-   },
-}
+components.active[3][9] = component.info.position_percent
 
 require("feline").setup {
    colors = {

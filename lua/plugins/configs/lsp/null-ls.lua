@@ -9,7 +9,7 @@ local b = null_ls.builtins
 local sources = {
 
    -- Lua
-   -- b.formatting.stylua,
+   b.formatting.stylua,
    -- b.diagnostics.luacheck.with { extra_args = { "--global vim" } },
 
    -- Shell
@@ -26,10 +26,10 @@ local sources = {
 local M = {}
 
 M.setup = function(on_attach)
-   null_ls.config {
+   null_ls.setup {
       sources = sources,
    }
-   require("lspconfig")["null-ls"].setup { on_attach = on_attach }
+   require("null-ls").setup { on_attach = on_attach }
 end
 
 return M
