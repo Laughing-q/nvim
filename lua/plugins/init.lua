@@ -194,11 +194,27 @@ return packer.startup(function()
       requires = {
          {
             "nvim-telescope/telescope-fzf-native.nvim",
+            disable = false,
             run = "make",
          },
          {
             "nvim-telescope/telescope-media-files.nvim",
             disable = true,
+         },
+         {
+            "ahmedkhalf/project.nvim",
+            disable = false,
+            config = function()
+              require("plugins.configs.telescope_ex.project").setup()
+            end,
+         },
+         {
+            "AckslD/nvim-neoclip.lua",
+            requires = {'tami5/sqlite.lua', module = 'sqlite'},
+            disable = false,
+            config = function()
+              require('plugins.configs.telescope_ex.nvimclip').setup()
+            end,
          },
       },
       config = function ()
@@ -252,14 +268,6 @@ return packer.startup(function()
    --    after = "nvim-treesitter",
    -- }
 
-    -- project.nvim
-   use {
-      "ahmedkhalf/project.nvim",
-      -- after = 'telescope.nvim',
-      config = function()
-        require("plugins.configs.project").setup()
-      end,
-    }
    -- Terminal
    use {
       "akinsho/toggleterm.nvim",

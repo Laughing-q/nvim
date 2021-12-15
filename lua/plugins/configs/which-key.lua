@@ -199,6 +199,7 @@ leader_key = {
          p = { "<cmd>Telescope projects<cr>", "Projects" },
          n = { "<cmd>Telescope current_buffer_fuzzy_find<cr>", "Find Word in current buffer" },
          j = { "<cmd>Telescope grep_string<cr>", "Find Word under the cursor" },
+         y = { "<cmd>Telescope neoclip<cr>", "Find Clipboard" },
          -- m = { "<cmd>Telescope media_files<cr>", "Media" },
       },
       T = {
