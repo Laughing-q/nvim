@@ -28,16 +28,17 @@ components.active[3][1] = component.lsp.diagnostic_errors
 components.active[3][2] = component.lsp.diagnostic_warnings
 components.active[3][3] = component.lsp.diagnostic_hints
 components.active[3][4] = component.lsp.diagnostic_info
-components.active[3][5] = component.lsp.client1
+components.active[3][5] = component.lsp.client3
+components.active[3][6] = component.treesitter
 
 -- info
 -- components.active[3][6] = component.info.icon1
 -- components.active[3][7] = component.info.file_encoding
-components.active[3][6] = component.info.icon2
-components.active[3][7] = component.info.position
-components.active[3][8] = component.info.icon3
+components.active[3][7] = component.info.icon2
+components.active[3][8] = component.info.position
+components.active[3][9] = component.info.icon3
 
-components.active[3][9] = component.info.position_percent
+components.active[3][10] = component.info.position_percent
 
 require("feline").setup {
    colors = {
