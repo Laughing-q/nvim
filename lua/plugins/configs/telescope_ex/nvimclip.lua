@@ -19,9 +19,9 @@ local opts = {
 }
 
 function M.setup()
-  local neoclip = require "neoclip"
+	local neoclip = require("neoclip")
 
-  neoclip.setup(opts)
+	neoclip.setup(opts)
 end
 
 return M
