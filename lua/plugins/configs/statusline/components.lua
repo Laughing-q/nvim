@@ -168,35 +168,35 @@ M.lsp = {
 		},
 	},
 
-  client3 = {
-    provider = function(msg)
-      msg = msg or "LS Inactive"
-      local buf_clients = vim.lsp.buf_get_clients()
-      local buf_ft = vim.bo.filetype
-      local buf_client_names = {}
-      if next(buf_clients) == nil then
-        if type(msg) == "boolean" or #msg == 0 then
-          return "LS Inactive"
-        end
-        return msg
-      end
+	client3 = {
+		provider = function(msg)
+			msg = msg or "LS Inactive"
+			local buf_clients = vim.lsp.buf_get_clients()
+			local buf_ft = vim.bo.filetype
+			local buf_client_names = {}
+			if next(buf_clients) == nil then
+				if type(msg) == "boolean" or #msg == 0 then
+					return "LS Inactive"
+				end
+				return msg
+			end
 
-      -- add client
-      for _, client in pairs(buf_clients) do
-        if client.name ~= "null-ls" then
-          table.insert(buf_client_names, client.name)
-        end
-      end
+			-- add client
+			for _, client in pairs(buf_clients) do
+				if client.name ~= "null-ls" then
+					table.insert(buf_client_names, client.name)
+				end
+			end
 
-      -- add formatter
-      local formatters = require "plugins.configs.statusline.utils"
-      local supported_formatters = formatters.get_formatters(buf_ft)
-      local supported_linters = formatters.get_linters(buf_ft)
-      vim.list_extend(buf_client_names, supported_formatters)
-      vim.list_extend(buf_client_names, supported_linters)
+			-- add formatter
+			local formatters = require("plugins.configs.statusline.utils")
+			local supported_formatters = formatters.get_formatters(buf_ft)
+			local supported_linters = formatters.get_linters(buf_ft)
+			vim.list_extend(buf_client_names, supported_formatters)
+			vim.list_extend(buf_client_names, supported_linters)
 
 			return table.concat(buf_client_names, ","), "🦁"
-    end,
+		end,
 		left_sep = "  ",
 		-- right_sep = {
 		--   str = 'vertical_bar_thin',
@@ -207,7 +207,7 @@ M.lsp = {
 		hl = {
 			fg = "gray",
 		},
-  },
+	},
 }
 
 M.info = {
@@ -312,13 +312,16 @@ M.python = {
 }
 
 M.treesitter = {
-  provider = function()
-    local b = vim.api.nvim_get_current_buf()
-    if vim.treesitter.highlighter.active[b] ~= nil then
-      return "  "
-    end
-    return ""
-  end,
+	provider = function()
+		local b = vim.api.nvim_get_current_buf()
+		if vim.treesitter.highlighter.active[b] ~= nil then
+			return "  "
+		end
+		return ""
+	end,
+	hl = {
+		fg = "green",
+	},
 }
 
 return M
