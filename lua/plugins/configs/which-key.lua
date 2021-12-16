@@ -165,6 +165,7 @@ leader_key = {
             "Workspace Diagnostics",
          },
          f = { "<cmd>lua vim.lsp.buf.formatting()<cr>", "Format" },
+         -- f = { "<cmd>lua vim.lsp.buf.range_formatting()<cr>", "Format" },
          h = { "<cmd>LspInfo<cr>", "Info" },
          k = {
             "<cmd>lua vim.lsp.diagnostic.goto_next()<cr>",
