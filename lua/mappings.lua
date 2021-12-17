@@ -99,7 +99,8 @@ map("n", "U", ":UndotreeToggle<CR>")
 -- bufferline
 map("n", "tl", ":BufferNext<CR>")
 map("n", "tj", ":BufferPrevious<CR>")
-map("n", "<TAB>", ":BufferNext<CR>")
+-- this will change the action of <C-i>, cause TAB=<C-i>
+-- map("n", "<TAB>", ":BufferNext<CR>")
 map("n", "<S-TAB>", ":BufferPrevious<CR>")
 -- lightspeed
 -- map({"n", "v"}, "<LEADER>s", "<Plug>Lightspeed_s", { noremap=false })
