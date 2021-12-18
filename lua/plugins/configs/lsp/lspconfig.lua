@@ -1,4 +1,7 @@
-local function lsp_settings()
+local M = {}
+
+
+M.setup = function ()
 	-- replace the default lsp diagnostic symbols
 	local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
 	for type, icon in pairs(signs) do
@@ -112,23 +115,23 @@ local function lsp_keymaps(bufnr)
 	-- buf_set_keymap("v", "<space>ca", "<cmd>lua vim.lsp.buf.range_code_action()<CR>", opts)
 end
 
-local function on_attach(client, bufnr)
+M.on_attach = function(client, bufnr)
 	-- Highlight
 	lsp_highlight_document(client)
 	-- Keymappings
 	lsp_keymaps(bufnr)
 end
 
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities.textDocument.completion.completionItem.documentationFormat = { "markdown", "plaintext" }
-capabilities.textDocument.completion.completionItem.snippetSupport = true
-capabilities.textDocument.completion.completionItem.preselectSupport = true
-capabilities.textDocument.completion.completionItem.insertReplaceSupport = true
-capabilities.textDocument.completion.completionItem.labelDetailsSupport = true
-capabilities.textDocument.completion.completionItem.deprecatedSupport = true
-capabilities.textDocument.completion.completionItem.commitCharactersSupport = true
-capabilities.textDocument.completion.completionItem.tagSupport = { valueSet = { 1 } }
-capabilities.textDocument.completion.completionItem.resolveSupport = {
+M.capabilities = vim.lsp.protocol.make_client_capabilities()
+M.capabilities.textDocument.completion.completionItem.documentationFormat = { "markdown", "plaintext" }
+M.capabilities.textDocument.completion.completionItem.snippetSupport = true
+M.capabilities.textDocument.completion.completionItem.preselectSupport = true
+M.capabilities.textDocument.completion.completionItem.insertReplaceSupport = true
+M.capabilities.textDocument.completion.completionItem.labelDetailsSupport = true
+M.capabilities.textDocument.completion.completionItem.deprecatedSupport = true
+M.capabilities.textDocument.completion.completionItem.commitCharactersSupport = true
+M.capabilities.textDocument.completion.completionItem.tagSupport = { valueSet = { 1 } }
+M.capabilities.textDocument.completion.completionItem.resolveSupport = {
 	properties = {
 		"documentation",
 		"detail",
@@ -136,10 +139,9 @@ capabilities.textDocument.completion.completionItem.resolveSupport = {
 	},
 }
 
-
-lsp_settings()
-
-local addlsp_confs = "plugins.configs.lsp.lspinstaller"
-if string.len(addlsp_confs) ~= 0 then
-	require(addlsp_confs).setup_lsp(on_attach, capabilities)
-end
+-- local addlsp_confs = "plugins.configs.lsp.lspinstaller"
+-- if string.len(addlsp_confs) ~= 0 then
+-- 	require(addlsp_confs).setup_lsp(on_attach, capabilities)
+-- end
+--
+return M
