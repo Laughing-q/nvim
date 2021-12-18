@@ -1,9 +1,9 @@
 -- Initialize the components table
-local component = require "plugins.configs.statusline.components"
+local component = require("plugins.configs.statusline.components")
 
 local components = {
-   active = {},
-   inactive = {},
+	active = {},
+	inactive = {},
 }
 
 -- Initialize left, mid and right
@@ -40,9 +40,9 @@ components.active[3][9] = component.info.icon3
 
 components.active[3][10] = component.info.position_percent
 
-require("feline").setup {
-   colors = {
-      bg = "#1f2335",
-   },
-   components = components,
-}
+require("feline").setup({
+	colors = {
+		bg = "#1f2335",
+	},
+	components = components,
+})

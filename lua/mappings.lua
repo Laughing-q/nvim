@@ -1,4 +1,4 @@
-local map = require('utils').map
+local map = require("utils").map
 
 vim.g.mapleader = " " --leader
 -------------base mappings---------------
@@ -104,9 +104,9 @@ map("n", "tj", ":BufferPrevious<CR>")
 map("n", "<S-TAB>", ":BufferPrevious<CR>")
 -- lightspeed
 -- map({"n", "v"}, "<LEADER>s", "<Plug>Lightspeed_s", { noremap=false })
-map({"n", "v"}, "<LEADER>S", "<Plug>Lightspeed_S", { noremap=false })
+map({ "n", "v" }, "<LEADER>S", "<Plug>Lightspeed_S", { noremap = false })
 -- comment
-map({"n", "v"}, "<LEADER>c", ":CommentToggle <CR>")
+map({ "n", "v" }, "<LEADER>c", ":CommentToggle <CR>")
 -- nvimtree
 map("n", "<C-n>", ":NvimTreeToggle <CR>")
 
@@ -114,9 +114,9 @@ map("n", "<C-n>", ":NvimTreeToggle <CR>")
 
 -- Add Packer commands because we are not loading it at startup
 local cmd = vim.cmd
-cmd "silent! command PackerClean lua require 'plugins' require('packer').clean()"
-cmd "silent! command PackerCompile lua require 'plugins' require('packer').compile()"
-cmd "silent! command PackerInstall lua require 'plugins' require('packer').install()"
-cmd "silent! command PackerStatus lua require 'plugins' require('packer').status()"
-cmd "silent! command PackerSync lua require 'plugins' require('packer').sync()"
-cmd "silent! command PackerUpdate lua require 'plugins' require('packer').update()"
+cmd("silent! command PackerClean lua require 'plugins' require('packer').clean()")
+cmd("silent! command PackerCompile lua require 'plugins' require('packer').compile()")
+cmd("silent! command PackerInstall lua require 'plugins' require('packer').install()")
+cmd("silent! command PackerStatus lua require 'plugins' require('packer').status()")
+cmd("silent! command PackerSync lua require 'plugins' require('packer').sync()")
+cmd("silent! command PackerUpdate lua require 'plugins' require('packer').update()")

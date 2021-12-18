@@ -1,5 +1,5 @@
-local on_attach = require('plugins.configs.lsp.lspconfig').on_attach
-local capabilities = require('plugins.configs.lsp.lspconfig').capabilities
+local on_attach = require("plugins.configs.lsp.lspconfig").on_attach
+local capabilities = require("plugins.configs.lsp.lspconfig").capabilities
 
 local M = {}
 
