@@ -1,11 +1,14 @@
+local on_attach = require('plugins.configs.lsp.lspconfig').on_attach
+local capabilities = require('plugins.configs.lsp.lspconfig').capabilities
+
 local M = {}
 
-M.setup_lsp = function(attach, capabilities)
+M.setup_lsp = function()
 	local lsp_installer = require("nvim-lsp-installer")
 
 	lsp_installer.on_server_ready(function(server)
 		local opts = {
-			on_attach = attach,
+			on_attach = on_attach,
 			capabilities = capabilities,
 			flags = {
 				debounce_text_changes = 150,
