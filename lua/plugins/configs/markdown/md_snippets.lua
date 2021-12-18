@@ -1,5 +1,4 @@
-vim.cmd(
-  [[
+vim.cmd([[
     autocmd Filetype markdown inoremap <buffer> ,f <++>
     autocmd Filetype markdown inoremap <buffer> ,n ---<Enter><Enter>
     autocmd Filetype markdown inoremap <buffer> ,b **** <++><Esc>F*hi
@@ -19,12 +18,9 @@ vim.cmd(
     autocmd Filetype markdown inoremap <buffer> ,l --------<Enter>
     autocmd Filetype markdown inoremap <buffer> ,w <details><Enter><summary></summary><Enter><Enter><++><Enter></details><Esc>3ki
 
-  ]]
-)
+  ]])
 
 -- autocmd Filetype markdown map <leader>w yiWi[<esc>Ea](<esc>pa)
 -- autocmd Filetype markdown inoremap <buffer> ,f <Esc>/<++><CR>:nohlsearch<CR>"_c4l
 -- autocmd Filetype markdown inoremap <buffer> ,w <Esc>/ <++><CR>:nohlsearch<CR>"_c5l<CR>
 -- autocmd Filetype markdown inoremap <buffer> ,s ~~~~ <++><Esc>F~hi
-
-
