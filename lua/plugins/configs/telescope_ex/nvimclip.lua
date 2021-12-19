@@ -3,17 +3,19 @@ local M = {}
 local opts = {
 	enable_persistant_history = true,
 	keys = {
-		i = {
-			select = "<cr>",
-			paste = "<c-p>",
-			paste_behind = "<c-l>",
-			custom = {},
-		},
-		n = {
-			select = "<cr>",
-			paste = "p",
-			paste_behind = "P",
-			custom = {},
+		telescope = {
+			i = {
+				select = "<cr>",
+				paste = "<c-p>",
+				paste_behind = "<c-l>",
+				custom = {},
+			},
+			n = {
+				select = "<cr>",
+				paste = "p",
+				paste_behind = "P",
+				custom = {},
+			},
 		},
 	},
 }

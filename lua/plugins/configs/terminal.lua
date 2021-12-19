@@ -59,7 +59,7 @@ end
 M.setup = function()
 	local terminal = require("toggleterm")
 	for _, exec in pairs(opts.execs) do
-		add_exec(exec[1], exec[2], exec[3])
+		add_exec(exec[1], exec[2])
 	end
 	terminal.setup(opts)
 end
