@@ -174,11 +174,14 @@ return packer.startup(function()
 	-- }
 
 	use({
-		"terrortylor/nvim-comment",
-		cmd = "CommentToggle",
+		"numToStr/Comment.nvim",
+		cmd = "Comment",
 		config = function()
 			require("plugins.configs.others").comment()
 		end,
+    setup = function()
+      require("utils").packer_lazy_load("Comment.nvim")
+    end,
 	})
 
 	-- file managing , picker etc
