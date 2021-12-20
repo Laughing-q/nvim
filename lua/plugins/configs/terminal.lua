@@ -1,6 +1,9 @@
 local M = {}
+local function warn(msg)
+    vim.cmd(string.format('echohl WarningMsg | echo "Warning: %s" | echohl None', msg))
+end
 
-local opts = {
+local terminal_opts = {
 	-- size can be a number or function which is passed the current terminal
 	size = 20,
 	open_mapping = [[<c-\>]],
@@ -36,32 +39,56 @@ local opts = {
 	-- laughing.builtin.terminal.execs = {{}} to overwrite
 	-- laughing.builtin.terminal.execs[#laughing.builtin.terminal.execs+1] = {"gdb", "tg", "GNU Debugger"}
 	execs = {
-		{ "lazygit", "gg" },
-		-- { "lf", "f", "f" },
+    { "lazygit", "<leader>gg", "LazyGit", "float" },
+		-- { "lf", "<leader>.", "f" },
 	},
 }
 
-local add_exec = function(exec, keymap)
-	vim.api.nvim_set_keymap(
-		"n",
-		"<leader>" .. keymap,
-		"<cmd>lua _exec_toggle('" .. exec .. "')<CR>",
-		{ noremap = true, silent = true }
-	)
+M.add_exec = function(opts)
+  local binary = opts.cmd:match "(%S+)"
+  if vim.fn.executable(binary) ~= 1 then
+    warn("Skipping configuring executable " .. binary .. ". Please make sure it is installed properly.")
+    return
+  end
+
+  local exec_func = string.format(
+    "<cmd>lua require('plugins.configs.terminal')._exec_toggle({ cmd = '%s', count = %d, direction = '%s'})<CR>",
+    opts.cmd,
+    opts.count,
+    opts.direction
+  )
+
+  -- this will slowdown the startup time.
+  -- local wk_status_ok, wk = pcall(require, "which-key")
+  -- if not wk_status_ok then
+  --   return
+  -- end
+  -- wk.register({ [opts.keymap] = { exec_func, opts.label } }, { mode = "n" })
+  -- wk.register({ [opts.keymap] = { exec_func, opts.label } }, { mode = "t" })
+
+  vim.api.nvim_set_keymap("n", opts.keymap, exec_func, { noremap=true, silent = true })
 end
 
-_exec_toggle = function(exec)
-	local Terminal = require("toggleterm.terminal").Terminal
-	local exec_term = Terminal:new({ cmd = exec, hidden = true })
-	exec_term:toggle()
+M._exec_toggle = function(opt)
+  local Terminal = require("toggleterm.terminal").Terminal
+  local term = Terminal:new { cmd = opt.cmd, count = opt.count, direction = opt.direction }
+  term:toggle(terminal_opts.size, opt.direction)
 end
 
 M.setup = function()
 	local terminal = require("toggleterm")
-	for _, exec in pairs(opts.execs) do
-		add_exec(exec[1], exec[2])
+	terminal.setup(terminal_opts)
+  for i, exec in pairs(terminal_opts.execs) do
+    local opt = {
+      cmd = exec[1],
+      keymap = exec[2],
+      label = exec[3],
+      count = i + 1,
+      direction = exec[4] or terminal_opts.direction,
+      size = terminal_opts.size,
+    }
+    M.add_exec(opt)
 	end
-	terminal.setup(opts)
 end
 
 return M
