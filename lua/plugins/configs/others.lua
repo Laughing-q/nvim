@@ -69,7 +69,7 @@ M.colorizer = function()
 end
 
 M.comment = function()
-	local present, nvim_comment = pcall(require, "nvim_comment")
+	local present, nvim_comment = pcall(require, "Comment")
 	if present then
 		nvim_comment.setup()
 	end
@@ -109,6 +109,7 @@ M.signature = function()
 			},
 			zindex = 200, -- by default it will be on top of all floating windows, set to 50 send it to bottom
 			padding = "", -- character to pad on left and right of signature can be ' ', or '|'  etc
+      -- transparency = 50,
 		})
 	end
 end

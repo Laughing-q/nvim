@@ -106,7 +106,9 @@ map("n", "<S-TAB>", ":BufferPrevious<CR>")
 -- map({"n", "v"}, "<LEADER>s", "<Plug>Lightspeed_s", { noremap=false })
 map({ "n", "v" }, "<LEADER>S", "<Plug>Lightspeed_S", { noremap = false })
 -- comment
-map({ "n", "v" }, "<LEADER>c", ":CommentToggle <CR>")
+-- map({ "n", "v" }, "<LEADER>c", ":CommentToggle <CR>")
+map("n", "<LEADER>c", ":lua require('Comment.api').toggle_current_linewise()<CR>")
+map("v", "<LEADER>c", ":lua require('Comment.api').toggle_linewise_op(vim.fn.visualmode())<CR>")
 -- nvimtree
 map("n", "<C-n>", ":NvimTreeToggle <CR>")
 
