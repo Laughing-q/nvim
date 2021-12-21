@@ -3,7 +3,8 @@ local core_modules = {
   "options",
   "mappings",
 }
-pcall(require, 'impatient')
+-- pcall(require, 'impatient')
+require "impatient"
 
 for _, module in ipairs(core_modules) do
    local ok, err = pcall(require, module)
