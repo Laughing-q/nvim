@@ -1,10 +1,9 @@
-local on_attach = require("plugins.configs.lsp.lspconfig").on_attach
-local capabilities = require("plugins.configs.lsp.lspconfig").capabilities
-
 local M = {}
 
 M.setup_lsp = function()
 	local lsp_installer = require("nvim-lsp-installer")
+  local on_attach = require("plugins.configs.lsp.lspconfig").on_attach
+  local capabilities = require("plugins.configs.lsp.lspconfig").capabilities
 
 	lsp_installer.on_server_ready(function(server)
 		local opts = {
