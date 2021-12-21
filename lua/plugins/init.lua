@@ -4,26 +4,42 @@ if not present then
 	return false
 end
 
+local status = require("plugins.opts").status
+
 local use = packer.use
 
 return packer.startup(function()
-	use({
-		"nvim-lua/plenary.nvim",
-	})
-
 	use({
 		"wbthomason/packer.nvim",
 		event = "VimEnter",
 	})
 
 	use({
+		"nvim-lua/plenary.nvim",
+    disable = not status.plenary,
+	})
+
+	-- faster startup time
+	use({
+		"nathom/filetype.nvim",
+    disable = not status.filetype,
+	})
+
+	use({
+		"lewis6991/impatient.nvim",
+    disable = not status.impatient,
+	})
+
+	use({
 		"kyazdani42/nvim-web-devicons",
 		event = "BufRead",
+    disable = not status.devicons,
 	})
 
 	use({
 		"famiu/feline.nvim",
 		-- after = "nvim-web-devicons",
+    disable = not status.feline,
 		config = function()
 			require("plugins.configs.statusline.simplifyline")
 		end,
@@ -31,6 +47,7 @@ return packer.startup(function()
 
 	use({
 		"lukas-reineke/indent-blankline.nvim",
+    disable = not status.blankline,
 		event = "BufRead",
 		config = function()
 			require("plugins.configs.others").blankline()
@@ -39,7 +56,7 @@ return packer.startup(function()
 
 	use({
 		"nvim-treesitter/nvim-treesitter",
-		branch = "0.5-compat",
+    disable = not status.treesitter,
 		event = "BufRead",
 		config = function()
 			require("plugins.configs.treesitter")
@@ -49,6 +66,7 @@ return packer.startup(function()
 	-- git stuff
 	use({
 		"lewis6991/gitsigns.nvim",
+    disable = not status.gitsigns,
 		opt = true,
 		config = function()
 			require("plugins.configs.gitsigns")
@@ -61,6 +79,7 @@ return packer.startup(function()
 	-- lsp stuff
 	use({
 		"neovim/nvim-lspconfig",
+    disable = not status.lspconfig,
 		opt = true,
 		setup = function()
 			require("utils").packer_lazy_load("nvim-lspconfig")
@@ -74,8 +93,10 @@ return packer.startup(function()
 		end,
 	})
 
+  -- TODO lazy load both nvim-lsp-installer and nvim-lspconfig may casue same issue.
 	use({
 		"williamboman/nvim-lsp-installer",
+    disable = not status.lspinstaller,
 		opt = true,
 		setup = function()
 			require("utils").packer_lazy_load("nvim-lsp-installer")
@@ -87,6 +108,7 @@ return packer.startup(function()
 
 	use({
 		"jose-elias-alvarez/null-ls.nvim",
+    disable = not status.null_ls,
 		after = "nvim-lspconfig",
 		config = function()
 			require("plugins.configs.lsp.null-ls").setup()
@@ -95,6 +117,7 @@ return packer.startup(function()
 
 	use({
 		"ray-x/lsp_signature.nvim",
+    disable = not status.lsp_signature,
 		after = "nvim-lspconfig",
 		config = function()
 			require("plugins.configs.others").signature()
@@ -104,6 +127,7 @@ return packer.startup(function()
 	use({
 		-- "andymass/vim-matchup",
 		"Laughing-q/vim-matchup",
+    disable = not status.matchup,
 		opt = true,
 		setup = function()
 			require("utils").packer_lazy_load("vim-matchup")
@@ -114,11 +138,13 @@ return packer.startup(function()
 
 	use({
 		"rafamadriz/friendly-snippets",
+    disable = not status.cmp,
 		event = "InsertEnter",
 	})
 
 	use({
 		"hrsh7th/nvim-cmp",
+    disable = not status.cmp,
 		after = "friendly-snippets",
 		config = function()
 			require("plugins.configs.cmp")
@@ -127,6 +153,7 @@ return packer.startup(function()
 
 	use({
 		"L3MON4D3/LuaSnip",
+    disable = not status.cmp,
 		wants = "friendly-snippets",
 		after = "nvim-cmp",
 		config = function()
@@ -136,31 +163,37 @@ return packer.startup(function()
 
 	use({
 		"saadparwaiz1/cmp_luasnip",
+    disable = not status.cmp,
 		after = "LuaSnip",
 	})
 
 	use({
 		"hrsh7th/cmp-nvim-lua",
+    disable = not status.cmp,
 		after = "cmp_luasnip",
 	})
 
 	use({
 		"hrsh7th/cmp-nvim-lsp",
+    disable = not status.cmp,
 		after = "cmp-nvim-lua",
 	})
 
 	use({
 		"hrsh7th/cmp-buffer",
+    disable = not status.cmp,
 		after = "cmp-nvim-lsp",
 	})
 
 	use({
 		"hrsh7th/cmp-path",
+    disable = not status.cmp,
 		after = "cmp-buffer",
 	})
 	-- misc plugins
 	use({
 		"windwp/nvim-autopairs",
+    disable = not status.autopairs,
 		after = "nvim-cmp",
 		config = function()
 			require("plugins.configs.others").autopairs()
@@ -168,13 +201,15 @@ return packer.startup(function()
 	})
 
 	-- dashboard
-	-- use {
-	--    "glepnir/dashboard-nvim",
-	--    config = require("plugins.configs.dashboard"),
-	-- }
+	use {
+	  "glepnir/dashboard-nvim",
+    disable = not status.dashboard,
+	  config = require("plugins.configs.dashboard"),
+	}
 
 	use({
 		"numToStr/Comment.nvim",
+    disable = not status.comment,
 		cmd = "Comment",
 		config = function()
 			require("plugins.configs.others").comment()
@@ -187,6 +222,7 @@ return packer.startup(function()
 	-- file managing , picker etc
 	use({
 		"kyazdani42/nvim-tree.lua",
+    disable = not status.nvimtree,
 		cmd = { "NvimTreeToggle", "NvimTreeFocus" },
 		config = function()
 			require("plugins.configs.nvimtree")
@@ -195,12 +231,13 @@ return packer.startup(function()
 
 	use({
 		"nvim-telescope/telescope.nvim",
+    disable = not status.telescope,
 		module = "telescope",
 		cmd = "Telescope",
 		requires = {
 			{
 				"nvim-telescope/telescope-fzf-native.nvim",
-				disable = false,
+        disable = not status.fzf,
 				run = "make",
 				opt = true,
 				setup = function()
@@ -209,11 +246,11 @@ return packer.startup(function()
 			},
 			{
 				"nvim-telescope/telescope-media-files.nvim",
-				disable = true,
+				disable = not status.media,
 			},
 			{
 				"ahmedkhalf/project.nvim",
-				disable = false,
+				disable = not status.project,
 				opt = true,
 				config = function()
 					require("plugins.configs.telescope_ex.project").setup()
@@ -225,7 +262,7 @@ return packer.startup(function()
 			{
 				"AckslD/nvim-neoclip.lua",
 				requires = { "tami5/sqlite.lua", module = "sqlite" },
-				disable = false,
+				disable = not status.neoclip,
 				opt = true,
 				setup = function()
 					require("utils").packer_lazy_load("nvim-neoclip.lua")
@@ -240,17 +277,10 @@ return packer.startup(function()
 		end,
 	})
 
-	-- faster startup time
-	use({
-		"nathom/filetype.nvim",
-	})
-
-	use({
-		"lewis6991/impatient.nvim",
-	})
 	-- keybinding
 	use({
 		"folke/which-key.nvim",
+    disable = not status.which_key,
 		event = "BufRead",
 		config = function()
 			require("plugins.configs.which-key").setup()
@@ -259,6 +289,7 @@ return packer.startup(function()
 	-- colorscheme
 	use({
 		"Laughing-q/tokyonight.nvim",
+    disable = not status.tokyonight,
 	})
 	-- use {
 	--    "xiyaowong/nvim-transparent",
@@ -267,12 +298,14 @@ return packer.startup(function()
 	-- bufferline
 	use({
 		"romgrk/barbar.nvim",
+    disable = not status.barbar,
 		event = "BufWinEnter",
 		-- after = "nvim-web-devicons",
 	})
 	-- multi select
 	use({
 		"mg979/vim-visual-multi",
+    disable = not status.visual_multi,
 		event = "BufRead",
 		-- opt = true,
 		-- setup = function()
@@ -289,6 +322,7 @@ return packer.startup(function()
 	-- Terminal
 	use({
 		"akinsho/toggleterm.nvim",
+    disable = not status.terminal,
 		event = "BufWinEnter",
 		config = function()
 			require("plugins.configs.terminal").setup()
@@ -297,6 +331,7 @@ return packer.startup(function()
 	-- swith true false
 	use({
 		"Laughing-q/antovim",
+    disable = not status.antovim,
 		cmd = { "Antovim" },
 	})
 	-- show color, `nvim-colorizer` is another option
@@ -310,6 +345,7 @@ return packer.startup(function()
 	-- }
 	use({
 		"norcalli/nvim-colorizer.lua",
+    disable = not status.colorizer,
 		event = "BufRead",
 		config = function()
 			require("plugins.configs.others").colorizer()
@@ -319,32 +355,38 @@ return packer.startup(function()
 	-- undotree
 	use({
 		"Laughing-q/undotree",
+    disable = not status.undotree,
 		cmd = { "UndotreeToggle" },
 	})
 	-- functions and values
 	use({
 		"liuchengxu/vista.vim",
+    disable = not status.vista,
 		cmd = { "Vista" },
 	})
 	-- focus 1
 	use({
 		"junegunn/goyo.vim",
+    disable = not status.goyo,
 		cmd = { "Goyo" },
 	})
 	-- faster select
 	use({
 		"gcmt/wildfire.vim",
+    disable = not status.wildfire,
 		event = "BufRead",
 		-- disable = true,
 	})
 	use({
 		"tpope/vim-surround",
+    disable = not status.surround,
 		event = "BufRead",
 		-- disable = true,
 	})
 	-- rnvimr
 	use({
 		"kevinhwang91/rnvimr",
+    disable = not status.rnvimr,
 		command = "RnvimrToggle",
 		config = function()
 			require("plugins.configs.others").rnvimr()
@@ -357,6 +399,7 @@ return packer.startup(function()
 	-- markdown
 	use({
 		"instant-markdown/vim-instant-markdown",
+    disable = not status.instant_markdown,
 		event = "BufRead",
 		ft = { "markdown" },
 		config = function()
@@ -365,6 +408,7 @@ return packer.startup(function()
 	})
 	use({
 		"dhruvasagar/vim-table-mode",
+    disable = not status.table_mode,
 		event = "BufRead",
 		ft = { "markdown" },
 		config = function()
@@ -373,6 +417,7 @@ return packer.startup(function()
 	})
 	use({
 		"mzlogin/vim-markdown-toc",
+    disable = not status.markdown_toc,
 		event = "BufRead",
 		ft = { "markdown" },
 		config = function()
@@ -381,14 +426,17 @@ return packer.startup(function()
 	})
 	use({
 		"dkarter/bullets.vim",
+    disable = not status.bullets,
 		event = "BufRead",
 		ft = { "markdown" },
 		config = function()
 			require("plugins.configs.markdown.bullets").setup()
 		end,
 	})
+  -- latex
 	use({
 		"lervag/vimtex",
+    disable = not status.vimtex,
 		ft = { "tex" },
 		config = function()
 			vim.g.vimtex_view_method = "zathura"
@@ -399,22 +447,25 @@ return packer.startup(function()
 	-- faster move, jump between characters
 	use({
 		"ggandor/lightspeed.nvim",
+    disable = not status.lightspeed,
 		event = "BufRead",
 	})
 
 	-- scrolling
 	use({
 		"dstein64/nvim-scrollview",
+    disable = not status.scrollview,
 		event = "BufRead",
 	})
 
 	-- scroll smoothly
 	-- use {
 	--   'karb94/neoscroll.nvim',
-	--    event = "BufRead",
-	--    config = function ()
-	--      require('neoscroll').setup()
-	--    end
+ --    disable=true,
+ --    event = "BufRead",
+ --    config = function ()
+ --      require('neoscroll').setup()
+ --    end
 	-- }
 
 	-- code hint from AI
@@ -423,9 +474,11 @@ return packer.startup(function()
 	-- }
 
 	-- notify
-	-- use {
-	--   'rcarriga/nvim-notify',
-	-- }
+	use {
+	  'rcarriga/nvim-notify',
+		event = "BufRead",
+    disable = not status.notify
+	}
 
 	-- use {
 	--    "xuhdev/vim-latex-live-preview",

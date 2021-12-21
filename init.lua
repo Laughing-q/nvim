@@ -1,12 +1,9 @@
-local core_modules = {
-   "autocmds",
-   "options",
-   "mappings",
+local core_modules = { 
+  "autocmds",
+  "options",
+  "mappings",
 }
--- require('impatient')
 pcall(require, 'impatient')
-
-require "plugins.configs.global".setup()
 
 for _, module in ipairs(core_modules) do
    local ok, err = pcall(require, module)
@@ -15,8 +12,11 @@ for _, module in ipairs(core_modules) do
    end
 end
 
+-- plugin global settings
+require "plugins.configs.global".setup()
 -- colorscheme
 local ok, _ = pcall(require, 'tokyonight')
 if ok then
   vim.cmd("colorscheme " .. "tokyonight")
 end
+-- vim.notify("this is a test")
