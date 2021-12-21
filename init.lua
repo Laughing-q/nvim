@@ -3,7 +3,9 @@ local core_modules = {
    "options",
    "mappings",
 }
-require('impatient')
+-- require('impatient')
+pcall(require, 'impatient')
+
 require "plugins.configs.global".setup()
 
 for _, module in ipairs(core_modules) do
