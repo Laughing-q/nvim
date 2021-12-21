@@ -18,7 +18,7 @@ vim.cmd([[ au BufReadPost * if expand('%:p') !~# '\m/\.git/' && line("'\"") > 1 
 
 -- Auto change directory to current dir
 -- TODO, do not work.
-vim.cmd([[ autocmd BufEnter * silent! lcd %:p:h ]])
+-- vim.cmd([[ autocmd BufEnter * silent! lcd %:p:h ]])
 
 -- keep cursor at the same position
 -- vim.cmd [[au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif]]

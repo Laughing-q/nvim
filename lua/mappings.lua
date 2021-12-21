@@ -82,6 +82,7 @@ map("n", "<Esc>", ":noh <CR>")
 
 -- file path
 map("n", "\\p", ":echo expand('%:p')<CR>")
+map("n", "\\w", ":pwd<CR>")
 -- <++>
 map("n", "<LEADER><LEADER>", "<Esc>/<++><CR>:nohlsearch<CR>c4l")
 -- figlet
