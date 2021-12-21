@@ -1,4 +1,2 @@
-
 vim.log
-install.sh
 plugin/packer_compiled.lua
