@@ -27,14 +27,20 @@ local function list_registered_providers_names(filetype)
 end
 
 function M.get_formatters(filetype)
-	local null_ls_methods = require("null-ls.methods")
+	local ok, null_ls_methods = pcall(require, "null-ls.methods")
+  if not ok then
+    return {}
+  end
 	local formatter_method = null_ls_methods.internal["FORMATTING"]
 	local registered_providers = list_registered_providers_names(filetype)
 	return registered_providers[formatter_method] or {}
 end
 
 function M.get_linters(filetype)
-	local null_ls_methods = require("null-ls.methods")
+	local ok, null_ls_methods = pcall(require, "null-ls.methods")
+  if not ok then
+    return {}
+  end
 	local linter_method = null_ls_methods.internal["DIAGNOSTICS"]
 	local registered_providers = list_registered_providers_names(filetype)
 	return registered_providers[linter_method] or {}

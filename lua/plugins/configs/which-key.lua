@@ -1,5 +1,6 @@
 local M = {}
 require("plugins.configs.compile")
+require("plugins.configs.format")
 local leader_key = {}
 
 leader_key = {
@@ -164,7 +165,8 @@ leader_key = {
 				"<cmd>Telescope lsp_workspace_diagnostics<cr>",
 				"Workspace Diagnostics",
 			},
-			f = { "<cmd>lua vim.lsp.buf.formatting()<cr>", "Format" },
+			-- f = { "<cmd>lua vim.lsp.buf.formatting()<cr>", "Format" },
+			f = { "<cmd>call Format()<CR>", "Format" },
 			-- f = { "<cmd>lua vim.lsp.buf.range_formatting()<cr>", "Format" },
 			h = { "<cmd>LspInfo<cr>", "Info" },
 			k = {

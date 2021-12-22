@@ -78,7 +78,7 @@ M.lsp = {
 	diagnostic_errors = {
 		provider = "diagnostic_errors",
 		enabled = function()
-			return lsp.diagnostics_exist("Error")
+			return lsp.diagnostics_exist
 		end,
 		icon = "  ",
 		hl = {
@@ -89,7 +89,7 @@ M.lsp = {
 	diagnostic_warnings = {
 		provider = "diagnostic_warnings",
 		enabled = function()
-			return lsp.diagnostics_exist("Warning")
+			return lsp.diagnostics_exist
 		end,
 		icon = "  ",
 		hl = {
@@ -100,7 +100,7 @@ M.lsp = {
 	diagnostic_hints = {
 		provider = "diagnostic_hints",
 		enabled = function()
-			return lsp.diagnostics_exist("Hint")
+			return lsp.diagnostics_exist
 		end,
 		icon = "  ",
 		hl = {
@@ -111,7 +111,7 @@ M.lsp = {
 	diagnostic_info = {
 		provider = "diagnostic_info",
 		enabled = function()
-			return lsp.diagnostics_exist("Information")
+			return lsp.diagnostics_exist
 		end,
 		icon = "  ",
 		hl = {

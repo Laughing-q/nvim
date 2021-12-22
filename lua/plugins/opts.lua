@@ -12,7 +12,7 @@ M.status = {
   -- lsp stuff
   lspconfig = true,
   lspinstaller = true,
-  null_ls = true,
+  null_ls = false,
   lsp_signature = true,
 
   matchup = true,

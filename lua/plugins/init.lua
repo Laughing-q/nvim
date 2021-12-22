@@ -37,12 +37,18 @@ return packer.startup(function()
 	})
 
 	use({
-		"famiu/feline.nvim",
+		"feline-nvim/feline.nvim",
 		-- after = "nvim-web-devicons",
+    -- commit = "4ef5e1516395eea731275e0f58b6bfba5c6ac9c1",
+		event = "BufRead",
+    -- opt = true,
     disable = not status.feline,
 		config = function()
 			require("plugins.configs.statusline.simplifyline")
 		end,
+		-- setup = function()
+		-- 	require("utils").packer_lazy_load("feline.nvim")
+		-- end,
 	})
 
 	use({
