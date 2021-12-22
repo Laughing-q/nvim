@@ -50,7 +50,8 @@ M.status = {
   vimtex = true,
   lightspeed = true,
   scrollview = true,
-  notify = true,
+  notify = false,
+  dap = false,
 }
 
 return M

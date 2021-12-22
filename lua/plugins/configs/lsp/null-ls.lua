@@ -22,8 +22,12 @@ local sources = {
 	diagnostics.shellcheck.with({ diagnostics_format = "#{m} [#{c}]" }),
 
 	-- python
-	formatting.yapf.with({ args = {} }),
-	-- formatting.black.with { extra_args = { "--fast" }},
+	-- formatting.yapf.with({ args = {} }),
+	-- formatting.black.with({
+ --    cwd = function(params)
+ --      return require("lspconfig")["pyright"].get_root_dir(params.bufname)
+ --    end,}),
+	formatting.black,
 
 	-- latex
 	diagnostics.chktex,
@@ -33,12 +37,13 @@ local sources = {
 
 local M = {}
 
-M.setup = function(on_attach)
+-- M.setup = function(on_attach)
+M.setup = function()
 	null_ls.setup({
 		sources = sources,
-		debug = false,
+		-- debug = true,
 	})
-	require("null-ls").setup({ on_attach = on_attach })
+	-- require("null-ls").setup({ on_attach = on_attach })
 end
 
 return M

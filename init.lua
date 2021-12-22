@@ -20,3 +20,4 @@ if ok then
   vim.cmd("colorscheme " .. "tokyonight")
 end
 -- vim.notify("this is a test")
+-- vim.lsp.set_log_level("debug")

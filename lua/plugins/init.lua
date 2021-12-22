@@ -479,6 +479,12 @@ return packer.startup(function()
 		event = "BufRead",
     disable = not status.notify
 	}
+	-- debug
+	use {
+	  'mfussenegger/nvim-dap',
+		event = "BufRead",
+    disable = not status.dap
+	}
 
 	-- use {
 	--    "xuhdev/vim-latex-live-preview",
