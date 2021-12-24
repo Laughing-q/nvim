@@ -4,7 +4,7 @@ local project_opts = {
 	---@usage set to true to disable setting the current-woriking directory
 	--- Manual mode doesn't automatically change your root directory, so you have
 	--- the option to manually do so using `:ProjectRoot` command.
-	manual_mode = true,
+	manual_mode = false,  -- null-ls will disturb this when set `false`, but i'am not using null-ls.
 
 	---@usage Methods of detecting the root directory
 	--- Allowed values: **"lsp"** uses the native neovim lsp
