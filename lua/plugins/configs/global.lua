@@ -25,6 +25,9 @@ M.setup = function()
 	vim.g.tokyonight_line_number_color = "#bb9af7"
 	vim.g.tokyonight_transparent_sidebar = true
 
+  -- kanagawa
+  -- require('kanagawa').setup({transparent = true})
+
 	-- vimtex
 	-- vim.g.vimtex_view_method = 'zathura'
 

@@ -2,6 +2,8 @@ local M = {}
 -- if show short statusline on small screens
 local shortline = true
 local lsp = require("feline.providers.lsp")
+local status_color = "#223249"  -- for kanagawa
+-- local status_color = "#3d59a1"  -- for tokyonight
 
 M.git = {
 	git_branch = {
@@ -9,7 +11,7 @@ M.git = {
 		icon = " 🐯 ",
 		hl = {
 			-- fg = "gray",
-			bg = "#3d59a1",
+			bg = status_color,
 		},
 		right_sep = { "block", "slant_right" },
 	},
@@ -218,7 +220,7 @@ M.info = {
 		end,
 		hl = {
 			-- fg = "gray",
-			bg = "#3d59a1",
+			bg = status_color,
 		},
 		left_sep = "slant_left",
 	},
@@ -230,7 +232,7 @@ M.info = {
 		-- },
 		hl = {
 			-- fg = "gray",
-			bg = "#3d59a1",
+			bg = status_color,
 		},
 		right_sep = "block",
 	},
@@ -241,7 +243,7 @@ M.info = {
 		end,
 		hl = {
 			-- fg = "gray",
-			bg = "#3d59a1",
+			bg = status_color,
 		},
 		left_sep = "slant_left",
 	},
@@ -250,7 +252,7 @@ M.info = {
 		provider = "position",
 		hl = {
 			-- fg = "gray",
-			bg = "#3d59a1",
+			bg = status_color,
 		},
 	},
 
@@ -261,7 +263,7 @@ M.info = {
 		end,
 		hl = {
 			-- fg = "gray",
-			bg = "#3d59a1",
+			bg = status_color,
 		},
 	},
 
@@ -284,7 +286,7 @@ M.info = {
 		end,
 		hl = {
 			-- fg = "gray",
-			bg = "#3d59a1",
+			bg = status_color,
 		},
 	},
 }

@@ -27,9 +27,11 @@ M.status = {
   media = false,
   project = true,
   neoclip = true,
+  -- colorscheme
+  tokyonight = false,
+  kanagawa = true,
 
   which_key = true,
-  tokyonight = true,
   barbar = true,
   visual_multi = true,
   terminal = true,

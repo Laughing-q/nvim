@@ -15,9 +15,11 @@ end
 -- plugin global settings
 require("plugins.configs.global").setup()
 -- colorscheme
-local ok, _ = pcall(require, "tokyonight")
+local colorscheme = "kanagawa"
+
+local ok, _ = pcall(require, colorscheme)
 if ok then
-	vim.cmd("colorscheme " .. "tokyonight")
+	vim.cmd("colorscheme " .. colorscheme)
 end
 -- vim.notify("this is a test")
 -- vim.lsp.set_log_level("debug")

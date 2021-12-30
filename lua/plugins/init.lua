@@ -297,6 +297,10 @@ return packer.startup(function()
 		"Laughing-q/tokyonight.nvim",
     disable = not status.tokyonight,
 	})
+	use({
+		"rebelot/kanagawa.nvim",
+    disable = not status.kanagawa,
+	})
 	-- use {
 	--    "xiyaowong/nvim-transparent",
 	-- }
