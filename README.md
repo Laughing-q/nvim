@@ -2,6 +2,7 @@
 
 ```shell
 # for code formatting and check
-yay -S black yapf stylua luacheck shfmt shellcheck
+yay -S black yapf stylua luacheck shfmt shellcheck 
+yay -S clang-format-all-git
 sudo npm install --global prettier
 ```

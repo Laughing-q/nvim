@@ -6,6 +6,8 @@ func! Format()
 		silent! exec "!black --fast --quiet %"
 	elseif &filetype == 'lua'
 		silent! exec "!stylua %"
+	elseif &filetype == 'cpp'
+		silent! exec "!clang-format --style=Microsoft -i %"
 	endif
   :e!
 endfunc
