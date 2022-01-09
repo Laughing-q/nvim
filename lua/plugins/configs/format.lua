@@ -8,6 +8,8 @@ func! Format()
 		silent! exec "!stylua %"
 	elseif &filetype == 'cpp'
 		silent! exec "!clang-format --style=Microsoft -i %"
+	elseif &filetype == 'cmake'
+		silent! exec "!cmake-format --enable-markup -i %"
 	endif
   :e!
 endfunc
