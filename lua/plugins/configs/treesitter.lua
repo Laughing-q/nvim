@@ -1,5 +1,5 @@
 local treesitter_opts = {
-	ensure_installed = { "python", "c", "cpp", "cuda", "dockerfile", "lua", "vim", "bash", "yaml", "bibtex", "latex" }, -- one of "all", "maintained" (parsers with maintainers), or a list of languages
+	ensure_installed = { "python", "c", "cpp", "cmake", "make", "cuda", "dockerfile", "lua", "vim", "bash", "yaml", "bibtex", "latex", "markdown" }, -- one of "all", "maintained" (parsers with maintainers), or a list of languages
 	ignore_install = {},
 	highlight = {
 		enable = true, -- false will disable the whole extension
