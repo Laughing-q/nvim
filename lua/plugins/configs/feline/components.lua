@@ -2,7 +2,7 @@ local M = {}
 -- if show short statusline on small screens
 local shortline = true
 local lsp = require("feline.providers.lsp")
-local status_color = "#223249"  -- for kanagawa
+local status_color = "#223249" -- for kanagawa
 -- local status_color = "#3d59a1"  -- for tokyonight
 
 M.git = {
@@ -191,7 +191,7 @@ M.lsp = {
 			end
 
 			-- add formatter
-			local formatters = require("plugins.configs.statusline.utils")
+			local formatters = require("plugins.configs.feline.utils")
 			local supported_formatters = formatters.get_formatters(buf_ft)
 			local supported_linters = formatters.get_linters(buf_ft)
 			vim.list_extend(buf_client_names, supported_formatters)
@@ -267,6 +267,22 @@ M.info = {
 		},
 	},
 
+	scrollBar = {
+		-- static = {
+    sbar = { "▁", "▂", "▃", "▄", "▅", "▆", "▇", "█" },
+		-- },
+		provider = function(self)
+			local curr_line = vim.api.nvim_win_get_cursor(0)[1]
+			local lines = vim.api.nvim_buf_line_count(0)
+			local i = math.floor(curr_line / lines * (#self.sbar - 1)) + 1
+			return string.rep(self.sbar[i], 2)
+		end,
+		hl = {
+			fg = "gray",
+			bg = status_color,
+		},
+	},
+
 	position_percent = {
 		provider = function()
 			local current_line = vim.fn.line(".")
@@ -293,7 +309,7 @@ M.info = {
 
 M.python = {
 	provider = function()
-		local utils = require("plugins.configs.statusline.utils")
+		local utils = require("plugins.configs.feline.utils")
 		if vim.bo.filetype == "python" then
 			local venv = os.getenv("CONDA_DEFAULT_ENV")
 			if venv then

@@ -5,10 +5,13 @@ M.status = {
   filetype = true,
   impatient = true,
   devicons = true,
-  feline = true,
   blankline = true,
   treesitter = true,
   gitsigns = true,
+
+  -- statueline
+  feline = true,
+  heirline = false,
   -- lsp stuff
   lspconfig = true,
   lspinstaller = true,

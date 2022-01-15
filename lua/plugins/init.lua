@@ -36,6 +36,7 @@ return packer.startup(function()
     disable = not status.devicons,
 	})
 
+  -- statueline
 	use({
 		"feline-nvim/feline.nvim",
 		-- after = "nvim-web-devicons",
@@ -44,11 +45,20 @@ return packer.startup(function()
     -- opt = true,
     disable = not status.feline,
 		config = function()
-			require("plugins.configs.statusline.simplifyline")
+			require("plugins.configs.feline.simplifyline")
 		end,
 		-- setup = function()
 		-- 	require("utils").packer_lazy_load("feline.nvim")
 		-- end,
+	})
+
+	use({
+		"rebelot/heirline.nvim",
+		event = "BufRead",
+    disable = not status.heirline,
+		config = function()
+			require("plugins.configs.heirline")
+		end,
 	})
 
 	use({
