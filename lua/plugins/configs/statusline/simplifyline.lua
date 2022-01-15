@@ -6,39 +6,40 @@ local components = {
 	inactive = {},
 }
 
+local left = {}
+local middle = {}
+local right = {}
+
 -- Initialize left, mid and right
 table.insert(components.active, {})
 table.insert(components.active, {})
 table.insert(components.active, {})
 
-components.active[1][1] = component.git.git_branch
-components.active[1][2] = component.python
--- diffAdded
-components.active[1][3] = component.git.git_diff_added
--- diffModfified
-components.active[1][4] = component.git.git_diff_changed
--- diffRemove
-components.active[1][5] = component.git.git_diff_removed
--- components.active[1][5] = component.python
+-- left
+table.insert(left, component.git.git_branch)
+table.insert(left, component.python)
+table.insert(left, component.git.git_diff_added)
+table.insert(left, component.git.git_diff_changed)
+table.insert(left, component.git.git_diff_removed)
 
--- lsp
-components.active[2][1] = component.lsp.progress
+-- middle
+table.insert(middle, component.lsp.progress)
 
-components.active[3][1] = component.lsp.diagnostic_errors
-components.active[3][2] = component.lsp.diagnostic_warnings
-components.active[3][3] = component.lsp.diagnostic_hints
-components.active[3][4] = component.lsp.diagnostic_info
-components.active[3][5] = component.lsp.client3
-components.active[3][6] = component.treesitter
+-- right
+table.insert(right, component.lsp.diagnostic_errors)
+table.insert(right, component.lsp.diagnostic_warnings)
+table.insert(right, component.lsp.diagnostic_hints)
+table.insert(right, component.lsp.diagnostic_info)
+table.insert(right, component.lsp.client3)
+table.insert(right, component.treesitter)
+table.insert(right, component.info.icon2)
+table.insert(right, component.info.position)
+table.insert(right, component.info.icon3)
+table.insert(right, component.info.position_percent)
 
--- info
--- components.active[3][6] = component.info.icon1
--- components.active[3][7] = component.info.file_encoding
-components.active[3][7] = component.info.icon2
-components.active[3][8] = component.info.position
-components.active[3][9] = component.info.icon3
-
-components.active[3][10] = component.info.position_percent
+components.active[1] = left
+components.active[2] = middle
+components.active[3] = right
 
 require("feline").setup({
 	colors = {
