@@ -10,8 +10,8 @@ M.status = {
   gitsigns = true,
 
   -- statueline
-  feline = true,
-  heirline = false,
+  feline = false,
+  heirline = true,
   -- lsp stuff
   lspconfig = true,
   lspinstaller = true,

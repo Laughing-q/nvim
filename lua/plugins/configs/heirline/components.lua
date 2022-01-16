@@ -30,129 +30,43 @@ M.Git = {
 		self.has_changes = self.status_dict.added ~= 0 or self.status_dict.removed ~= 0 or self.status_dict.changed ~= 0
 	end,
 
-	hl = { fg = colors.orange },
+	hl = { fg = "white", bg = "#223249" },
 
 	{ -- git branch name
 		provider = function(self)
-			return " " .. self.status_dict.head
+			return " 🐯" .. self.status_dict.head .. " "
 		end,
-		hl = { style = "bold" },
+		-- hl = { style = "bold" },
 	},
-	-- You could handle delimiters, icons and counts similar to Diagnostics
-	{
-		condition = function(self)
-			return self.has_changes
-		end,
-		provider = "  ",
-	},
+	-- {
+	-- 	condition = function(self)
+	-- 		return self.has_changes
+	-- 	end,
+	-- 	provider = " ",
+	-- },
 	{
 		provider = function(self)
 			local count = self.status_dict.added or 0
-			return count > 0 and ("+" .. count)
+			return count > 0 and ("  " .. count)
 		end,
-		hl = { fg = colors.git.add },
-	},
-	{
-		provider = function(self)
-			local count = self.status_dict.removed or 0
-			return count > 0 and ("-" .. count)
-		end,
-		hl = { fg = colors.git.del },
+		hl = { fg = "#45b97c", bg = "black"},
 	},
 	{
 		provider = function(self)
 			local count = self.status_dict.changed or 0
-			return count > 0 and ("~" .. count)
+			return count > 0 and ("  " .. count)
 		end,
-		hl = { fg = colors.git.change },
+		hl = { fg = "#dea32c", bg = "black"},
 	},
 	{
-		condition = function(self)
-			return self.has_changes
+		provider = function(self)
+			local count = self.status_dict.removed or 0
+			return count > 0 and ("  " .. count)
 		end,
-		provider = "  ",
+		hl = { fg = "#f15b6c", bg = "black" },
 	},
 }
 
-M.ViMode = {
-	-- get vim current mode, this information will be required by the provider
-	-- and the highlight functions, so we compute it only once per component
-	-- evaluation and store it as a component attribute
-	init = function(self)
-		self.mode = vim.fn.mode(1) -- :h mode()
-	end,
-	-- Now we define some dictionaries to map the output of mode() to the
-	-- corresponding string and color. We can put these into `static` to compute
-	-- them at initialisation time.
-	static = {
-		mode_names = { -- change the strings if yow like it vvvvverbose!
-			n = "N",
-			no = "N?",
-			nov = "N?",
-			noV = "N?",
-			["no^V"] = "N?",
-			niI = "Ni",
-			niR = "Nr",
-			niV = "Nv",
-			nt = "Nt",
-			v = "V",
-			vs = "Vs",
-			V = "V_",
-			Vs = "Vs",
-			["^V"] = "^V",
-			["^Vs"] = "^V",
-			s = "S",
-			S = "S_",
-			["^S"] = "^S",
-			i = "I",
-			ic = "Ic",
-			ix = "Ix",
-			R = "R",
-			Rc = "Rc",
-			Rx = "Rx",
-			Rv = "Rv",
-			Rvc = "Rv",
-			Rvx = "Rv",
-			c = "C",
-			cv = "Ex",
-			r = "...",
-			rm = "M",
-			["r?"] = "?",
-			["!"] = "!",
-			t = "T",
-		},
-		mode_colors = {
-			n = colors.red,
-			i = colors.green,
-			v = colors.cyan,
-			V = colors.cyan,
-			["^V"] = colors.cyan,
-			c = colors.orange,
-			s = colors.purple,
-			S = colors.purple,
-			["^S"] = colors.purple,
-			R = colors.orange,
-			r = colors.orange,
-			["!"] = colors.red,
-			t = colors.red,
-		},
-	},
-	-- We can now access the value of mode() that, by now, would have been
-	-- computed by `init()` and use it to index our strings dictionary.
-	-- note how `static` fields become just regular attributes once the
-	-- component is instantiated.
-	-- To be extra meticulous, we can also add some vim statusline syntax to
-	-- control the padding and make sure our string is always at least 2
-	-- characters long. Plus a nice Icon.
-	provider = function(self)
-		return " %2(" .. self.mode_names[self.mode] .. "%)"
-	end,
-	-- Same goes for the highlight. Now the foreground will change according to the current mode.
-	hl = function(self)
-		local mode = self.mode:sub(1, 1) -- get only the first mode character
-		return { fg = self.mode_colors[mode], style = "bold" }
-	end,
-}
 
 -- I take no credits for this! :lion:
 M.ScrollBar = {

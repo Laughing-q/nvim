@@ -34,8 +34,8 @@ table.insert(right, component.lsp.client3)
 table.insert(right, component.treesitter)
 table.insert(right, component.info.icon2)
 table.insert(right, component.info.position)
-table.insert(right, component.info.icon3)
-table.insert(right, component.info.position_percent)
+-- table.insert(right, component.info.icon3)
+-- table.insert(right, component.info.position_percent)
 -- table.insert(right, component.info.scrollBar)
 
 components.active[1] = left
