@@ -45,7 +45,7 @@ return packer.startup(function()
     -- opt = true,
     disable = not status.feline,
 		config = function()
-			require("plugins.configs.feline.simplifyline")
+			require("plugins.configs.feline")
 		end,
 		-- setup = function()
 		-- 	require("utils").packer_lazy_load("feline.nvim")

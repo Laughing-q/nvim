@@ -49,24 +49,122 @@ M.Git = {
 			local count = self.status_dict.added or 0
 			return count > 0 and ("  " .. count)
 		end,
-		hl = { fg = "#45b97c", bg = "black"},
+		hl = { fg = "#45b97c", bg = "#1f2335" },
 	},
 	{
 		provider = function(self)
 			local count = self.status_dict.changed or 0
 			return count > 0 and ("  " .. count)
 		end,
-		hl = { fg = "#dea32c", bg = "black"},
+		hl = { fg = "#dea32c", bg = "#1f2335" },
 	},
 	{
 		provider = function(self)
 			local count = self.status_dict.removed or 0
 			return count > 0 and ("  " .. count)
 		end,
-		hl = { fg = "#f15b6c", bg = "black" },
+		hl = { fg = "#f15b6c", bg = "#1f2335" },
 	},
 }
 
+M.Python = {
+	provider = function()
+		local python = require("plugins.configs.feline.utils")
+		if vim.bo.filetype == "python" then
+			local venv = os.getenv("CONDA_DEFAULT_ENV")
+			if venv then
+				return string.format(" 🍀(%s)", python.env_cleanup(venv))
+			end
+			venv = os.getenv("VIRTUAL_ENV")
+			if venv then
+				return string.format(" 🍀(%s)", python.env_cleanup(venv))
+			end
+			return ""
+		end
+		return ""
+	end,
+
+	hl = {
+		fg = "green",
+	},
+}
+
+M.Diagnostics = {
+	condition = conditions.has_diagnostics,
+
+	init = function(self)
+		self.errors = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.ERROR })
+		self.warnings = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.WARN })
+		self.hints = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.HINT })
+		self.info = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.INFO })
+	end,
+
+	{
+		provider = function(self)
+			-- 0 is just another output, we can decide to print it or not!
+			return self.errors > 0 and (" " .. self.errors .. " ")
+		end,
+		hl = { fg = colors.diag.error },
+	},
+	{
+		provider = function(self)
+			return self.warnings > 0 and (" " .. self.warnings .. " ")
+		end,
+		hl = { fg = colors.diag.warn },
+	},
+	{
+		provider = function(self)
+			return self.info > 0 and (" " .. self.info .. " ")
+		end,
+		hl = { fg = colors.diag.info },
+	},
+	{
+		provider = function(self)
+			return self.hints > 0 and (" " .. self.hints)
+		end,
+		hl = { fg = colors.diag.hint },
+	},
+}
+
+M.LSP = {
+	-- condition = function ()
+	--   return next(vim.lsp.buf_get_clients()) ~= nil
+	-- end,
+	condition = conditions.lsp_attached,
+
+	{
+		provider = function()
+			local names = {}
+			for i, server in ipairs(vim.lsp.buf_get_clients(0)) do
+				table.insert(names, server.name)
+			end
+			return "🦁" .. table.concat(names, " ") .. ""
+		end,
+		hl = { fg = "gray" },
+	},
+}
+
+M.Treesitter = {
+	provider = function()
+		local b = vim.api.nvim_get_current_buf()
+		if vim.treesitter.highlighter.active[b] ~= nil then
+			return "  "
+		end
+		return ""
+	end,
+	hl = {
+		fg = "green",
+	},
+}
+
+M.Ruler = {
+	-- %l = current line number
+	-- %L = number of lines in the buffer
+	-- %c = column number
+	-- %P = percentage through file of displayed window
+	provider = " 🎨%l:%c ",
+	hl = { bg = "#223249" },
+}
 
 -- I take no credits for this! :lion:
 M.ScrollBar = {
@@ -79,6 +177,7 @@ M.ScrollBar = {
 		local i = math.floor(curr_line / lines * (#self.sbar - 1)) + 1
 		return string.rep(self.sbar[i], 2)
 	end,
+	hl = { bg = "#223249" },
 }
 M.Align = { provider = "%=" }
 M.Space = { provider = " " }
