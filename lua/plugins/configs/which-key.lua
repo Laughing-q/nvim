@@ -107,7 +107,15 @@ leader_key = {
 				"<cmd>BufferCloseBuffersRight<cr>",
 				"Close all to the right",
 			},
-			D = {
+			c = {
+				"<cmd>BufferCloseAllButCurrent<cr>",
+				"Close all but Current",
+			},
+			p = {
+				"<cmd>BufferCloseAllButPinned<cr>",
+				"Close all but Pinned",
+			},
+			d = {
 				"<cmd>BufferOrderByDirectory<cr>",
 				"Sort by directory",
 			},

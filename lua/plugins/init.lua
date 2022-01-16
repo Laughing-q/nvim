@@ -318,9 +318,12 @@ return packer.startup(function()
 	-- bufferline
 	use({
 		"romgrk/barbar.nvim",
+		-- after = "nvim-web-devicons",
     disable = not status.barbar,
 		event = "BufWinEnter",
-		-- after = "nvim-web-devicons",
+		config = function()
+			require("plugins.configs.bufferline")
+		end,
 	})
 	-- multi select
 	use({
