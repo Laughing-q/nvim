@@ -100,6 +100,8 @@ map("n", "U", ":UndotreeToggle<CR>")
 -- bufferline
 map("n", "tl", ":BufferNext<CR>")
 map("n", "tj", ":BufferPrevious<CR>")
+map("n", "tml", ":BufferMoveNext<CR>")
+map("n", "tmj", ":BufferMovePrevious<CR>")
 -- this will change the action of <C-i>, cause TAB=<C-i>
 -- map("n", "<TAB>", ":BufferNext<CR>")
 map("n", "<S-TAB>", ":BufferPrevious<CR>")
