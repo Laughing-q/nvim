@@ -246,6 +246,15 @@ return packer.startup(function()
 	})
 
 	use({
+		"sidebar-nvim/sidebar.nvim",
+    disable = not status.nvimtree,
+		-- cmd = { "NvimTreeToggle", "NvimTreeFocus" },
+		config = function()
+			require("sidebar-nvim").setup({sections = { "datetime", "git", "diagnostics", "todos" }})
+		end,
+	})
+
+	use({
 		"nvim-telescope/telescope.nvim",
     disable = not status.telescope,
 		module = "telescope",
