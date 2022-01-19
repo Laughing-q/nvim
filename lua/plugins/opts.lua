@@ -24,6 +24,7 @@ M.status = {
   dashboard = false,
   comment = true,
   nvimtree = true,
+  sidebar = false,
   -- telescope stuff
   telescope = true,
   fzf = true,

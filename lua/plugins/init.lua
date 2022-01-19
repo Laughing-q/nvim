@@ -246,9 +246,9 @@ return packer.startup(function()
 	})
 
 	use({
+    -- config is not finish yet.
 		"sidebar-nvim/sidebar.nvim",
-    disable = not status.nvimtree,
-		-- cmd = { "NvimTreeToggle", "NvimTreeFocus" },
+    disable = not status.sidebar,
 		config = function()
 			require("sidebar-nvim").setup({sections = { "datetime", "git", "diagnostics", "todos" }})
 		end,
