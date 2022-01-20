@@ -1,6 +1,8 @@
 vim.cmd [[
 func! Format()
-	if &filetype == 'sh'
+	if &filetype == 'bash'
+		silent! exec "!shfmt -w %"
+  elseif &filetype == 'sh'
 		silent! exec "!shfmt -w %"
   elseif &filetype == 'python'
 		silent! exec "!black --fast --quiet %"

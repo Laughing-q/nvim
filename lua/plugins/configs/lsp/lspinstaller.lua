@@ -18,6 +18,11 @@ M.setup_lsp = function()
 	 	 opts = vim.tbl_deep_extend("force", sumneko_opts, opts)
 	 end
 
+   if server.name == "bashls" then
+	 	 local sumneko_opts = require("plugins.configs.lsp.settings.bashls")
+	 	 opts = vim.tbl_deep_extend("force", sumneko_opts, opts)
+	 end
+
 	 if server.name == "pyright" then
 	 	 local pyright_opts = require("plugins.configs.lsp.settings.pyright")
 	 	 opts = vim.tbl_deep_extend("force", pyright_opts, opts)
