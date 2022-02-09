@@ -1,7 +1,7 @@
 local M = {}
 
 local opts = {
-	enable_persistant_history = true,
+  enable_persistent_history = true,
 	keys = {
 		telescope = {
 			i = {

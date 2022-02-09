@@ -136,7 +136,8 @@ map("n", "<LEADER>c", ":lua require('Comment.api').toggle_current_linewise()<CR>
 map("v", "<LEADER>c", ":lua require('Comment.api').toggle_linewise_op(vim.fn.visualmode())<CR>")
 
 -- nvimtree
-map("n", "<C-n>", ":SidebarNvimToggle <CR>")
+map("n", "<C-n>", ":NvimTreeToggle <CR>")
+-- map("n", "<C-n>", ":SidebarNvimToggle <CR>")
 
 -- others keymapping in which-key setting
 
