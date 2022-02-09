@@ -53,6 +53,17 @@ M.setup = function()
     ]],
 		false
 	)
+
+  -- nvim-scrollview
+  vim.api.nvim_exec(
+    [[
+      hi ScrollView ctermbg=159 guibg=LightCyan
+    ]],
+    false
+  )
+  vim.g.scrollview_winblend = 80
+  vim.g.scrollview_hide_on_intersect = true
+  vim.g.scrollview_character = ''
 end
 
 return M
