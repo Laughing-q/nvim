@@ -25,6 +25,9 @@ vim.cmd([[ autocmd BufEnter * silent! lcd %:p:h ]])
 -- clear tex compile stuff
 vim.cmd([[ autocmd BufWinLeave *.tex silent !texclear %; ]])
 
+-- yank highlight
+vim.cmd([[ autocmd TextYankPost * silent lua require('vim.highlight').on_yank({higroup = 'Search', timeout = 200}) ]])
+
 -- markdown snippets
 vim.cmd([[
     autocmd Filetype markdown inoremap <buffer> ,f <++>
