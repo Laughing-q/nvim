@@ -5,7 +5,15 @@ end
 
 local terminal_opts = {
 	-- size can be a number or function which is passed the current terminal
-	size = 20,
+  size = function(term)
+    if term.direction == "horizontal" then
+      return 10
+    elseif term.direction == "vertical" then
+      return vim.o.columns * 0.4
+    else
+      return 20
+    end
+  end,
 	open_mapping = [[<c-\>]],
 	hide_numbers = true, -- hide the number column in toggleterm buffers
 	shade_filetypes = {},

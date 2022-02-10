@@ -45,8 +45,12 @@ map("", "-", "N")
 map("", "=", "n")
 
 --terminal
-map("n", "tek", ":execute 15 .. 'new +terminal' | let b:term_type = 'hori' | startinsert <CR>")
+map("n", "tek", ":execute 10 .. 'new +terminal' | let b:term_type = 'hori' | startinsert <CR>")
 map("n", "tel", ":execute 'vnew +terminal' | let b:term_type = 'vert' | startinsert <CR>")
+map("t", "jk", "<C-\\><C-n><C-w>w")
+-- map("n", "jk", "<C-w>wa")
+-- map("t", "JK", "<C-\\><C-n> :lua require('utils').close_buffer() <CR>")
+
 
 -- indent
 map("n", ">", ">>")
