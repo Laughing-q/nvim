@@ -7,7 +7,33 @@ local M = {}
 -- vim-table-mode plugin load in `markdown` only, so setting from below won't load at first.
 -- vim.g.table_mode_map_prefix = '<Leader>m'
 -- vim.g.table_mode_toggle_map = 'm'
-M.setup = function()
+
+M.setup = function(colorscheme)
+  --------------colorscheme-------------
+	-- tokyonight
+  if colorscheme == "tokyonight" then
+    -- vim.g.tokyonight_style = 'storm'
+    vim.g.tokyonight_transparent = true
+    vim.g.tokyonight_line_number_color = "#bb9af7"
+    vim.g.tokyonight_transparent_sidebar = true
+  end
+
+  -- kanagawa
+  -- set barbar highlight for kanagawa
+  if colorscheme == "kanagawa"  then
+    -- require('kanagawa').setup({transparent = true})
+    vim.api.nvim_exec(
+      [[
+      hi BufferCurrent guibg=#363646
+      hi BufferCurrentSign guibg=#363646
+      hi BufferCurrentMod guibg=#363646
+      hi BufferCurrentMod guifg=#E5AB0E
+    ]],
+      false
+    )
+  end
+
+  --------------plugins-------------
 	-- vim-table-mode
 	vim.g.table_mode_map_prefix = "<Leader>m"
 	vim.g.table_mode_toggle_map = "m"
@@ -19,20 +45,8 @@ M.setup = function()
 	-- vim.g.vmt_fence_text = 'TOC'
 	-- vim.g.vmt_fence_closing_text = '/TOC'
 
-	-- tokyonight
-	-- vim.g.tokyonight_style = 'storm'
-	vim.g.tokyonight_transparent = true
-	vim.g.tokyonight_line_number_color = "#bb9af7"
-	vim.g.tokyonight_transparent_sidebar = true
-
-  -- kanagawa
-  -- require('kanagawa').setup({transparent = true})
-
 	-- vimtex
 	-- vim.g.vimtex_view_method = 'zathura'
-
-	-- nvim-scrollview
-	vim.g.scrollview_current_only = true
 
 	-- vim-visual-multi
 	vim.api.nvim_exec(
@@ -64,6 +78,7 @@ M.setup = function()
   vim.g.scrollview_winblend = 80
   vim.g.scrollview_hide_on_intersect = true
   vim.g.scrollview_character = ''
+	vim.g.scrollview_current_only = true
 end
 
 return M
