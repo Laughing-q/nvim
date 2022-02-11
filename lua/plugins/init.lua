@@ -333,9 +333,25 @@ return packer.startup(function()
     disable = not status.barbar,
 		event = "BufWinEnter",
 		config = function()
-			require("plugins.configs.bufferline")
+			require("plugins.configs.barbar")
 		end,
+    setup = function()
+       require("keymappings").barbar()
+    end,
 	})
+	use({
+		"akinsho/bufferline.nvim",
+		-- after = "nvim-web-devicons",
+    disable = not status.bufferline,
+		event = "BufWinEnter",
+		config = function()
+			require("plugins.configs.bufferline").setup()
+		end,
+    setup = function()
+       require("keymappings").bufferline()
+    end,
+	})
+
 	-- multi select
 	use({
 		"mg979/vim-visual-multi",

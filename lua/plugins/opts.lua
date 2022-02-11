@@ -35,8 +35,11 @@ M.status = {
   tokyonight = false,
   kanagawa = true,
 
-  which_key = true,
+  -- bufferline
   barbar = true,
+  bufferline = false,
+
+  which_key = true,
   visual_multi = true,
   terminal = true,
   antovim = true,
