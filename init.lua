@@ -30,6 +30,3 @@ local ok, _ = pcall(require, colorscheme)
 if ok then
 	vim.cmd("colorscheme " .. colorscheme)
 end
--- vim.notify("this is a test")
--- vim.lsp.set_log_level("debug")
-
