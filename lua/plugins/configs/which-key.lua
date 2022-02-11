@@ -71,7 +71,7 @@ leader_key = {
 		s = {
 			name = "spell and wrap",
 			s = { ":set spell!<CR>", "Spell check" },
-			w = { ":set wrap!<CR>", "Spell check" },
+			w = { ":set wrap!<CR>", "Set wrap" },
 		},
 
 		-- nvimtree
@@ -98,10 +98,10 @@ leader_key = {
 			-- f = { "<cmd>Telescope buffers<cr>", "Find" },
 			b = { "<cmd>b#<cr>", "Previous" },
 			w = { "<cmd>BufferWipeout<cr>", "Wipeout" },
-			e = {
-				"<cmd>BufferCloseAllButCurrent<cr>",
-				"Close all but current",
-			},
+			-- e = {
+			-- 	"<cmd>BufferCloseAllButCurrent<cr>",
+			-- 	"Close all but current",
+			-- },
 			j = { "<cmd>BufferCloseBuffersLeft<cr>", "Close all to the left" },
 			l = {
 				"<cmd>BufferCloseBuffersRight<cr>",
@@ -149,7 +149,6 @@ leader_key = {
 			o = { "<cmd>Telescope git_status<cr>", "Open changed file" },
 			b = { "<cmd>Telescope git_branches<cr>", "Checkout branch" },
 			c = { "<cmd>Telescope git_commits<cr>", "Checkout commit" },
-			t = { "<cmd>Telescope git_commits<cr>", "Status" },
 			C = {
 				"<cmd>Telescope git_bcommits<cr>",
 				"Checkout commit(for current file)",
