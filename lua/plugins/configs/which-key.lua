@@ -4,9 +4,6 @@ require("plugins.configs.format")
 local leader_key = {}
 
 leader_key = {
-	---@usage disable which-key completely [not recommeded]
-	active = true,
-	on_config_done = nil,
 	setup = {
 		plugins = {
 			marks = true, -- shows a list of your marks on ' and `

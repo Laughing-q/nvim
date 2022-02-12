@@ -329,7 +329,7 @@ return packer.startup(function()
 	-- bufferline
 	use({
 		"romgrk/barbar.nvim",
-		-- after = "nvim-web-devicons",
+		-- after = "folke/which-key.nvim",
     disable = not status.barbar,
 		event = "BufWinEnter",
 		config = function()
