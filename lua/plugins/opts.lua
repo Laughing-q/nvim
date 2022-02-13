@@ -36,8 +36,8 @@ M.status = {
   kanagawa = true,
 
   -- bufferline
-  barbar = true,
-  bufferline = false,
+  barbar = false,
+  bufferline = true,
 
   which_key = true,
   visual_multi = true,

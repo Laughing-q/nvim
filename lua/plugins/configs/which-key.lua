@@ -89,38 +89,38 @@ leader_key = {
 			g = { "<cmd>GenTocGFM<CR>", "GenToc" },
 			-- m = { "<cmd>TableModeToggle<CR>", "TableMode" },
 		},
-		b = {
-			name = "Buffers",
-			g = { "<cmd>BufferPick<cr>", "Jump" },
-			-- f = { "<cmd>Telescope buffers<cr>", "Find" },
-			b = { "<cmd>b#<cr>", "Previous" },
-			w = { "<cmd>BufferWipeout<cr>", "Wipeout" },
-			-- e = {
-			-- 	"<cmd>BufferCloseAllButCurrent<cr>",
-			-- 	"Close all but current",
-			-- },
-			j = { "<cmd>BufferCloseBuffersLeft<cr>", "Close all to the left" },
-			l = {
-				"<cmd>BufferCloseBuffersRight<cr>",
-				"Close all to the right",
-			},
-			c = {
-				"<cmd>BufferCloseAllButCurrent<cr>",
-				"Close all but Current",
-			},
-			p = {
-				"<cmd>BufferCloseAllButPinned<cr>",
-				"Close all but Pinned",
-			},
-			d = {
-				"<cmd>BufferOrderByDirectory<cr>",
-				"Sort by directory",
-			},
-			L = {
-				"<cmd>BufferOrderByLanguage<cr>",
-				"Sort by language",
-			},
-		},
+		-- b = {
+		-- 	name = "Buffers",
+		-- 	g = { "<cmd>BufferPick<cr>", "Jump" },
+		-- 	-- f = { "<cmd>Telescope buffers<cr>", "Find" },
+		-- 	b = { "<cmd>b#<cr>", "Previous" },
+		-- 	w = { "<cmd>BufferWipeout<cr>", "Wipeout" },
+		-- 	-- e = {
+		-- 	-- 	"<cmd>BufferCloseAllButCurrent<cr>",
+		-- 	-- 	"Close all but current",
+		-- 	-- },
+		-- 	j = { "<cmd>BufferCloseBuffersLeft<cr>", "Close all to the left" },
+		-- 	l = {
+		-- 		"<cmd>BufferCloseBuffersRight<cr>",
+		-- 		"Close all to the right",
+		-- 	},
+		-- 	c = {
+		-- 		"<cmd>BufferCloseAllButCurrent<cr>",
+		-- 		"Close all but Current",
+		-- 	},
+		-- 	p = {
+		-- 		"<cmd>BufferCloseAllButPinned<cr>",
+		-- 		"Close all but Pinned",
+		-- 	},
+		-- 	d = {
+		-- 		"<cmd>BufferOrderByDirectory<cr>",
+		-- 		"Sort by directory",
+		-- 	},
+		-- 	L = {
+		-- 		"<cmd>BufferOrderByLanguage<cr>",
+		-- 		"Sort by language",
+		-- 	},
+		-- },
 		p = {
 			name = "Packer",
 			c = { "<cmd>PackerCompile<cr>", "Compile" },

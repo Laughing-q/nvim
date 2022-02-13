@@ -10,6 +10,7 @@
 local core_modules = {
 	"autocmds",
 	"options",
+  "commands",
 	"keymappings",
 }
 pcall(require, "impatient")

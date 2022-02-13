@@ -120,15 +120,6 @@ M.misc = function()
 	-- map("n", "<C-n>", ":SidebarNvimToggle <CR>")
 
 	-- others keymapping in which-key setting
-
-	-- Add Packer commands because we are not loading it at startup
-	local cmd = vim.cmd
-	cmd("silent! command PackerClean lua require 'plugins' require('packer').clean()")
-	cmd("silent! command PackerCompile lua require 'plugins' require('packer').compile()")
-	cmd("silent! command PackerInstall lua require 'plugins' require('packer').install()")
-	cmd("silent! command PackerStatus lua require 'plugins' require('packer').status()")
-	cmd("silent! command PackerSync lua require 'plugins' require('packer').sync()")
-	cmd("silent! command PackerUpdate lua require 'plugins' require('packer').update()")
 end
 
 M.barbar = function()
@@ -224,6 +215,8 @@ M.bufferline = function()
 	map("n", "<leader>bL", ":BufferLineSortByExtension<CR>")
 	map("n", "<leader>bt", ":BufferLineSortByTabs<CR>")
 	map("n", "<leader>bp", ":BufferLinePickClose<CR>")
+	map("n", "<leader>bc", ":BufferLineCloseLeft<CR>:BufferLineCloseRight<CR>")
+	map("n", "<leader>bw", ":BufferKill<CR>")
 end
 
 return M
