@@ -183,6 +183,27 @@ function M.buf_kill(kill_command, bufnr, force)
 	end
 end
 
+-- kill other buffers but current
+function M.buf_kill_others(kill_command)
+	local bo = vim.bo
+	local api = vim.api
+
+  local current = api.nvim_get_current_buf()
+
+	kill_command = kill_command or "bd"
+
+	-- Get list of active buffers
+	local buffers = vim.tbl_filter(function(buf)
+		return api.nvim_buf_is_valid(buf) and bo[buf].buflisted
+	end, api.nvim_list_bufs())
+
+  for _, number in ipairs(buffers) do
+    if number ~= current then
+      vim.cmd(string.format("%s %d", kill_command, number))
+    end
+  end
+end
+
 M.setup = function()
 	require("bufferline").setup({
 		options = bufferline.options,

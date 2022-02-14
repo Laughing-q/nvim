@@ -215,7 +215,8 @@ M.bufferline = function()
 	map("n", "<leader>bL", ":BufferLineSortByExtension<CR>")
 	map("n", "<leader>bt", ":BufferLineSortByTabs<CR>")
 	map("n", "<leader>bp", ":BufferLinePickClose<CR>")
-	map("n", "<leader>bc", ":BufferLineCloseLeft<CR>:BufferLineCloseRight<CR>")
+	-- map("n", "<leader>bc", ":BufferLineCloseLeft<CR>:BufferLineCloseRight<CR>")
+	map("n", "<leader>bc", ":BufferCloseAllButCurrent<CR>")
 	map("n", "<leader>bw", ":BufferKill<CR>")
 end
 
