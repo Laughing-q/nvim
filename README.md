@@ -1,5 +1,5 @@
 # My neovim config🚀
-🔥18~25ms startup time, with 51 plugins.
+🔥17~24ms startup time, with 51 plugins.
 ![demo5](https://user-images.githubusercontent.com/61612323/153551133-747cf4aa-537f-46ea-814b-28edab00f4f3.png)
 
 ## Installation🎨
