@@ -69,6 +69,10 @@ leader_key = {
 			name = "spell and wrap",
 			s = { ":set spell!<CR>", "Spell check" },
 			w = { ":set wrap!<CR>", "Set wrap" },
+			l = { ":set splitright<CR>:vsplit<CR>", "Split left" },
+			k = { ":set splitbelow<CR>:split<CR>", "Split down" },
+			i = { ":set nosplitright<CR>:vsplit<CR>:set splitright<CR>", "Split up" },
+			j = { ":set nosplitbelow<CR>:split<CR>:set splitbelow<CR>", "Split right" },
 		},
 
 		-- nvimtree

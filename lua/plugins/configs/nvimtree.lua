@@ -65,13 +65,13 @@ local list = {
   { key = "<",                            cb = tree_cb("prev_sibling") },
   { key = ">",                            cb = tree_cb("next_sibling") },
   { key = "P",                            cb = tree_cb("parent_node") },
-  { key = "j",                         cb = tree_cb("close_node") },
+  { key = "j",                            cb = tree_cb("close_node") },
   { key = "<S-CR>",                       cb = tree_cb("close_node") },
   { key = "<Tab>",                        cb = tree_cb("preview") },
   { key = "J",                            cb = tree_cb("first_sibling") },
   { key = "L",                            cb = tree_cb("last_sibling") },
   -- { key = "I",                            cb = tree_cb("toggle_ignored") },
-  { key = "<BS>",                            cb = tree_cb("toggle_dotfiles") },
+  { key = "<BS>",                         cb = tree_cb("toggle_dotfiles") },
   { key = "R",                            cb = tree_cb("refresh") },
   { key = "a",                            cb = tree_cb("create") },
   { key = "d",                            cb = tree_cb("remove") },
@@ -81,8 +81,8 @@ local list = {
   { key = "x",                            cb = tree_cb("cut") },
   { key = "c",                            cb = tree_cb("copy") },
   { key = "p",                            cb = tree_cb("paste") },
-  { key = "yn",                            cb = tree_cb("copy_name") },
-  { key = "yp",                            cb = tree_cb("copy_path") },
+  { key = "yn",                           cb = tree_cb("copy_name") },
+  { key = "yp",                           cb = tree_cb("copy_path") },
   { key = "ya",                           cb = tree_cb("copy_absolute_path") },
   { key = "[c",                           cb = tree_cb("prev_git_item") },
   { key = "]c",                           cb = tree_cb("next_git_item") },
@@ -94,7 +94,7 @@ local list = {
 
 nvimtree.setup({
 	diagnostics = {
-		enable = false,
+		enable = true,
 		icons = {
 			hint = "",
 			info = "",
@@ -119,7 +119,7 @@ nvimtree.setup({
 	view = {
 		allow_resize = true,
 		side = "left",
-		width = 25,
+		width = 30,
     mappings = {
       custom_only = true,
       list=list,
