@@ -42,10 +42,6 @@ M.misc = function()
 	-- command
 	-- map("", ";", ":")
 
-	-- search move
-	map("", "-", "N")
-	map("", "=", "n")
-
 	--terminal
 	map("n", "tek", ":execute 10 .. 'new +terminal' | let b:term_type = 'hori' | startinsert <CR>")
 	map("n", "tel", ":execute 'vnew +terminal' | let b:term_type = 'vert' | startinsert <CR>")

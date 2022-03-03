@@ -60,9 +60,9 @@ leader_key = {
 		-- window move stuff
 		w = { "<C-w>w", "Window previous" },
 		j = { "<C-w>h", "Window left" },
-		l = { "<C-w>l", "Window left" },
-		i = { "<C-w>k", "Window left" },
-		k = { "<C-w>j", "Window left" },
+		l = { "<C-w>l", "Window right" },
+		i = { "<C-w>k", "Window up" },
+		k = { "<C-w>j", "Window down" },
 
 		-- spell and wrap stuff
 		s = {
