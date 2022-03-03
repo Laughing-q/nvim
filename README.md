@@ -26,7 +26,7 @@ sudo npm install --global prettier
 ```
 
 ## Keymappings💻
-I'm not a native `vim` user, I'm used to using direction keys to move instead of `hjkl`(but maybe I'll be there soon), so my keymappings are based on `i(Up`)、`k(Down`)、`l(Right`)、`j(Left)` for now.
+ I just too lazy to change the keymappings stuff below, But this branch actually are based on `hjkl`.
 ### Base mappings⌨️
 - base
   | shortcut   | action                                                    | Equivalent    | mode        |
