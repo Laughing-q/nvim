@@ -4,23 +4,15 @@ local M = {}
 M.misc = function()
 	vim.g.mapleader = " " --leader
 	-------------base mappings---------------
-	-- cursor movement
-	map("", "i", "k")
-	map("", "k", "j")
-	map("", "j", "h")
-	map("", "h", "i")
-	map("", "gi", "gk")
-	map("", "gk", "gj")
-	map("", "gh", "gi")
 	-- Remap for dealing with word wrap
 	-- map("", "j", 'v:count || mode(1)[0:1] == "no" ? "j" : "gj"', { expr = true })
 	-- map("", "k", 'v:count || mode(1)[0:1] == "no" ? "k" : "gk"', { expr = true })
 
-	map("", "I", "5k")
-	map("", "K", "5j")
-	map("", "J", "5h")
+	map("", "K", "5k")
+	map("", "J", "5j")
+	map("", "H", "5h")
 	map("", "L", "5l")
-	map("", "H", "I")
+	map("", "I", "I")
 
 	-- enter, quit and save
 	map("n", "O", "o<ESC>")
@@ -28,26 +20,24 @@ M.misc = function()
 	map("n", "S", ":w <CR>")
 
 	-- fast home and end
+  -- TODO: <C-h> may conflict with <backspace>
 	map("", "<C-l>", "$")
-	map("", "<C-j>", "0")
+	map("", "<C-h>", "0")
 
 	-- insert moving
-	map("i", "<A-j>", "<Left>")
+  -- TODO: <C-h> may conflict with <backspace>
+	map("i", "<A-h>", "<Left>")
 	map("i", "<C-l>", "<End>")
 	map("i", "<A-l>", "<Right>")
-	map("i", "<A-i>", "<Up>")
-	map("i", "<A-k>", "<Down>")
-	map("i", "<C-j>", "<ESC>^i")
+	map("i", "<A-k>", "<Up>")
+	map("i", "<A-j>", "<Down>")
+	map("i", "<C-h>", "<ESC>^i")
 
 	-- command
 	-- map("", ";", ":")
 
-	-- search move
-	map("", "-", "N")
-	map("", "=", "n")
-
 	--terminal
-	map("n", "tek", ":execute 10 .. 'new +terminal' | let b:term_type = 'hori' | startinsert <CR>")
+	map("n", "tej", ":execute 10 .. 'new +terminal' | let b:term_type = 'hori' | startinsert <CR>")
 	map("n", "tel", ":execute 'vnew +terminal' | let b:term_type = 'vert' | startinsert <CR>")
 	map("t", "JK", "<C-\\><C-n><C-w>w")
 	-- map("n", "jk", "<C-w>wa")
@@ -60,10 +50,10 @@ M.misc = function()
 	map("v", "<", "<gv")
 
 	-- move line
-	map("v", "<A-k>", ":m '>+1<CR>gv-gv")
-	map("v", "<A-i>", ":m '<-2<CR>gv-gv")
-	map("n", "<A-k>", ":m .+1<CR>==")
-	map("n", "<A-i>", ":m .-2<CR>==")
+	map("v", "<A-j>", ":m '>+1<CR>gv-gv")
+	map("v", "<A-k>", ":m '<-2<CR>gv-gv")
+	map("n", "<A-j>", ":m .+1<CR>==")
+	map("n", "<A-k>", ":m .-2<CR>==")
 
 	-- Resize the arrows
 	map("n", "<Up>", ":resize -5<CR>")
@@ -129,9 +119,9 @@ M.barbar = function()
 	-- map("n", "tml", ":BufferMoveNext<CR>")
 	-- map("n", "tmj", ":BufferMovePrevious<CR>")
 	map("n", "<A-l>", ":BufferNext<CR>")
-	map("n", "<A-j>", ":BufferPrevious<CR>")
+	map("n", "<A-h>", ":BufferPrevious<CR>")
 	map("n", "<A-;>", ":BufferMoveNext<CR>")
-	map("n", "<A-h>", ":BufferMovePrevious<CR>")
+	map("n", "<A-g>", ":BufferMovePrevious<CR>")
 	-- map("n", "<A-p>", ":BufferPin<CR>")
 	-- Goto buffer in position...
 	map("n", "<A-1>", ":BufferGoto 1<CR>")
@@ -195,9 +185,9 @@ end
 
 M.bufferline = function()
 	map("n", "<A-l>", ":BufferLineCycleNext<CR>")
-	map("n", "<A-j>", ":BufferLineCyclePrev<CR>")
+	map("n", "<A-h>", ":BufferLineCyclePrev<CR>")
 	map("n", "<A-;>", ":BufferLineMoveNext<CR>")
-	map("n", "<A-h>", ":BufferLineMovePrev<CR>")
+	map("n", "<A-g>", ":BufferLineMovePrev<CR>")
 	map("n", "<A-1>", ":BufferLineGoToBuffer 1<CR>")
 	map("n", "<A-2>", ":BufferLineGoToBuffer 2<CR>")
 	map("n", "<A-3>", ":BufferLineGoToBuffer 3<CR>")
@@ -209,7 +199,7 @@ M.bufferline = function()
 	map("n", "<A-9>", ":BufferLineGoToBuffer 9<CR>")
 
 	map("n", "<leader>bl", ":BufferLineCloseRight<CR>")
-	map("n", "<leader>bj", ":BufferLineCloseLeft<CR>")
+	map("n", "<leader>bh", ":BufferLineCloseLeft<CR>")
 	map("n", "<leader>bg", ":BufferLinePick<CR>")
 	map("n", "<leader>bd", ":BufferLineSortByDirectory<CR>")
 	map("n", "<leader>bL", ":BufferLineSortByExtension<CR>")

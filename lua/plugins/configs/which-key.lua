@@ -59,10 +59,10 @@ leader_key = {
 
 		-- window move stuff
 		w = { "<C-w>w", "Window previous" },
-		j = { "<C-w>h", "Window left" },
-		l = { "<C-w>l", "Window left" },
-		i = { "<C-w>k", "Window left" },
-		k = { "<C-w>j", "Window left" },
+		h = { "<C-w>h", "Window left" },
+		l = { "<C-w>l", "Window right" },
+		k = { "<C-w>k", "Window up" },
+		j = { "<C-w>j", "Window down" },
 
 		-- spell and wrap stuff
 		s = {
@@ -70,9 +70,9 @@ leader_key = {
 			s = { ":set spell!<CR>", "Spell check" },
 			w = { ":set wrap!<CR>", "Set wrap" },
 			l = { ":set splitright<CR>:vsplit<CR>", "Split left" },
-			k = { ":set splitbelow<CR>:split<CR>", "Split down" },
-			i = { ":set nosplitright<CR>:vsplit<CR>:set splitright<CR>", "Split up" },
-			j = { ":set nosplitbelow<CR>:split<CR>:set splitbelow<CR>", "Split right" },
+			j = { ":set splitbelow<CR>:split<CR>", "Split down" },
+			k = { ":set nosplitright<CR>:vsplit<CR>:set splitright<CR>", "Split up" },
+			h = { ":set nosplitbelow<CR>:split<CR>:set splitbelow<CR>", "Split right" },
 		},
 
 		-- nvimtree
@@ -136,8 +136,8 @@ leader_key = {
 
 		g = {
 			name = "Git",
-			k = { "<cmd>lua require 'gitsigns'.next_hunk()<cr>", "Next Hunk" },
-			i = { "<cmd>lua require 'gitsigns'.prev_hunk()<cr>", "Prev Hunk" },
+			j = { "<cmd>lua require 'gitsigns'.next_hunk()<cr>", "Next Hunk" },
+			k = { "<cmd>lua require 'gitsigns'.prev_hunk()<cr>", "Prev Hunk" },
 			l = { "<cmd>lua require 'gitsigns'.blame_line()<cr>", "Blame" },
 			p = { "<cmd>lua require 'gitsigns'.preview_hunk()<cr>", "Preview Hunk" },
 			r = { "<cmd>lua require 'gitsigns'.reset_hunk()<cr>", "Reset Hunk" },
