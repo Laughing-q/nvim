@@ -52,8 +52,6 @@ I'm not a native `vim` user, I'm used to using direction keys to move instead of
   | `S`        | Save                                                      | `:w<CR>`      | `n`         |
   | `ctrl` `l` | end of line                                               | `$`, `<End>`  | `n` `v` `i` |
   | `ctrl` `j` | start of line                                             | `0`, `<ESC>I` | `n` `v` `i` |
-  | `-`        | search previous item(not used any more)                   | `N`           | `n` `v`     |
-  | `=`        | search next item(not used any more)                       | `n`           | `n` `v`     |
 
 - move line
   | shortcut  | action                    | mode    |
