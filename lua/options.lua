@@ -33,6 +33,9 @@ local options = {
 	signcolumn = "yes",
 	splitright = true,
 	splitbelow = true,
+
+  -- global status
+  laststatus = 3  -- 2 for original
 }
 
 for k, v in pairs(options) do
