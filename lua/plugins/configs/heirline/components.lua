@@ -135,7 +135,7 @@ M.LSP = {
 	{
 		provider = function()
 			local names = {}
-			for i, server in ipairs(vim.lsp.buf_get_clients(0)) do
+			for _, server in pairs(vim.lsp.buf_get_clients()) do
 				table.insert(names, server.name)
 			end
 			return "🦁" .. table.concat(names, " ") .. ""
