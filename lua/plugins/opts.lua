@@ -61,6 +61,7 @@ M.status = {
   scrollview = true,
   notify = false,
   dap = false,
+  suda = true,
 }
 
 return M

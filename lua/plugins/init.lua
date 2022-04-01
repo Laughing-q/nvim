@@ -555,4 +555,10 @@ return packer.startup(function()
       }
     end
   }
+
+  use {
+    'lambdalisue/suda.vim',
+    cmd = {"SudaWrite", "SudaRead"},
+    disable = not status.suda
+  }
 end)
