@@ -16,10 +16,14 @@ M.misc = function()
 	-- map("", "j", 'v:count || mode(1)[0:1] == "no" ? "j" : "gj"', { expr = true })
 	-- map("", "k", 'v:count || mode(1)[0:1] == "no" ? "k" : "gk"', { expr = true })
 
-	map("", "I", "5k")
-	map("", "K", "5j")
-	map("", "J", "5h")
-	map("", "L", "5l")
+	-- map("", "I", "5k")
+	-- map("", "K", "5j")
+	-- map("", "J", "5h")
+	-- map("", "L", "5l")
+	map("", "I", "<nop>")
+	map("", "K", "<nop>")
+	map("", "J", "<nop>")
+	map("", "L", "<nop>")
 	map("", "H", "I")
 
 	-- enter, quit and save
@@ -62,10 +66,10 @@ M.misc = function()
 	map("n", "<A-i>", ":m .-2<CR>==")
 
 	-- Resize the arrows
-	map("n", "<Up>", ":resize -5<CR>")
-	map("n", "<Down>", ":resize +5<CR>")
-	map("n", "<Left>", ":vertical resize -5<CR>")
-	map("n", "<Right>", ":vertical resize +5<CR>")
+	map("n", "<Up>", ":resize -1<CR>")
+	map("n", "<Down>", ":resize +1<CR>")
+	map("n", "<Left>", ":vertical resize -1<CR>")
+	map("n", "<Right>", ":vertical resize +1<CR>")
 
 	-- move up/down the view port without moving the cursor
 	map("n", "<C-Y>", "5<C-y>")
@@ -103,8 +107,8 @@ M.misc = function()
 	map("n", "U", ":UndotreeToggle<CR>")
 
 	-- lightspeed
-	-- map({"n", "v"}, "<LEADER>s", "<Plug>Lightspeed_s", { noremap=false })
-	map({ "n", "v" }, "<LEADER>S", "<Plug>Lightspeed_S", { noremap = false })
+	map({"n", "v"}, "K", "<Plug>Lightspeed_s", { noremap=false })
+	map({ "n", "v" }, "I", "<Plug>Lightspeed_S", { noremap = false })
 
 	-- comment
 	-- map({ "n", "v" }, "<LEADER>c", ":CommentToggle <CR>")
