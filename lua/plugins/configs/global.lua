@@ -16,6 +16,8 @@ M.setup = function(colorscheme)
     vim.g.tokyonight_transparent = true
     vim.g.tokyonight_line_number_color = "#bb9af7"
     vim.g.tokyonight_transparent_sidebar = true
+    vim.g.tokyonight_italic_functions = true
+    vim.g.tokyonight_italic_variables = false
   end
 
   -- kanagawa

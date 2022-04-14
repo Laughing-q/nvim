@@ -160,6 +160,7 @@ return packer.startup(function()
 
 	use({
 		"hrsh7th/nvim-cmp",
+    commit="dbc72290295cfc63075dab9ea635260d2b72f2e5",
     disable = not status.cmp,
 		after = "friendly-snippets",
 		config = function()
