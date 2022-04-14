@@ -15,11 +15,11 @@ local colors = {
 		hint = utils.get_highlight("DiagnosticHint").fg,
 		info = utils.get_highlight("DiagnosticInfo").fg,
 	},
-	git = {
-		del = utils.get_highlight("diffDeleted").fg,
-		add = utils.get_highlight("diffAdded").fg,
-		change = utils.get_highlight("diffChanged").fg,
-	},
+	-- git = {
+	-- 	del = utils.get_highlight("diffDeleted").fg,
+	-- 	add = utils.get_highlight("diffAdded").fg,
+	-- 	change = utils.get_highlight("diffChanged").fg,
+	-- },
 }
 
 M.Git = {

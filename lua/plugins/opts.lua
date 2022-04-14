@@ -32,7 +32,7 @@ M.status = {
   project = true,
   neoclip = true,
   -- colorscheme
-  tokyonight = false,
+  tokyonight = true,
   kanagawa = true,
 
   -- bufferline

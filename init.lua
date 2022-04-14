@@ -24,7 +24,7 @@ end
 require("keymappings").misc()
 
 -- colorscheme
-local colorscheme = "kanagawa"
+local colorscheme = "tokyonight"
 -- plugin global settings
 require("plugins.configs.global").setup(colorscheme)
 
