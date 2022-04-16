@@ -13,7 +13,7 @@ M.setup = function(colorscheme)
 	-- tokyonight
   if colorscheme == "tokyonight" then
     -- vim.g.tokyonight_style = 'storm'
-    vim.g.tokyonight_transparent = true
+    vim.g.tokyonight_transparent = false
     vim.g.tokyonight_line_number_color = "#bb9af7"
     vim.g.tokyonight_transparent_sidebar = true
     vim.g.tokyonight_italic_functions = true

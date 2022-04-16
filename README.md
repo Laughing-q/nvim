@@ -1,6 +1,7 @@
 # My neovim config🚀
 🔥17~25ms startup time, with 51 plugins.
 ![demo5](https://user-images.githubusercontent.com/61612323/153551133-747cf4aa-537f-46ea-814b-28edab00f4f3.png)
+deprecated
 
 ## Installation🎨
 ```shell
@@ -31,29 +32,29 @@ I'm not a native `vim` user, I'm used to using direction keys to move instead of
 If you guys want `hjkl` style, just checkout branch `hjkl`. I actually don't test it all, but it will work.
 ### Base mappings⌨️
 - base
-  | shortcut   | action                                                    | Equivalent    | mode        |
-  |------------|-----------------------------------------------------------|---------------|-------------|
-  | `i`        | up                                                        | `k`           | `n` `v`     |
-  | `k`        | down                                                      | `j`           | `n` `v`     |
-  | `l`        | right                                                     | `l`           | `n` `v`     |
-  | `j`        | left                                                      | `h`           | `n` `v`     |
-  | `h`        | insert                                                    | `i`           | `n` `v`     |
-  | `I`        | faster up move                                            | `5i`          | `n` `v`     |
-  | `K`        | faster down move                                          | `5k`          | `n` `v`     |
-  | `L`        | faster right move                                         | `5l`          | `n` `v`     |
-  | `J`        | faster left move                                          | `5j`          | `n` `v`     |
-  | `H`        | move cursor to start of line and insert                   | `I`           | `n` `v`     |
-  | `alt` `j`  | left                                                      | `<Left>`      | `i`         |
-  | `alt` `l`  | right                                                     | `<Right>`     | `i`         |
-  | `alt` `i`  | up                                                        | `<Up>`        | `i`         |
-  | `alt` `k`  | down                                                      | `<Down>`      | `i`         |
-  | `ctrl` `e` | Move the view port down 5 lines without moving the cursor | `ctrl+e`      | `n` `v`     |
-  | `ctrl` `y` | Move the view port up 5 lines without moving the cursor   | `ctrl+y`      | `n` `v`     |
-  | `O`        | Move to next line and keep normal mode                    | `O<ESC>`      | `n`         |
-  | `Q`        | Quit                                                      | `:q<CR>`      | `n`         |
-  | `S`        | Save                                                      | `:w<CR>`      | `n`         |
-  | `ctrl` `l` | end of line                                               | `$`, `<End>`  | `n` `v` `i` |
-  | `ctrl` `j` | start of line                                             | `0`, `<ESC>I` | `n` `v` `i` |
+  | shortcut        | action                                                    | Equivalent    | mode        |
+  |-----------------|-----------------------------------------------------------|---------------|-------------|
+  | `i`             | up                                                        | `k`           | `n` `v`     |
+  | `k`             | down                                                      | `j`           | `n` `v`     |
+  | `l`             | right                                                     | `l`           | `n` `v`     |
+  | `j`             | left                                                      | `h`           | `n` `v`     |
+  | `h`             | insert                                                    | `i`           | `n` `v`     |
+  | `I`(deprecated) | faster up move                                            | `5i`          | `n` `v`     |
+  | `K`(deprecated) | faster down move                                          | `5k`          | `n` `v`     |
+  | `L`(deprecated) | faster right move                                         | `5l`          | `n` `v`     |
+  | `J`(deprecated) | faster left move                                          | `5j`          | `n` `v`     |
+  | `H`             | move cursor to start of line and insert                   | `I`           | `n` `v`     |
+  | `alt` `j`       | left                                                      | `<Left>`      | `i`         |
+  | `alt` `l`       | right                                                     | `<Right>`     | `i`         |
+  | `alt` `i`       | up                                                        | `<Up>`        | `i`         |
+  | `alt` `k`       | down                                                      | `<Down>`      | `i`         |
+  | `ctrl` `e`      | Move the view port down 5 lines without moving the cursor | `ctrl+e`      | `n` `v`     |
+  | `ctrl` `y`      | Move the view port up 5 lines without moving the cursor   | `ctrl+y`      | `n` `v`     |
+  | `O`             | Move to next line and keep normal mode                    | `O<ESC>`      | `n`         |
+  | `Q`             | Quit                                                      | `:q<CR>`      | `n`         |
+  | `S`             | Save                                                      | `:w<CR>`      | `n`         |
+  | `ctrl` `l`      | end of line                                               | `$`, `<End>`  | `n` `v` `i` |
+  | `ctrl` `j`      | start of line                                             | `0`, `<ESC>I` | `n` `v` `i` |
 
 - move line
   | shortcut  | action                    | mode    |
@@ -187,7 +188,6 @@ If you guys want `hjkl` style, just checkout branch `hjkl`. I actually don't tes
   | `<leader>` `L` `r`    | rename                | `n`  |
   | `<leader>` `L` `s`    | document symbols      | `n`  |
   | `<leader>` `L` `S`    | workspace symbols     | `n`  |
-  | `<leader>` `L` `<++>` | <++>                  | `n`  |
   
 - Telescope(finder)
   * [telescope](https://github.com/nvim-telescope/telescope.nvim)
@@ -214,10 +214,10 @@ If you guys want `hjkl` style, just checkout branch `hjkl`. I actually don't tes
 - faster jump
   * [lightspeed](https://github.com/ggandor/lightspeed.nvim)
 
-  | shortcut       | action                        | mode |
-  |----------------|-------------------------------|------|
-  | `s`            | search char and jump          | `n`  |
-  | `<leader>` `S` | search char and jump(reverse) | `n`  |
+  | shortcut | action                        | mode |
+  |----------|-------------------------------|------|
+  | `K`      | search char and jump          | `n`  |
+  | `I`      | search char and jump(reverse) | `n`  |
 
 - nvimtree
   * [nvimtree](https://github.com/kyazdani42/nvim-tree.lua)
@@ -235,7 +235,7 @@ If you guys want `hjkl` style, just checkout branch `hjkl`. I actually don't tes
 
 
 - `<leader>` = `<space>`
-- More details see [mappings.lua](./lua/mappings.lua) and [which-key.lua](./lua/plugins/configs/which-key.lua)
+- More details see [mappings.lua](./lua/keymappings.lua) and [which-key.lua](./lua/plugins/configs/which-key.lua)
 
 ## Reference🍔
 - [https://github.com/NvChad/NvChad](https://github.com/NvChad/NvChad)
