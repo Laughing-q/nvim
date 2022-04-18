@@ -79,11 +79,15 @@ M.misc = function()
 	map("n", "<Esc>", ":noh <CR>")
 
 	-- split window
-	-- map("n", "s", "<nop>")
-	-- map("n", "sl", ":set splitright<CR>:vsplit<CR>")
-	-- map("n", "sk", ":set splitbelow<CR>:split<CR>")
-	-- map("n", "sj", ":set nosplitright<CR>:vsplit<CR>:set splitright<CR>")
-	-- map("n", "si", ":set nosplitbelow<CR>:split<CR>:set splitbelow<CR>")
+	map("n", "s", "<nop>")
+	map("n", "sl", ":set splitright<CR>:vsplit<CR>")
+	map("n", "sk", ":set splitbelow<CR>:split<CR>")
+	map("n", "sj", ":set nosplitright<CR>:vsplit<CR>:set splitright<CR>")
+	map("n", "si", ":set nosplitbelow<CR>:split<CR>:set splitbelow<CR>")
+
+  -- spell and warp
+	map("n", "sw", ":set wrap!<CR>")
+	map("n", "ss", ":set spell!<CR>")
 
 	-- file path
 	map("n", "\\p", ":echo expand('%:p')<CR>")

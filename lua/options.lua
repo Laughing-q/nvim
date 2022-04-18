@@ -35,7 +35,7 @@ local options = {
 	splitbelow = true,
 
   -- global status(neovim 0.7.0)
-  -- laststatus = 3  -- 2 for original
+  laststatus = 3  -- 2 for original
 }
 
 for k, v in pairs(options) do
