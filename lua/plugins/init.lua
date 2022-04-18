@@ -233,9 +233,9 @@ return packer.startup(function()
 		config = function()
 			require("plugins.configs.others").comment()
 		end,
-    setup = function()
-      require("utils").packer_lazy_load("Comment.nvim")
-    end,
+    -- setup = function()
+    --   require("utils").packer_lazy_load("Comment.nvim")
+    -- end,
 	})
 
 	-- file managing , picker etc
