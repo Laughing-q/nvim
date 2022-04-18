@@ -66,11 +66,12 @@ telescope.setup({
 			i = {
 				["<C-k>"] = actions.move_selection_next,
 				["<C-i>"] = actions.move_selection_previous,
+				["<tab>"] = actions.move_selection_previous,
 				["<C-c>"] = actions.close,
 				["<C-n>"] = actions.cycle_history_next,
 				["<C-p>"] = actions.cycle_history_prev,
 				["<C-q>"] = actions.smart_send_to_qflist + actions.open_qflist,
-        ["<M-l>"] = action_layout.toggle_preview
+        ["<M-l>"] = action_layout.toggle_preview,
 			},
 			n = {
 				["<C-n>"] = actions.move_selection_next,
