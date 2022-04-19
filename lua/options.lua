@@ -33,6 +33,7 @@ local options = {
 	signcolumn = "yes",
 	splitright = true,
 	splitbelow = true,
+  wrap = false,
 
   -- global status(neovim 0.7.0)
   laststatus = 3  -- 2 for original
