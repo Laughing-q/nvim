@@ -85,7 +85,7 @@ M.misc = function()
 	map("n", "sj", ":set nosplitright<CR>:vsplit<CR>:set splitright<CR>")
 	map("n", "si", ":set nosplitbelow<CR>:split<CR>:set splitbelow<CR>")
 
-  -- spell and warp
+	-- spell and warp
 	map("n", "sw", ":set wrap!<CR>")
 	map("n", "ss", ":set spell!<CR>")
 
@@ -111,13 +111,18 @@ M.misc = function()
 	map("n", "U", ":UndotreeToggle<CR>")
 
 	-- lightspeed
-	map({"n", "v"}, "K", "<Plug>Lightspeed_s", { noremap=false })
-	map({ "n", "v" }, "I", "<Plug>Lightspeed_S", { noremap = false })
+	map({ "n", "v" }, "K", "<Plug>Lightspeed_s", { noremap = false, desc = "jump down" })
+	map({ "n", "v" }, "I", "<Plug>Lightspeed_S", { noremap = false, desc = "jump up" })
 
 	-- comment
 	-- map({ "n", "v" }, "<LEADER>c", ":CommentToggle <CR>")
-	map("n", "<LEADER>c", ":lua require('Comment.api').toggle_current_linewise()<CR>")
-	map("v", "<LEADER>c", ":lua require('Comment.api').toggle_linewise_op(vim.fn.visualmode())<CR>")
+	map("n", "<LEADER>c", ":lua require('Comment.api').toggle_current_linewise()<CR>", { desc = "Comment" })
+	map(
+		"v",
+		"<LEADER>c",
+		":lua require('Comment.api').toggle_linewise_op(vim.fn.visualmode())<CR>",
+		{ desc = "Comment" }
+	)
 
 	-- nvimtree
 	map("n", "<C-n>", ":NvimTreeToggle <CR>")
