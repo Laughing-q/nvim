@@ -54,6 +54,7 @@ return packer.startup(function()
 
 	use({
 		"rebelot/heirline.nvim",
+    commit = "0b93d183b9a4fd9b2b33f9b431753de979da94d0",
 		event = "BufRead",
     disable = not status.heirline,
 		config = function()
