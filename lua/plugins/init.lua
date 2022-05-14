@@ -438,6 +438,7 @@ return packer.startup(function()
 	-- rnvimr
 	use({
 		"kevinhwang91/rnvimr",
+    commit = "4f4fbd29e2e0869bea9a8376e06fca4331de60c9",
     disable = not status.rnvimr,
 		command = "RnvimrToggle",
 		config = function()
