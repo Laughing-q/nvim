@@ -24,6 +24,7 @@ yay -S black yapf stylua luacheck shfmt shellcheck
 yay -S clang-format-all-git
 pip install cmakelang
 sudo npm install --global prettier
+yay -S ripgrep
 ```
 
 ## Keymappings💻
