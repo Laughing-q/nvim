@@ -179,16 +179,16 @@ return packer.startup(function()
 		end,
 	})
 
-	use({
-		"lukas-reineke/cmp-rg",
-    disable = not status.cmp,
-		after = "LuaSnip",
-	})
+	-- use({
+	-- 	"lukas-reineke/cmp-rg",
+ --    disable = not status.cmp,
+	-- 	after = "LuaSnip",
+	-- })
 
 	use({
 		"saadparwaiz1/cmp_luasnip",
     disable = not status.cmp,
-		after = "cmp-rg",
+		after = "LuaSnip",
 	})
 
 	use({
