@@ -28,6 +28,11 @@ M.setup_lsp = function()
 	 	 opts = vim.tbl_deep_extend("force", pyright_opts, opts)
 	 end
 
+	 if server.name == "pylsp" then
+	 	 local pyright_opts = require("plugins.configs.lsp.settings.pylsp")
+	 	 opts = vim.tbl_deep_extend("force", pyright_opts, opts)
+	 end
+
 		server:setup(opts)
 		vim.cmd([[ do User LspAttachBuffers ]])
 	end)
