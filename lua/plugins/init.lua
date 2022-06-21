@@ -136,9 +136,9 @@ return packer.startup(function()
 		"ray-x/lsp_signature.nvim",
 		disable = not status.lsp_signature,
 		after = "nvim-lspconfig",
-		config = function()
-			require("plugins.configs.others").signature()
-		end,
+		-- config = function()
+		-- 	require("plugins.configs.others").signature()
+		-- end,
 	})
 
 	use({

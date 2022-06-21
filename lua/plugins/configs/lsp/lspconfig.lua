@@ -37,7 +37,10 @@ M.setup = function()
 	vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
 		border = "single",
 	})
-	vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, {
+	-- vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, {
+	-- 	border = "single",
+	-- })
+	vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(require("lsp_signature").signature_handler, {
 		border = "single",
 	})
 
@@ -109,6 +112,8 @@ local function lsp_keymaps(bufnr)
 	buf_set_keymap("n", "gl", "<cmd>lua vim.diagnostic.open_float()<CR>", opts)
 	buf_set_keymap("n", "[d", "<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>", opts)
 	buf_set_keymap("n", "]d", "<cmd>lua vim.lsp.diagnostic.goto_next()<CR>", opts)
+	buf_set_keymap("n", "<A-x>", "<cmd>lua vim.lsp.buf.signature_help()<CR>", opts)
+	buf_set_keymap("i", "<A-x>", "<cmd>lua vim.lsp.buf.signature_help()<CR>", opts)
 	-- buf_set_keymap("n", "<space>q", "<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>", opts)
 	-- buf_set_keymap("n", "<space>fm", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
 	-- buf_set_keymap("v", "<space>ca", "<cmd>lua vim.lsp.buf.range_code_action()<CR>", opts)
@@ -125,7 +130,7 @@ local capabilities = vim.lsp.protocol.make_client_capabilities()
 -- Add additional capabilities supported by nvim-cmp
 local status_ok, cmp_nvim_lsp = pcall(require, "cmp_nvim_lsp")
 if not status_ok then
-  M.capabilities = capabilities
+	M.capabilities = capabilities
 	return M
 end
 M.capabilities = cmp_nvim_lsp.update_capabilities(capabilities)

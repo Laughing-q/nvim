@@ -110,6 +110,7 @@ M.signature = function()
 			zindex = 200, -- by default it will be on top of all floating windows, set to 50 send it to bottom
 			padding = "", -- character to pad on left and right of signature can be ' ', or '|'  etc
       -- transparency = 50,
+      toggle_key = "<M-x>",
 		})
 	end
 end
