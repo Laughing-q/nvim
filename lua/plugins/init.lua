@@ -236,13 +236,13 @@ return packer.startup(function()
 	use({
 		"numToStr/Comment.nvim",
 		disable = not status.comment,
-		cmd = "Comment",
+		-- cmd = "Comment",
 		config = function()
 			require("plugins.configs.others").comment()
 		end,
-		-- setup = function()
-		--   require("utils").packer_lazy_load("Comment.nvim")
-		-- end,
+		setup = function()
+		  require("utils").packer_lazy_load("Comment.nvim")
+		end,
 	})
 
 	-- file managing , picker etc
