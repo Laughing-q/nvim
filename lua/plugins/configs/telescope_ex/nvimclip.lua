@@ -21,8 +21,10 @@ local opts = {
 }
 
 function M.setup()
-	local neoclip = require("neoclip")
-
+  local present, neoclip = pcall(require, "neoclip")
+  if not present then
+    return
+  end
 	neoclip.setup(opts)
 end
 

@@ -30,7 +30,7 @@ M.status = {
   fzf = true,
   media = false,
   project = true,
-  neoclip = true,
+  neoclip = false,
   -- colorscheme
   tokyonight = true,
   kanagawa = true,

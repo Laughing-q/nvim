@@ -101,7 +101,7 @@ telescope.setup({
 	},
 })
 
-local extensions = { "fzf", "projects", "neoclip" }
+local extensions = { "fzf", "projects" }
 -- local packer_repos = [["extensions", "telescope-fzf-native.nvim"]]
 
 -- telescope media_files
