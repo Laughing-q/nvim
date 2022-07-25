@@ -1,65 +1,12 @@
+local present, lspconfig = pcall(require, "lspconfig")
+
+if not present then
+	return
+end
+
 local M = {}
 
-M.setup = function()
-	-- replace the default lsp diagnostic symbols
-	local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
-	for type, icon in pairs(signs) do
-		local hl = "DiagnosticSign" .. type
-		vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
-	end
-
-	-- Customizing how diagnostics are displayed
-	local config = {
-		-- disable virtual text
-		virtual_text = false,
-		-- virtual_text = {
-		--    prefix = "",
-		--    spacing = 0,
-		-- },
-		-- show signs
-		signs = {
-			active = signs,
-		},
-		update_in_insert = true,
-		underline = true,
-		severity_sort = true,
-		float = {
-			focusable = false,
-			style = "minimal",
-			border = "rounded",
-			source = "always",
-			header = "",
-			prefix = "",
-		},
-	}
-	vim.diagnostic.config(config)
-
-	vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
-		border = "single",
-	})
-	-- vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, {
-	-- 	border = "single",
-	-- })
-	vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(require("lsp_signature").signature_handler, {
-		border = "single",
-	})
-
-	-- suppress error messages from lang servers
-	vim.notify = function(msg, log_level, _opts)
-		if msg:match("exit code") then
-			return
-		end
-		if log_level == vim.log.levels.ERROR then
-			vim.api.nvim_err_writeln(msg)
-		else
-			vim.api.nvim_echo({ { msg } }, true, {})
-		end
-	end
-
-	-- show line diagnostics automatically in hover window
-	-- vim.o.updatetime = 250
-	-- vim.cmd [[autocmd CursorHold,CursorHoldI * lua vim.diagnostic.open_float(nil, {focus=false})]]
-end
+require "plugins.configs.lsp.ui"
 
 -- Highlight word
 local function lsp_highlight_document(client)
@@ -134,20 +81,37 @@ if not status_ok then
 	return M
 end
 M.capabilities = cmp_nvim_lsp.update_capabilities(capabilities)
--- -- M.capabilities.textDocument.completion.completionItem.documentationFormat = { "markdown", "plaintext" }
--- -- M.capabilities.textDocument.completion.completionItem.snippetSupport = true
--- -- M.capabilities.textDocument.completion.completionItem.preselectSupport = true
--- -- M.capabilities.textDocument.completion.completionItem.insertReplaceSupport = true
--- -- M.capabilities.textDocument.completion.completionItem.labelDetailsSupport = true
--- -- M.capabilities.textDocument.completion.completionItem.deprecatedSupport = true
--- -- M.capabilities.textDocument.completion.completionItem.commitCharactersSupport = true
--- -- M.capabilities.textDocument.completion.completionItem.tagSupport = { valueSet = { 1 } }
--- -- M.capabilities.textDocument.completion.completionItem.resolveSupport = {
--- -- 	properties = {
--- -- 		"documentation",
--- -- 		"detail",
--- -- 		"additionalTextEdits",
--- -- 	},
--- -- }
+
+local sumneko_opts = require("plugins.configs.lsp.settings.sumneko_lua")
+local pyright_opts = require("plugins.configs.lsp.settings.pyright")
+local pylsp_opts = require("plugins.configs.lsp.settings.pylsp")
+
+-- lspconfig.sumneko_lua.setup({
+-- 	on_attach = M.on_attach,
+-- 	capabilities = M.capabilities,
+--
+-- 	sumneko_opts,
+-- })
+
+lspconfig.bashls.setup{
+	on_attach = M.on_attach,
+	capabilities = M.capabilities,
+
+	filetype = { "sh", "bash" },
+}
+
+lspconfig.pyright.setup{
+	on_attach = M.on_attach,
+	capabilities = M.capabilities,
+
+	settings = pyright_opts.settings,
+}
+
+-- lspconfig.pylsp.setup({
+-- 	on_attach = M.on_attach,
+-- 	capabilities = M.capabilities,
+--
+-- 	pylsp_opts,
+-- })
 
 return M

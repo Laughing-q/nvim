@@ -97,29 +97,28 @@ return packer.startup(function()
 	use({
 		"neovim/nvim-lspconfig",
 		disable = not status.lspconfig,
-		opt = true,
-		setup = function()
-			require("utils").packer_lazy_load("nvim-lspconfig")
-			-- reload the current file so lsp actually starts for it
-			vim.defer_fn(function()
-				vim.cmd('if &ft == "packer" | echo "" | else | silent! e %')
-			end, 0)
-		end,
+		after = "mason.nvim",
 		config = function()
-			require("plugins.configs.lsp.lspconfig").setup()
+			require("plugins.configs.lsp.lspconfig")
 		end,
 	})
 
 	-- TODO lazy load both nvim-lsp-installer and nvim-lspconfig may casue same issue.
+	-- use({
+	-- 	"williamboman/nvim-lsp-installer",
+	-- 	disable = not status.lspinstaller,
+	-- 	setup = function()
+	-- 		require("utils").packer_lazy_load("nvim-lsp-installer")
+	-- 	end,
+	-- 	config = function()
+	-- 		require("plugins.configs.lsp.lspinstaller")
+	-- 	end,
+	-- })
 	use({
-		"williamboman/nvim-lsp-installer",
+		"williamboman/mason.nvim",
 		disable = not status.lspinstaller,
-		opt = true,
-		setup = function()
-			require("utils").packer_lazy_load("nvim-lsp-installer")
-		end,
 		config = function()
-			require("plugins.configs.lsp.lspinstaller").setup_lsp()
+			require("plugins.configs.lsp.mason")
 		end,
 	})
 
@@ -241,7 +240,7 @@ return packer.startup(function()
 			require("plugins.configs.others").comment()
 		end,
 		setup = function()
-		  require("utils").packer_lazy_load("Comment.nvim")
+			require("utils").packer_lazy_load("Comment.nvim")
 		end,
 	})
 
