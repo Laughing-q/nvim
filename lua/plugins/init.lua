@@ -416,10 +416,19 @@ return packer.startup(function()
 		cmd = { "UndotreeToggle" },
 	})
 	-- functions and values
+	-- use({
+	-- 	"liuchengxu/vista.vim",
+	-- 	disable = not status.vista,
+	-- 	cmd = { "Vista" },
+	-- })
 	use({
-		"liuchengxu/vista.vim",
+		"stevearc/aerial.nvim",
 		disable = not status.vista,
-		cmd = { "Vista" },
+		cmd = { "AerialToggle" },
+    config = function()
+      -- require('aerial').setup({})
+      require('plugins.configs.aerial')
+    end
 	})
 	-- focus 1
 	use({

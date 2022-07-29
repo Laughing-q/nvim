@@ -79,7 +79,7 @@ leader_key = {
 		e = { ":NvimTreeFocus <CR>", "NvimTree Focus" },
 
 		-- functions and values
-		v = { "<cmd>Vista!!<CR>", "Vista" },
+		v = { "<cmd>AerialToggle<CR>", "Aerial" },
 		-- Compile file
 		r = { "<cmd>call CompileRunGcc()<CR>", "Compile file" },
 		-- transparency

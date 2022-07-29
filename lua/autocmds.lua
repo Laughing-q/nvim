@@ -51,3 +51,31 @@ vim.cmd([[
     autocmd Filetype markdown inoremap <buffer> ,w <details><Enter><summary></summary><Enter><Enter><++><Enter></details><Esc>3ki
 
   ]])
+
+-- aerial keymappings
+vim.cmd([[
+    autocmd Filetype aerial nnoremap <buffer> ? <cmd>lua require'aerial.bindings'.show()<CR>
+    autocmd Filetype aerial nnoremap <buffer> <CR> <cmd>lua require'aerial'.select()<CR>
+    autocmd Filetype aerial nnoremap <buffer> p <cmd>lua require'aerial'.select({jump=false})<CR>
+    autocmd Filetype aerial nnoremap <buffer> q <cmd>AerialClose<CR>
+
+    autocmd Filetype aerial nnoremap <buffer> <C-v> <cmd>lua require'aerial'.select({split='v'})<CR>
+    autocmd Filetype aerial nnoremap <buffer> <C-x> <cmd>lua require'aerial'.select({split='h'})<CR>
+
+    autocmd Filetype aerial nnoremap <buffer> <A-k> j<cmd>lua require'aerial'.select({jump=false})<CR>
+    autocmd Filetype aerial nnoremap <buffer> <A-i> k<cmd>lua require'aerial'.select({jump=false})<CR>
+
+    autocmd Filetype aerial nnoremap <buffer> { <cmd>AerialPrev<CR>
+    autocmd Filetype aerial nnoremap <buffer> } <cmd>AerialNext<CR>
+
+    autocmd Filetype aerial nnoremap <buffer> l <cmd>AerialTreeToggle<CR>
+    autocmd Filetype aerial nnoremap <buffer> L <cmd>AerialTreeToggle!<CR>
+    autocmd Filetype aerial nnoremap <buffer> j <cmd>AerialTreeClose<CR>
+    autocmd Filetype aerial nnoremap <buffer> J <cmd>AerialTreeClose!<CR>
+]]
+)
+ --    { "zx", "zX" },
+ --    "<cmd>AerialTreeSyncFolds<CR>",
+ --    "Sync code folding to the tree (useful if they get out of sync)",
+ --  },
+ --
