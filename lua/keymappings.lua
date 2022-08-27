@@ -114,16 +114,6 @@ M.misc = function()
 	map({ "n", "v" }, "K", "<Plug>Lightspeed_s", { noremap = false, desc = "jump down" })
 	map({ "n", "v" }, "I", "<Plug>Lightspeed_S", { noremap = false, desc = "jump up" })
 
-	-- comment
-	-- map({ "n", "v" }, "<LEADER>c", ":CommentToggle <CR>")
-	map("n", "<LEADER>c", ":lua require('Comment.api').toggle_current_linewise()<CR>", { desc = "Comment" })
-	map(
-		"v",
-		"<LEADER>c",
-		":lua require('Comment.api').toggle_linewise_op(vim.fn.visualmode())<CR>",
-		{ desc = "Comment" }
-	)
-
 	-- nvimtree
 	map("n", "<C-n>", ":NvimTreeToggle <CR>")
 	-- map("n", "<C-n>", ":SidebarNvimToggle <CR>")

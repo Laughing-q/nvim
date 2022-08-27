@@ -34,14 +34,6 @@ local function custom_filter(buf, buf_nums)
 end
 
 local bufferline = {
-	highlights = {
-		background = {
-			gui = "italic",
-		},
-		buffer_selected = {
-			gui = "bold",
-		},
-	},
 	options = {
 		numbers = "none", -- can be "none" | "ordinal" | "buffer_id" | "both" | function
 		close_command = "bdelete! %d", -- can be a string | function, see "Mouse actions"
@@ -51,7 +43,10 @@ local bufferline = {
 		-- NOTE: this plugin is designed with this icon in mind,
 		-- and so changing this is NOT recommended, this is intended
 		-- as an escape hatch for people who cannot bear it for whatever reason
-		indicator_icon = "▎",
+		indicator = {
+        icon = "▎",
+        style = 'icon',
+    },
 		buffer_close_icon = "",
 		modified_icon = "●",
 		close_icon = "",
@@ -207,7 +202,6 @@ end
 M.setup = function()
 	require("bufferline").setup({
 		options = bufferline.options,
-		highlights = bufferline.highlights,
 	})
 end
 
