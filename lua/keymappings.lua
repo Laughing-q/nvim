@@ -97,6 +97,8 @@ M.misc = function()
 	-- figlet
 	map("n", "tx", ":r !figlet ")
 
+  map("x", "<leader>p", "\"_dp")
+
 	-------------plugins mappings---------------
 	-- rnvimr
 	map("n", "R", ":RnvimrToggle<CR><C-\\><C-n>:RnvimrResize 0<CR>")
