@@ -24,15 +24,10 @@ M.setup = function(colorscheme)
   -- set barbar highlight for kanagawa
   if colorscheme == "kanagawa"  then
     -- require('kanagawa').setup({transparent = true})
-    vim.api.nvim_exec(
-      [[
-      hi BufferCurrent guibg=#363646
-      hi BufferCurrentSign guibg=#363646
-      hi BufferCurrentMod guibg=#363646
-      hi BufferCurrentMod guifg=#E5AB0E
-    ]],
-      false
-    )
+    vim.cmd [[hi BufferCurrent guibg=#363646]]
+    vim.cmd [[hi BufferCurrentSign guibg=#363646]]
+    vim.cmd [[hi BufferCurrentMod guibg=#363646]]
+    vim.cmd [[hi BufferCurrentMod guifg=#E5AB0E]]
   end
 
   --------------plugins-------------

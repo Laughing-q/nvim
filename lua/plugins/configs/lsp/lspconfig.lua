@@ -9,23 +9,40 @@ local M = {}
 require "plugins.configs.lsp.ui"
 
 -- Highlight word
-local function lsp_highlight_document(client)
-	-- Set autocommands conditional on server_capabilities
-	if client.resolved_capabilities.document_highlight then
-		vim.api.nvim_exec(
-			[[
-      hi LspReferenceRead cterm=bold ctermbg=red guibg=#145b7d
-      hi LspReferenceText cterm=bold ctermbg=red guibg=#63434f
-      hi LspReferenceWrite cterm=bold ctermbg=red guibg=#145b7d
-      augroup lsp_document_highlight
-        autocmd! * <buffer>
-        autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
-        autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
-      augroup END
-    ]],
-			false
-		)
-	end
+local function setup_document_highlight(client, bufnr)
+  local status_ok, highlight_supported = pcall(function()
+    return client.supports_method "textDocument/documentHighlight"
+  end)
+  if not status_ok or not highlight_supported then
+    return
+  end
+  vim.cmd [[hi LspReferenceRead cterm=bold ctermbg=red guibg=#145b7d]]
+  vim.cmd [[hi LspReferenceText cterm=bold ctermbg=red guibg=#63434f]]
+  vim.cmd [[hi LspReferenceWrite cterm=bold ctermbg=red guibg=#145b7d]]
+  local group = "lsp_document_highlight"
+  local hl_events = { "CursorHold", "CursorHoldI" }
+
+  local ok, hl_autocmds = pcall(vim.api.nvim_get_autocmds, {
+    group = group,
+    buffer = bufnr,
+    event = hl_events,
+  })
+
+  if ok and #hl_autocmds > 0 then
+    return
+  end
+
+  vim.api.nvim_create_augroup(group, { clear = false })
+  vim.api.nvim_create_autocmd(hl_events, {
+    group = group,
+    buffer = bufnr,
+    callback = vim.lsp.buf.document_highlight,
+  })
+  vim.api.nvim_create_autocmd("CursorMoved", {
+    group = group,
+    buffer = bufnr,
+    callback = vim.lsp.buf.clear_references,
+  })
 end
 
 -- keymapping
@@ -46,15 +63,6 @@ local function lsp_keymaps(bufnr)
 	-- See `:help vim.lsp.*` for documentation on any of the below functions
 	buf_set_keymap("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>", opts)
 	buf_set_keymap("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", opts)
-	-- buf_set_keymap("n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>", opts)
-	-- buf_set_keymap("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>", opts)
-	-- buf_set_keymap("n", "gk", "<cmd>lua vim.lsp.buf.signature_help()<CR>", opts)
-	-- buf_set_keymap("n", "<space>wa", "<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>", opts)
-	-- buf_set_keymap("n", "<space>wr", "<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>", opts)
-	-- buf_set_keymap("n", "<space>wl", "<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>", opts)
-	-- buf_set_keymap("n", "<space>D", "<cmd>lua vim.lsp.buf.type_definition()<CR>", opts)
-	-- buf_set_keymap("n", "<space>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", opts)
-	-- buf_set_keymap("n", "<space>ca", "<cmd>lua vim.lsp.buf.code_action()<CR>", opts)
 	buf_set_keymap("n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>", opts)
 	buf_set_keymap("n", "gl", "<cmd>lua vim.diagnostic.open_float()<CR>", opts)
 	buf_set_keymap("n", "[d", "<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>", opts)
@@ -64,11 +72,21 @@ local function lsp_keymaps(bufnr)
 	-- buf_set_keymap("n", "<space>q", "<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>", opts)
 	-- buf_set_keymap("n", "<space>fm", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
 	-- buf_set_keymap("v", "<space>ca", "<cmd>lua vim.lsp.buf.range_code_action()<CR>", opts)
+	-- buf_set_keymap("n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>", opts)
+	-- buf_set_keymap("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>", opts)
+	-- buf_set_keymap("n", "gk", "<cmd>lua vim.lsp.buf.signature_help()<CR>", opts)
+	-- buf_set_keymap("n", "<space>wa", "<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>", opts)
+	-- buf_set_keymap("n", "<space>wr", "<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>", opts)
+	-- buf_set_keymap("n", "<space>wl", "<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>", opts)
+	-- buf_set_keymap("n", "<space>D", "<cmd>lua vim.lsp.buf.type_definition()<CR>", opts)
+	-- buf_set_keymap("n", "<space>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", opts)
+	-- buf_set_keymap("n", "<space>ca", "<cmd>lua vim.lsp.buf.code_action()<CR>", opts)
 end
 
 M.on_attach = function(client, bufnr)
 	-- Highlight
-	lsp_highlight_document(client)
+	-- lsp_highlight_document(client)
+  setup_document_highlight(client, bufnr)
 	-- Keymappings
 	lsp_keymaps(bufnr)
 end
