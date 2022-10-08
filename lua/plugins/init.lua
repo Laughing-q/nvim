@@ -587,4 +587,9 @@ return packer.startup(function()
 		cmd = { "SudaWrite", "SudaRead" },
 		disable = not status.suda,
 	})
+
+  use({
+    "ThePrimeagen/vim-be-good",
+    cmd = {"VimBeGood"},
+  })
 end)
