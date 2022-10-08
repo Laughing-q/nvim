@@ -178,15 +178,15 @@ leader_key = {
 			-- f = { "<cmd>lua vim.lsp.buf.range_formatting()<cr>", "Format" },
 			h = { "<cmd>LspInfo<cr>", "Info" },
 			k = {
-				"<cmd>lua vim.lsp.diagnostic.goto_next()<cr>",
+				vim.diagnostic.goto_next,
 				"Next Diagnostic",
 			},
 			i = {
-				"<cmd>lua vim.lsp.diagnostic.goto_prev()<cr>",
+				vim.diagnostic.goto_prev,
 				"Prev Diagnostic",
 			},
-			q = { "<cmd>lua vim.lsp.diagnostic.set_loclist()<cr>", "Quickfix" },
-			r = { "<cmd>lua vim.lsp.buf.rename()<cr>", "Rename" },
+			q = { vim.diagnostic.setloclist, "Quickfix" },
+			r = { vim.lsp.buf.rename, "Rename" },
 			s = { "<cmd>Telescope lsp_document_symbols<cr>", "Document Symbols" },
 			S = {
 				"<cmd>Telescope lsp_dynamic_workspace_symbols<cr>",
