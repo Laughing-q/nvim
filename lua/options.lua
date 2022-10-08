@@ -1,7 +1,7 @@
 local options = {
 	-- NeoVim/Vim options
 	clipboard = "unnamedplus",
-	cmdheight = 0,
+	cmdheight = 1,
 	ruler = false,
 	ignorecase = true,
 	smartcase = true,
