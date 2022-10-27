@@ -45,6 +45,9 @@ local tokyonight_setpup = function()
 			hl.LineNr = {
 				fg = "#bb9af7",
 			}
+      hl.BufferLineFill = {
+        bg = c.black,
+      }
 		end,
 	})
 end
