@@ -266,14 +266,14 @@ return packer.startup(function()
 	use({
 		"nvim-telescope/telescope.nvim",
 		disable = not status.telescope,
-		module = "telescope",
-		cmd = "Telescope",
+		-- module = "telescope",
+		-- cmd = "Telescope",
 		requires = {
 			{
 				"nvim-telescope/telescope-fzf-native.nvim",
 				disable = not status.fzf,
 				run = "make",
-				opt = true,
+				-- opt = true,
 				setup = function()
 					require("utils").packer_lazy_load("telescope-fzf-native.nvim")
 				end,
@@ -285,7 +285,7 @@ return packer.startup(function()
 			{
 				"ahmedkhalf/project.nvim",
 				disable = not status.project,
-				opt = true,
+				-- opt = true,
 				config = function()
 					require("plugins.configs.telescope_ex.project").setup()
 				end,
@@ -297,7 +297,7 @@ return packer.startup(function()
 				"AckslD/nvim-neoclip.lua",
 				requires = { "tami5/sqlite.lua", module = "sqlite" },
 				disable = not status.neoclip,
-				opt = true,
+				-- opt = true,
 				setup = function()
 					require("utils").packer_lazy_load("nvim-neoclip.lua")
 				end,

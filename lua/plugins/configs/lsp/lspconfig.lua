@@ -98,7 +98,7 @@ if not status_ok then
 	M.capabilities = capabilities
 	return M
 end
-M.capabilities = cmp_nvim_lsp.update_capabilities(capabilities)
+M.capabilities = cmp_nvim_lsp.default_capabilities(capabilities)
 
 local sumneko_opts = require("plugins.configs.lsp.settings.sumneko_lua")
 local pyright_opts = require("plugins.configs.lsp.settings.pyright")
