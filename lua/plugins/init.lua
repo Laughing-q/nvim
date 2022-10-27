@@ -322,7 +322,7 @@ return packer.startup(function()
 	})
 	-- colorscheme
 	use({
-		"Laughing-q/tokyonight.nvim",
+		"folke/tokyonight.nvim",
 		disable = not status.tokyonight,
 	})
 	use({
