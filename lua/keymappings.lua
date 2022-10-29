@@ -97,7 +97,7 @@ M.misc = function()
 	-- figlet
 	map("n", "tx", ":r !figlet ")
 
-  map("x", "<leader>p", "\"_dp")
+  map("x", "<leader>p", "\"_dP")
 
 	-------------plugins mappings---------------
 	-- rnvimr
