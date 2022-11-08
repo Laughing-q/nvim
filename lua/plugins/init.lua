@@ -525,6 +525,13 @@ return packer.startup(function()
 		"ggandor/lightspeed.nvim",
 		disable = not status.lightspeed,
 		event = "BufRead",
+    config = function ()
+      require'lightspeed'.setup{
+          --- f/t ---
+          limit_ft_matches = 0,
+          repeat_ft_with_target_char = false,
+        }
+    end
 	})
 
 	-- scrolling
