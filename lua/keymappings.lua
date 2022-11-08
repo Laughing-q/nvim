@@ -33,7 +33,7 @@ M.misc = function()
 
 	-- fast home and end
 	map("", "<C-l>", "$")
-	map("", "<C-j>", "0")
+	map("", "<C-j>", "_")
 
 	-- insert moving
 	map("i", "<A-j>", "<Left>")
