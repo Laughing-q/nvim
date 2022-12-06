@@ -74,6 +74,10 @@ M.misc = function()
 	-- move up/down the view port without moving the cursor
 	map("n", "<C-Y>", "5<C-y>")
 	map("n", "<C-E>", "5<C-e>")
+	map("n", "<C-D>", "<C-D>zz")
+	map("n", "<C-U>", "<C-U>zz")
+	map("n", "n", "nzz")
+	map("n", "N", "Nzz")
 
 	-- use ESC to turn off search highlighting
 	map("n", "<Esc>", ":noh <CR>")
