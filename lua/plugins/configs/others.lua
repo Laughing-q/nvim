@@ -169,7 +169,7 @@ M.rnvimr = function()
 	vim.g.rnvimr_shadow_winblend = 70
 	vim.api.nvim_exec(
 		[[
-    let g:rnvimr_ranger_cmd = 'ranger --cmd="set draw_borders both"'
+    let g:rnvimr_ranger_cmd = ['ranger', '--cmd=set draw_borders both']
     highlight link RnvimrNormal CursorLine
     let g:rnvimr_action = {'<C-t>': 'NvimEdit tabedit','<C-x>': 'NvimEdit split','<C-v>': 'NvimEdit vsplit','gw': 'JumpNvimCwd','yw': 'EmitRangerCwd'}
 
