@@ -54,7 +54,6 @@ return packer.startup(function()
 
 	use({
 		"rebelot/heirline.nvim",
-		-- commit = "0b93d183b9a4fd9b2b33f9b431753de979da94d0",
 		event = "BufRead",
 		disable = not status.heirline,
 		config = function()
@@ -160,7 +159,6 @@ return packer.startup(function()
 
 	use({
 		"hrsh7th/nvim-cmp",
-		-- commit="dbc72290295cfc63075dab9ea635260d2b72f2e5",
 		disable = not status.cmp,
 		after = "friendly-snippets",
 		config = function()
@@ -452,7 +450,6 @@ return packer.startup(function()
 	-- rnvimr
 	use({
 		"kevinhwang91/rnvimr",
-		-- commit = "4f4fbd29e2e0869bea9a8376e06fca4331de60c9",
 		disable = not status.rnvimr,
 		command = "RnvimrToggle",
 		config = function()
