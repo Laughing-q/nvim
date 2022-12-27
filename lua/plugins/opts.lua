@@ -33,7 +33,7 @@ M.status = {
   kanagawa = true,
 
   -- bufferline
-  bufferline = true,
+  bufferline = false,
 
   which_key = true,
   terminal = true,

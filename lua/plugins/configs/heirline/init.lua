@@ -5,6 +5,8 @@ local statusline = {
 	component.Git,
 	component.Python,
 	component.Align,
+  component.FileNameBlock,
+	component.Align,
 	component.Diagnostics,
 	component.Space,
 	component.Space,
@@ -14,3 +16,4 @@ local statusline = {
 	component.ScrollBar,
 }
 require("heirline").setup(statusline)
+
