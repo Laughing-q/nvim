@@ -177,7 +177,7 @@ M.map = function(mode, keys, cmd, opt)
 				end
 			else
 				if valid_modes[mode] and lhs and rhs then
-					vim.api.nvim_set_keymap(mode, lhs, rhs, options)
+					vim.keymap.set(mode, lhs, rhs, options)
 				else
 					mode, lhs, rhs = mode or "", lhs or "", rhs or ""
 					print(
