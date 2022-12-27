@@ -79,6 +79,11 @@ return packer.startup(function()
 		end,
 	})
 
+	use({ -- Additional text objects via treesitter
+		"nvim-treesitter/nvim-treesitter-textobjects",
+		after = "nvim-treesitter",
+	})
+
 	-- git stuff
 	use({
 		"lewis6991/gitsigns.nvim",
@@ -119,7 +124,7 @@ return packer.startup(function()
 		end,
 	})
 
-  -- TODO: remove it or config it
+	-- TODO: remove it or config it
 	-- use({
 	-- 	-- "andymass/vim-matchup",
 	-- 	"Laughing-q/vim-matchup",
@@ -325,15 +330,15 @@ return packer.startup(function()
 		cmd = { "UndotreeToggle" },
 	})
 	-- functions and values
-  --
+	--
 	use({
 		"stevearc/aerial.nvim",
 		disable = not status.aerial,
 		cmd = { "AerialToggle" },
-    config = function()
-      -- require('aerial').setup({})
-      require('plugins.configs.aerial')
-    end
+		config = function()
+			-- require('aerial').setup({})
+			require("plugins.configs.aerial")
+		end,
 	})
 
 	-- faster select
@@ -416,13 +421,13 @@ return packer.startup(function()
 		"ggandor/lightspeed.nvim",
 		disable = not status.lightspeed,
 		event = "BufRead",
-    config = function ()
-      require'lightspeed'.setup{
-          --- f/t ---
-          limit_ft_matches = 0,
-          repeat_ft_with_target_char = false,
-        }
-    end
+		config = function()
+			require("lightspeed").setup({
+				--- f/t ---
+				limit_ft_matches = 0,
+				repeat_ft_with_target_char = false,
+			})
+		end,
 	})
 
 	-- scrolling
@@ -443,7 +448,7 @@ return packer.startup(function()
 	--    "xuhdev/vim-latex-live-preview",
 	-- }
 
-  -- remote, rarely used it
+	-- remote, rarely used it
 	-- use({
 	-- 	"chipsenkbeil/distant.nvim",
 	-- 	cmd = "DistantLaunch",
