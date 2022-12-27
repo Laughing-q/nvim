@@ -287,9 +287,9 @@ return packer.startup(function()
 		config = function()
 			require("plugins.configs.bufferline").setup()
 		end,
-		setup = function()
-			require("keymappings").bufferline()
-		end,
+		-- setup = function()
+		-- 	require("keymappings").bufferline()
+		-- end,
 	})
 
 	-- Terminal
@@ -473,6 +473,9 @@ return packer.startup(function()
 
   use({
     "ThePrimeagen/harpoon",
+    setup = function ()
+			require("keymappings").harpoon()
+    end
   })
 
 end)
