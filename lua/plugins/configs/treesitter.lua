@@ -15,11 +15,11 @@ local treesitter_opts = {
       keymaps = {
         -- You can use the capture groups defined in textobjects.scm
         ['aa'] = '@parameter.outer',
-        ['ia'] = '@parameter.inner',
+        ['ha'] = '@parameter.inner',
         ['af'] = '@function.outer',
-        ['if'] = '@function.inner',
+        ['hf'] = '@function.inner',
         ['ac'] = '@class.outer',
-        ['ic'] = '@class.inner',
+        ['hc'] = '@class.inner',
       },
     },
     move = {
@@ -40,6 +40,15 @@ local treesitter_opts = {
       goto_previous_end = {
         ['[M'] = '@function.outer',
         ['[]'] = '@class.outer',
+      },
+    },
+    swap = {
+      enable = true,
+      swap_next = {
+        ['<leader>a'] = '@parameter.inner',
+      },
+      swap_previous = {
+        ['<leader>A'] = '@parameter.inner',
       },
     },
   },
