@@ -102,17 +102,6 @@ return packer.startup(function()
 		end,
 	})
 
-	-- TODO lazy load both nvim-lsp-installer and nvim-lspconfig may casue same issue.
-	-- use({
-	-- 	"williamboman/nvim-lsp-installer",
-	-- 	disable = not status.lspinstaller,
-	-- 	setup = function()
-	-- 		require("utils").packer_lazy_load("nvim-lsp-installer")
-	-- 	end,
-	-- 	config = function()
-	-- 		require("plugins.configs.lsp.lspinstaller")
-	-- 	end,
-	-- })
 	use({
 		"williamboman/mason.nvim",
 		disable = not status.lspinstaller,
@@ -130,24 +119,16 @@ return packer.startup(function()
 		end,
 	})
 
-	use({
-		"ray-x/lsp_signature.nvim",
-		disable = not status.lsp_signature,
-		after = "nvim-lspconfig",
-		-- config = function()
-		-- 	require("plugins.configs.others").signature()
-		-- end,
-	})
-
-	use({
-		-- "andymass/vim-matchup",
-		"Laughing-q/vim-matchup",
-		disable = not status.matchup,
-		opt = true,
-		setup = function()
-			require("utils").packer_lazy_load("vim-matchup")
-		end,
-	})
+  -- TODO: remove it or config it
+	-- use({
+	-- 	-- "andymass/vim-matchup",
+	-- 	"Laughing-q/vim-matchup",
+	-- 	disable = not status.matchup,
+	-- 	opt = true,
+	-- 	setup = function()
+	-- 		require("utils").packer_lazy_load("vim-matchup")
+	-- 	end,
+	-- })
 
 	-- load luasnips + cmp related in insert mode only
 
@@ -175,12 +156,6 @@ return packer.startup(function()
 			require("plugins.configs.others").luasnip()
 		end,
 	})
-
-	-- use({
-	-- 	"lukas-reineke/cmp-rg",
-	--    disable = not status.cmp,
-	-- 	after = "LuaSnip",
-	-- })
 
 	use({
 		"saadparwaiz1/cmp_luasnip",
@@ -253,15 +228,6 @@ return packer.startup(function()
 	})
 
 	use({
-		-- config is not finish yet.
-		"sidebar-nvim/sidebar.nvim",
-		disable = not status.sidebar,
-		config = function()
-			require("sidebar-nvim").setup({ sections = { "datetime", "git", "diagnostics", "todos" } })
-		end,
-	})
-
-	use({
 		"nvim-telescope/telescope.nvim",
 		disable = not status.telescope,
 		-- module = "telescope",
@@ -277,10 +243,6 @@ return packer.startup(function()
 				end,
 			},
 			{
-				"nvim-telescope/telescope-media-files.nvim",
-				disable = not status.media,
-			},
-			{
 				"ahmedkhalf/project.nvim",
 				disable = not status.project,
 				-- opt = true,
@@ -289,18 +251,6 @@ return packer.startup(function()
 				end,
 				setup = function()
 					require("utils").packer_lazy_load("project.nvim")
-				end,
-			},
-			{
-				"AckslD/nvim-neoclip.lua",
-				requires = { "tami5/sqlite.lua", module = "sqlite" },
-				disable = not status.neoclip,
-				-- opt = true,
-				setup = function()
-					require("utils").packer_lazy_load("nvim-neoclip.lua")
-				end,
-				config = function()
-					require("plugins.configs.telescope_ex.nvimclip").setup()
 				end,
 			},
 		},
@@ -327,23 +277,8 @@ return packer.startup(function()
 		"rebelot/kanagawa.nvim",
 		disable = not status.kanagawa,
 	})
-	-- use {
-	--    "xiyaowong/nvim-transparent",
-	-- }
 
 	-- bufferline
-	use({
-		"romgrk/barbar.nvim",
-		-- after = "folke/which-key.nvim",
-		disable = not status.barbar,
-		event = "BufWinEnter",
-		config = function()
-			require("plugins.configs.barbar")
-		end,
-		setup = function()
-			require("keymappings").barbar()
-		end,
-	})
 	use({
 		"akinsho/bufferline.nvim",
 		-- after = "nvim-web-devicons",
@@ -357,23 +292,6 @@ return packer.startup(function()
 		end,
 	})
 
-	-- multi select
-	use({
-		"mg979/vim-visual-multi",
-		disable = not status.visual_multi,
-		event = "BufRead",
-		-- opt = true,
-		-- setup = function()
-		--    require("utils").packer_lazy_load "vim-visual-multi"
-		-- end,
-	})
-
-	-- rainbow parentheses
-	-- use {
-	--    "p00f/nvim-ts-rainbow",
-	--    after = "nvim-treesitter",
-	-- }
-
 	-- Terminal
 	use({
 		"akinsho/toggleterm.nvim",
@@ -383,21 +301,14 @@ return packer.startup(function()
 			require("plugins.configs.terminal").setup()
 		end,
 	})
+
 	-- swith true false
 	use({
 		"Laughing-q/antovim",
 		disable = not status.antovim,
 		cmd = { "Antovim" },
 	})
-	-- show color, `nvim-colorizer` is another option
-	-- use {
-	--    "RRethy/vim-hexokinase",
-	--    run = "make hexokinase",
-	--    opt = true,
-	--    setup = function()
-	--       require("utils").packer_lazy_load "vim-hexokinase"
-	--    end,
-	-- }
+
 	use({
 		"norcalli/nvim-colorizer.lua",
 		disable = not status.colorizer,
@@ -414,26 +325,17 @@ return packer.startup(function()
 		cmd = { "UndotreeToggle" },
 	})
 	-- functions and values
-	-- use({
-	-- 	"liuchengxu/vista.vim",
-	-- 	disable = not status.vista,
-	-- 	cmd = { "Vista" },
-	-- })
+  --
 	use({
 		"stevearc/aerial.nvim",
-		disable = not status.vista,
+		disable = not status.aerial,
 		cmd = { "AerialToggle" },
     config = function()
       -- require('aerial').setup({})
       require('plugins.configs.aerial')
     end
 	})
-	-- focus 1
-	use({
-		"junegunn/goyo.vim",
-		disable = not status.goyo,
-		cmd = { "Goyo" },
-	})
+
 	-- faster select
 	use({
 		"gcmt/wildfire.vim",
@@ -461,21 +363,12 @@ return packer.startup(function()
 		end,
 	})
 	-- markdown
-	-- use({
-	-- 	"instant-markdown/vim-instant-markdown",
-	--    disable = not status.instant_markdown,
-	-- 	event = "BufRead",
-	-- 	ft = { "markdown" },
-	-- 	config = function()
-	-- 		require("plugins.configs.markdown.instant_markdown").setup()
-	-- 	end,
-	-- })
 	use({
 		"iamcco/markdown-preview.nvim",
 		run = function()
 			vim.fn["mkdp#util#install"]()
 		end,
-		disable = not status.instant_markdown,
+		disable = not status.markdown_preview,
 		event = "BufRead",
 		ft = { "markdown" },
 	})
@@ -517,6 +410,7 @@ return packer.startup(function()
 			-- vim.g.vimtex_compiler_latexmk_engines='xelatex'
 		end,
 	})
+
 	-- faster move, jump between characters
 	use({
 		"ggandor/lightspeed.nvim",
@@ -538,27 +432,6 @@ return packer.startup(function()
 		event = "BufRead",
 	})
 
-	-- scroll smoothly
-	-- use {
-	--   'karb94/neoscroll.nvim',
-	--    disable=true,
-	--    event = "BufRead",
-	--    config = function ()
-	--      require('neoscroll').setup()
-	--    end
-	-- }
-
-	-- code hint from AI
-	-- use {
-	--   'github/copilot.vim'
-	-- }
-
-	-- notify
-	use({
-		"rcarriga/nvim-notify",
-		event = "BufRead",
-		disable = not status.notify,
-	})
 	-- debug
 	use({
 		"mfussenegger/nvim-dap",
@@ -570,21 +443,22 @@ return packer.startup(function()
 	--    "xuhdev/vim-latex-live-preview",
 	-- }
 
-	use({
-		"chipsenkbeil/distant.nvim",
-		cmd = "DistantLaunch",
-		-- DistantLaunch ip mode=ssh ssh.user=username
-		config = function()
-			require("distant").setup({
-				-- Applies Chip's personal settings to every machine you connect to
-				--
-				-- 1. Ensures that distant servers terminate with no connections
-				-- 2. Provides navigation bindings for remote directories
-				-- 3. Provides keybinding to jump into a remote file's parent directory
-				["*"] = require("distant.settings").chip_default(),
-			})
-		end,
-	})
+  -- remote, rarely used it
+	-- use({
+	-- 	"chipsenkbeil/distant.nvim",
+	-- 	cmd = "DistantLaunch",
+	-- 	-- DistantLaunch ip mode=ssh ssh.user=username
+	-- 	config = function()
+	-- 		require("distant").setup({
+	-- 			-- Applies Chip's personal settings to every machine you connect to
+	-- 			--
+	-- 			-- 1. Ensures that distant servers terminate with no connections
+	-- 			-- 2. Provides navigation bindings for remote directories
+	-- 			-- 3. Provides keybinding to jump into a remote file's parent directory
+	-- 			["*"] = require("distant.settings").chip_default(),
+	-- 		})
+	-- 	end,
+	-- })
 
 	use({
 		"lambdalisue/suda.vim",

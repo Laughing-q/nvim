@@ -16,42 +16,36 @@ M.status = {
   lspconfig = true,
   lspinstaller = true,
   null_ls = false,
-  lsp_signature = true,
 
-  matchup = true,
+  -- TODO: remove it or config it
+  -- matchup = true,
   cmp = true,
   autopairs = true,
   dashboard = false,
   comment = true,
   nvimtree = true,
-  sidebar = false,
   -- telescope stuff
   telescope = true,
   fzf = true,
-  media = false,
   project = true,
-  neoclip = false,
   -- colorscheme
   tokyonight = true,
   kanagawa = true,
 
   -- bufferline
-  barbar = false,
   bufferline = true,
 
   which_key = true,
-  visual_multi = true,
   terminal = true,
   antovim = true,
   colorizer = true,
   undotree = true,
-  vista = true,
-  goyo = true,
+  aerial = true,
   wildfire = true,
   surround = true,
   rnvimr = true,
   -- markdown stuff
-  instant_markdown = true,
+  markdown_preview = true,
   table_mode = true,
   markdown_toc = true,
   bullets = true,
@@ -59,7 +53,6 @@ M.status = {
   vimtex = true,
   lightspeed = true,
   scrollview = true,
-  notify = false,
   dap = false,
   suda = true,
 }
