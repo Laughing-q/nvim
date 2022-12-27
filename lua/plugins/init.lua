@@ -470,4 +470,9 @@ return packer.startup(function()
     "ThePrimeagen/vim-be-good",
     cmd = {"VimBeGood"},
   })
+
+  use({
+    "ThePrimeagen/harpoon",
+  })
+
 end)
