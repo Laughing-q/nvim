@@ -164,7 +164,7 @@ leader_key = {
 			name = "LSP",
 			l = { "<cmd>LspStop<cr>", "Close LSP" },
 			L = { "<cmd>LspStart<cr>", "Open LSP" },
-			a = { "<cmd>lua vim.lsp.buf.code_action()<cr>", "Code Action" },
+			a = { "vim.lsp.buf.code_action", "Code Action" },
 			d = {
 				"<cmd>Telescope diagnostics bufnr=0<cr>",
 				"Document Diagnostics",
