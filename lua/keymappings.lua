@@ -122,81 +122,10 @@ M.misc = function()
 
 	-- nvimtree
 	map("n", "<C-n>", ":NvimTreeToggle <CR>")
-	-- map("n", "<C-n>", ":SidebarNvimToggle <CR>")
 
 	-- others keymapping in which-key setting
 end
 
-M.barbar = function()
-	-- bufferline
-	-- map("n", "tl", ":BufferNext<CR>")
-	-- map("n", "tj", ":BufferPrevious<CR>")
-	-- map("n", "tml", ":BufferMoveNext<CR>")
-	-- map("n", "tmj", ":BufferMovePrevious<CR>")
-	map("n", "<A-l>", ":BufferNext<CR>")
-	map("n", "<A-j>", ":BufferPrevious<CR>")
-	map("n", "<A-;>", ":BufferMoveNext<CR>")
-	map("n", "<A-h>", ":BufferMovePrevious<CR>")
-	-- map("n", "<A-p>", ":BufferPin<CR>")
-	-- Goto buffer in position...
-	map("n", "<A-1>", ":BufferGoto 1<CR>")
-	map("n", "<A-2>", ":BufferGoto 2<CR>")
-	map("n", "<A-3>", ":BufferGoto 3<CR>")
-	map("n", "<A-4>", ":BufferGoto 4<CR>")
-	map("n", "<A-5>", ":BufferGoto 5<CR>")
-	map("n", "<A-6>", ":BufferGoto 6<CR>")
-	map("n", "<A-7>", ":BufferGoto 7<CR>")
-	map("n", "<A-8>", ":BufferGoto 8<CR>")
-	map("n", "<A-9>", ":BufferGoto 9<CR>")
-	map("n", "<A-0>", ":BufferLast<CR>")
-	-- this will change the action of <C-i>, cause TAB=<C-i>
-	-- map("n", "<TAB>", ":BufferNext<CR>")
-	-- map("n", "<S-TAB>", ":BufferPrevious<CR>")
-
-	----------this will slow down startup time------------
-	-- local wk_status_ok, wk = pcall(require, "which-key")
-	-- if not wk_status_ok then
-	-- 	return
-	-- end
-	-- local mappings = {
-	-- 	b = {
-	-- 		name = "Buffers",
-	-- 		g = { "<cmd>BufferPick<cr>", "Jump" },
-	-- 		b = { "<cmd>b#<cr>", "Previous" },
-	-- 		w = { "<cmd>BufferWipeout<cr>", "Wipeout" },
-	-- 		j = { "<cmd>BufferCloseBuffersLeft<cr>", "Close all to the left" },
-	-- 		l = {
-	-- 			"<cmd>BufferCloseBuffersRight<cr>",
-	-- 			"Close all to the right",
-	-- 		},
-	-- 		c = {
-	-- 			"<cmd>BufferCloseAllButCurrent<cr>",
-	-- 			"Close all but Current",
-	-- 		},
-	-- 		p = {
-	-- 			"<cmd>BufferCloseAllButPinned<cr>",
-	-- 			"Close all but Pinned",
-	-- 		},
-	-- 		d = {
-	-- 			"<cmd>BufferOrderByDirectory<cr>",
-	-- 			"Sort by directory",
-	-- 		},
-	-- 		L = {
-	-- 			"<cmd>BufferOrderByLanguage<cr>",
-	-- 			"Sort by language",
-	-- 		},
-	-- 	},
-	-- }
-	-- local opts = {
-	-- 	mode = "n", -- NORMAL mode
-	-- 	prefix = "<leader>",
-	-- 	buffer = nil, -- Global mappings. Specify a buffer number for buffer local mappings
-	-- 	silent = true, -- use `silent` when creating keymaps
-	-- 	noremap = true, -- use `noremap` when creating keymaps
-	-- 	nowait = true, -- use `nowait` when creating keymaps
-	-- }
-	-- wk.register(mappings, opts)
-end
 
 M.bufferline = function()
 	map("n", "<A-l>", ":BufferLineCycleNext<CR>")
