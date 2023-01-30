@@ -148,13 +148,6 @@ require("lazy").setup({
         end,
       },
 
-      {
-        "windwp/nvim-autopairs",
-        config = function()
-          require("plugins.configs.others").autopairs()
-        end,
-      },
-
       -- cmp sources plugins
       {
         "saadparwaiz1/cmp_luasnip",
@@ -164,6 +157,14 @@ require("lazy").setup({
         "hrsh7th/cmp-path",
       },
     }
+  },
+
+  {
+    "windwp/nvim-autopairs",
+    config = function()
+      require("plugins.configs.others").autopairs()
+    end,
+    dependencies = "hrsh7th/nvim-cmp"
   },
 
 	-- dashboard
