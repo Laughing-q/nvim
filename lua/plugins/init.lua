@@ -200,6 +200,7 @@ require("lazy").setup({
 		enabled = status.telescope,
     -- lazy = false,
     -- cmd = "Telescope",
+    event = "BufRead",
 		dependencies = {
 			{
 				"nvim-telescope/telescope-fzf-native.nvim",
