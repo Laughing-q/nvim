@@ -9,9 +9,9 @@ if not vim.loop.fs_stat(lazypath) then
     lazypath,
   })
 end
-vim.lazy.rtp:prepend(lazypath)
+vim.opt.rtp:prepend(lazypath)
 
-local status = require("plugins.lazys").status
+local status = require("plugins.opts").status
 
 require("lazy").setup({
 	{
