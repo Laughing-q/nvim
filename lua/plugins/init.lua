@@ -82,6 +82,7 @@ require("lazy").setup({
 	{
 		"lewis6991/gitsigns.nvim",
 		enabled = status.gitsigns,
+		event = "BufRead",
 		config = function()
 			require("plugins.configs.gitsigns")
 		end,
@@ -189,8 +190,7 @@ require("lazy").setup({
 	{
 		"nvim-telescope/telescope.nvim",
 		enabled = status.telescope,
-		-- module = "telescope",
-		-- cmd = "Telescope",
+    lazy = false,
 		dependencies = {
 			{
 				"nvim-telescope/telescope-fzf-native.nvim",
