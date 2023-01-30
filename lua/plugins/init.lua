@@ -82,10 +82,13 @@ require("lazy").setup({
 	{
 		"lewis6991/gitsigns.nvim",
 		enabled = status.gitsigns,
-		event = "BufRead",
+		-- event = "BufRead",
 		config = function()
 			require("plugins.configs.gitsigns")
 		end,
+    init = function ()
+      require("utils").lazy_load "gitsigns.nvim"
+    end
 	},
 
 	-- lsp stuff
@@ -93,10 +96,13 @@ require("lazy").setup({
 		"neovim/nvim-lspconfig",
 		enabled = status.lspconfig,
 		dependencies = { "mason.nvim" },
-		event = "BufWinEnter",
-		init = function()
+		-- event = "BufWinEnter",
+		config = function()
 			require("plugins.configs.lsp.lspconfig")
 		end,
+    init = function ()
+      require("utils").lazy_load "nvim-lspconfig"
+    end
 	},
 
 	{
@@ -192,7 +198,8 @@ require("lazy").setup({
 	{
 		"nvim-telescope/telescope.nvim",
 		enabled = status.telescope,
-    lazy = false,
+    -- lazy = false,
+    -- cmd = "Telescope",
 		dependencies = {
 			{
 				"nvim-telescope/telescope-fzf-native.nvim",
