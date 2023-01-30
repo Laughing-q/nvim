@@ -50,9 +50,6 @@ require("lazy").setup({
 		"rebelot/heirline.nvim",
 		event = "BufRead",
 		enabled = status.heirline,
-		config = function()
-			require("plugins.configs.heirline")
-		end,
 	},
 
 	{
@@ -172,6 +169,7 @@ require("lazy").setup({
 	{
 		"numToStr/Comment.nvim",
 		enabled = status.comment,
+		event = "BufWinEnter",
 		config = function()
 			require("plugins.configs.others").comment()
 		end,
