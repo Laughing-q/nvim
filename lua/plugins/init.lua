@@ -319,13 +319,13 @@ require("lazy").setup({
 			vim.fn["mkdp#util#install"]()
 		end,
 		enabled = status.markdown_preview,
-		event = "BufRead",
+		-- event = "BufRead",
 		ft = { "markdown" },
 	},
 	{
 		"dhruvasagar/vim-table-mode",
 		enabled = status.table_mode,
-		event = "BufRead",
+		-- event = "BufRead",
 		ft = { "markdown" },
 		config = function()
 			require("plugins.configs.markdown.table_mode").setup()
@@ -334,7 +334,7 @@ require("lazy").setup({
 	{
 		"mzlogin/vim-markdown-toc",
 		enabled = status.markdown_toc,
-		event = "BufRead",
+		-- event = "BufRead",
 		ft = { "markdown" },
 		config = function()
 			require("plugins.configs.markdown.markdown_toc").setup()
@@ -343,8 +343,8 @@ require("lazy").setup({
 	{
 		"dkarter/bullets.vim",
 		enabled = status.bullets,
-		event = "BufRead",
 		ft = { "markdown" },
+    -- event = "BufRead",
 		config = function()
 			require("plugins.configs.markdown.bullets").setup()
 		end,
