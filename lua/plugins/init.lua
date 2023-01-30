@@ -1,13 +1,13 @@
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
-  vim.fn.system({
-    "git",
-    "clone",
-    "--filter=blob:none",
-    "https://github.com/folke/lazy.nvim.git",
-    "--branch=stable", -- latest stable release
-    lazypath,
-  })
+	vim.fn.system({
+		"git",
+		"clone",
+		"--filter=blob:none",
+		"https://github.com/folke/lazy.nvim.git",
+		"--branch=stable", -- latest stable release
+		lazypath,
+	})
 end
 vim.opt.rtp:prepend(lazypath)
 
@@ -44,7 +44,7 @@ require("lazy").setup({
 		config = function()
 			require("plugins.configs.feline")
 		end,
-  },
+	},
 
 	{
 		"rebelot/heirline.nvim",
@@ -53,7 +53,7 @@ require("lazy").setup({
 		config = function()
 			require("plugins.configs.heirline")
 		end,
-  },
+	},
 
 	{
 		"lukas-reineke/indent-blankline.nvim",
@@ -62,7 +62,7 @@ require("lazy").setup({
 		config = function()
 			require("plugins.configs.others").blankline()
 		end,
-  },
+	},
 
 	{
 		"nvim-treesitter/nvim-treesitter",
@@ -71,35 +71,31 @@ require("lazy").setup({
 		config = function()
 			require("plugins.configs.treesitter")
 		end,
-  },
+	},
 
 	{ -- Additional text objects via treesitter
 		"nvim-treesitter/nvim-treesitter-textobjects",
-		dependencies = {"nvim-treesitter"},
-  },
+		dependencies = { "nvim-treesitter" },
+	},
 
 	-- git stuff
 	{
 		"lewis6991/gitsigns.nvim",
 		enabled = status.gitsigns,
-		lazy = true,
 		config = function()
 			require("plugins.configs.gitsigns")
 		end,
-		init = function()
-			require("utils").lazy_load("gitsigns.nvim")
-		end,
-  },
+	},
 
 	-- lsp stuff
 	{
 		"neovim/nvim-lspconfig",
 		enabled = status.lspconfig,
-		dependencies = {"mason.nvim"},
+		dependencies = { "mason.nvim" },
 		config = function()
 			require("plugins.configs.lsp.lspconfig")
 		end,
-  },
+	},
 
 	{
 		"williamboman/mason.nvim",
@@ -107,7 +103,7 @@ require("lazy").setup({
 		config = function()
 			require("plugins.configs.lsp.mason")
 		end,
-  },
+	},
 
 	{
 		"jose-elias-alvarez/null-ls.nvim",
@@ -116,56 +112,52 @@ require("lazy").setup({
 		config = function()
 			require("plugins.configs.lsp.null-ls").setup()
 		end,
-  },
+	},
 
 	-- TODO: remove it or config it
 	-- {
 	-- 	-- "andymass/vim-matchup",
 	-- 	"Laughing-q/vim-matchup",
 	-- 	enabled = status.matchup,
-	-- 	lazy = true,
-	-- 	init = function()
-	-- 		require("utils").lazy_load("vim-matchup")
-	-- 	end,
-	-- })
+	-- },
 
 	-- load luasnips + cmp related in insert mode only
 
 	{
 		"hrsh7th/nvim-cmp",
 		enabled = status.cmp,
-		event = "InsertEnter",
 		config = function()
 			require("plugins.configs.cmp")
 		end,
-    dependencies = {
-      {
-        -- snippet plugin
-        "L3MON4D3/LuaSnip",
-        dependencies = "rafamadriz/friendly-snippets",
-        config = function()
-          require("plugins.configs.others").luasnip()
-        end,
-      },
+		dependencies = {
+			{
+				-- snippet plugin
+				"L3MON4D3/LuaSnip",
+				dependencies = "rafamadriz/friendly-snippets",
+				config = function()
+					require("plugins.configs.others").luasnip()
+				end,
+			},
 
-      -- cmp sources plugins
-      {
-        "saadparwaiz1/cmp_luasnip",
-        "hrsh7th/cmp-nvim-lua",
-        "hrsh7th/cmp-nvim-lsp",
-        "hrsh7th/cmp-buffer",
-        "hrsh7th/cmp-path",
-      },
-    }
-  },
+			-- cmp sources plugins
+			{
+				"saadparwaiz1/cmp_luasnip",
+				"hrsh7th/cmp-nvim-lua",
+				"hrsh7th/cmp-nvim-lsp",
+				"hrsh7th/cmp-buffer",
+				"hrsh7th/cmp-path",
+			},
+		},
+	},
 
-  {
-    "windwp/nvim-autopairs",
-    config = function()
-      require("plugins.configs.others").autopairs()
-    end,
-    dependencies = "hrsh7th/nvim-cmp"
-  },
+	{
+		"windwp/nvim-autopairs",
+		event = "InsertEnter",
+		config = function()
+			require("plugins.configs.others").autopairs()
+		end,
+		dependencies = "hrsh7th/nvim-cmp",
+	},
 
 	-- dashboard
 	{
@@ -174,19 +166,15 @@ require("lazy").setup({
 		config = function()
 			require("plugins.configs.dashboard")
 		end,
-  },
+	},
 
 	{
 		"numToStr/Comment.nvim",
 		enabled = status.comment,
-		-- cmd = "Comment",
 		config = function()
 			require("plugins.configs.others").comment()
 		end,
-		init = function()
-			require("utils").lazy_load("Comment.nvim")
-		end,
-  },
+	},
 
 	-- file managing , picker etc
 	{
@@ -196,7 +184,7 @@ require("lazy").setup({
 		config = function()
 			require("plugins.configs.nvimtree")
 		end,
-  },
+	},
 
 	{
 		"nvim-telescope/telescope.nvim",
@@ -208,27 +196,19 @@ require("lazy").setup({
 				"nvim-telescope/telescope-fzf-native.nvim",
 				enabled = status.fzf,
 				build = "make",
-				-- lazy = true,
-				init = function()
-					require("utils").lazy_load("telescope-fzf-native.nvim")
-				end,
 			},
 			{
 				"ahmedkhalf/project.nvim",
 				enabled = status.project,
-				-- lazy = true,
 				config = function()
 					require("plugins.configs.telescope_ex.project").setup()
-				end,
-				init = function()
-					require("utils").lazy_load("project.nvim")
 				end,
 			},
 		},
 		config = function()
 			require("plugins.configs.telescope")
 		end,
-  },
+	},
 
 	-- keybinding
 	{
@@ -238,18 +218,18 @@ require("lazy").setup({
 		config = function()
 			require("plugins.configs.which-key").setup()
 		end,
-  },
+	},
 	-- colorscheme
 	{
 		"folke/tokyonight.nvim",
 		enabled = status.tokyonight,
-    lazy = false, -- make sure we load this during startup if it is your main colorscheme
-    priority = 1000, -- make sure to load this before all the other start plugins
-  },
+		lazy = false, -- make sure we load this during startup if it is your main colorscheme
+		priority = 1000, -- make sure to load this before all the other start plugins
+	},
 	{
 		"rebelot/kanagawa.nvim",
 		enabled = status.kanagawa,
-  },
+	},
 
 	-- bufferline
 	{
@@ -262,7 +242,7 @@ require("lazy").setup({
 		init = function()
 			require("keymappings").bufferline()
 		end,
-  },
+	},
 
 	-- Terminal
 	{
@@ -272,14 +252,14 @@ require("lazy").setup({
 		config = function()
 			require("plugins.configs.terminal").setup()
 		end,
-  },
+	},
 
 	-- swith true false
 	{
 		"Laughing-q/antovim",
 		enabled = status.antovim,
 		cmd = { "Antovim" },
-  },
+	},
 
 	{
 		"norcalli/nvim-colorizer.lua",
@@ -288,14 +268,14 @@ require("lazy").setup({
 		config = function()
 			require("plugins.configs.others").colorizer()
 		end,
-  },
+	},
 
 	-- undotree
 	{
 		"Laughing-q/undotree",
 		enabled = status.undotree,
 		cmd = { "UndotreeToggle" },
-  },
+	},
 	-- functions and values
 	--
 	{
@@ -306,7 +286,7 @@ require("lazy").setup({
 			-- require('aerial').setup({})
 			require("plugins.configs.aerial")
 		end,
-  },
+	},
 
 	-- faster select
 	{
@@ -314,13 +294,13 @@ require("lazy").setup({
 		enabled = status.wildfire,
 		event = "BufRead",
 		-- disable = true,
-  },
+	},
 	{
 		"tpope/vim-surround",
 		enabled = status.surround,
 		event = "BufRead",
 		-- disable = true,
-  },
+	},
 	-- rnvimr
 	{
 		"kevinhwang91/rnvimr",
@@ -329,10 +309,7 @@ require("lazy").setup({
 		config = function()
 			require("plugins.configs.others").rnvimr()
 		end,
-		init = function()
-			require("utils").lazy_load("rnvimr")
-		end,
-  },
+	},
 	-- markdown
 	{
 		"iamcco/markdown-preview.nvim",
@@ -342,7 +319,7 @@ require("lazy").setup({
 		enabled = status.markdown_preview,
 		event = "BufRead",
 		ft = { "markdown" },
-  },
+	},
 	{
 		"dhruvasagar/vim-table-mode",
 		enabled = status.table_mode,
@@ -351,7 +328,7 @@ require("lazy").setup({
 		config = function()
 			require("plugins.configs.markdown.table_mode").setup()
 		end,
-  },
+	},
 	{
 		"mzlogin/vim-markdown-toc",
 		enabled = status.markdown_toc,
@@ -360,7 +337,7 @@ require("lazy").setup({
 		config = function()
 			require("plugins.configs.markdown.markdown_toc").setup()
 		end,
-  },
+	},
 	{
 		"dkarter/bullets.vim",
 		enabled = status.bullets,
@@ -369,7 +346,7 @@ require("lazy").setup({
 		config = function()
 			require("plugins.configs.markdown.bullets").setup()
 		end,
-  },
+	},
 	-- latex
 	{
 		"lervag/vimtex",
@@ -380,7 +357,7 @@ require("lazy").setup({
 			vim.g.vimtex_compiler_progname = "xelatex"
 			-- vim.g.vimtex_compiler_latexmk_engines='xelatex'
 		end,
-  },
+	},
 
 	-- faster move, jump between characters
 	{
@@ -394,21 +371,21 @@ require("lazy").setup({
 				repeat_ft_with_target_char = false,
 			})
 		end,
-  },
+	},
 
 	-- scrolling
 	{
 		"dstein64/nvim-scrollview",
 		enabled = status.scrollview,
 		event = "BufRead",
-  },
+	},
 
 	-- debug
 	{
 		"mfussenegger/nvim-dap",
 		event = "BufRead",
 		enabled = status.dap,
-  },
+	},
 
 	-- use {
 	--    "xuhdev/vim-latex-live-preview",
@@ -435,10 +412,12 @@ require("lazy").setup({
 		"lambdalisue/suda.vim",
 		cmd = { "SudaWrite", "SudaRead" },
 		enabled = status.suda,
-  },
+	},
 
 	{
 		"ThePrimeagen/vim-be-good",
 		cmd = { "VimBeGood" },
-  },
+	},
+}, {
+	defaults = { lazy = true },
 })
