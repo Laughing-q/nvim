@@ -12,6 +12,7 @@ local core_modules = {
 	"options",
   "commands",
 	"keymappings",
+  "plugins",
 }
 pcall(require, "impatient")
 
