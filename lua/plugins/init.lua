@@ -50,7 +50,7 @@ require("lazy").setup({
 		"rebelot/heirline.nvim",
 		event = "BufRead",
 		enabled = status.heirline,
-    init = function ()
+    config = function ()
       require("plugins.configs.heirline")
     end
 	},
