@@ -50,6 +50,9 @@ require("lazy").setup({
 		"rebelot/heirline.nvim",
 		event = "BufRead",
 		enabled = status.heirline,
+    init = function ()
+      require("plugins.configs.heirline")
+    end
 	},
 
 	{
@@ -90,7 +93,8 @@ require("lazy").setup({
 		"neovim/nvim-lspconfig",
 		enabled = status.lspconfig,
 		dependencies = { "mason.nvim" },
-		config = function()
+		event = "BufWinEnter",
+		init = function()
 			require("plugins.configs.lsp.lspconfig")
 		end,
 	},
