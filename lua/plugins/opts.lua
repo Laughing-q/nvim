@@ -3,7 +3,6 @@ local M = {}
 M.status = {
   plenary = true,
   filetype = true,
-  impatient = true,
   devicons = true,
   blankline = true,
   treesitter = true,

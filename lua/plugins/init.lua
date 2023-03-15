@@ -26,11 +26,6 @@ require("lazy").setup({
 	},
 
 	{
-		"lewis6991/impatient.nvim",
-		enabled = status.impatient,
-	},
-
-	{
 		"kyazdani42/nvim-web-devicons",
 		event = "BufRead",
 		enabled = status.devicons,

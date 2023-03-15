@@ -14,7 +14,6 @@ local core_modules = {
 	"keymappings",
   "plugins",
 }
-pcall(require, "impatient")
 require("keymappings").misc()
 
 for _, module in ipairs(core_modules) do
