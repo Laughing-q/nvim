@@ -42,7 +42,7 @@ M.status = {
   aerial = true,
   wildfire = true,
   surround = true,
-  rnvimr = true,
+  rnvimr = false,
   -- markdown stuff
   markdown_preview = true,
   table_mode = true,

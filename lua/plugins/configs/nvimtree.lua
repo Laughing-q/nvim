@@ -53,7 +53,7 @@ local list = {
   { key = "-",                            cb = tree_cb("dir_up") },
   { key = "s",                            cb = tree_cb("system_open") },
   { key = "q",                            cb = tree_cb("close") },
-  { key = "g?",                           cb = tree_cb("toggle_help") },
+  { key = "?",                            cb = tree_cb("toggle_help") },
 }
 
 g.nvim_tree_icons = {
@@ -82,8 +82,9 @@ g.nvim_tree_icons = {
 
 local options = {
    filters = {
-      dotfiles = false,
-      exclude = { "custom" },
+      dotfiles = true,
+      custom = {"__pycache__"},
+      exclude = {},
    },
    disable_netrw = true,
    hijack_netrw = true,
