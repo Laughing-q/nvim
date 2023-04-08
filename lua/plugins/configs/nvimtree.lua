@@ -37,7 +37,7 @@ local list = {
   -- { key = "I",                            cb = tree_cb("toggle_ignored") },
   { key = "<BS>",                         cb = tree_cb("toggle_dotfiles") },
   { key = "R",                            cb = tree_cb("refresh") },
-  { key = "a",                            cb = tree_cb("create") },
+  { key = "T",                            cb = tree_cb("create") },
   { key = "d",                            cb = tree_cb("cut") },
   -- { key = "D",                            cb = tree_cb("trash") },
   { key = "D",                            cb = tree_cb("remove") },
@@ -51,7 +51,7 @@ local list = {
   { key = "ya",                           cb = tree_cb("copy_absolute_path") },
   { key = "[c",                           cb = tree_cb("prev_git_item") },
   { key = "]c",                           cb = tree_cb("next_git_item") },
-  { key = "-",                            cb = tree_cb("dir_up") },
+  { key = "h",                            cb = tree_cb("dir_up") },
   { key = "s",                            cb = tree_cb("system_open") },
   { key = "q",                            cb = tree_cb("close") },
   { key = "?",                            cb = tree_cb("toggle_help") },
@@ -106,8 +106,11 @@ local options = {
       }
    },
    git = {
-      enable = false,
-      ignore = true,
+      enable = true,
+      ignore = false,
+   },
+   diagnostics = {
+     enable = false,
    },
    actions = {
       open_file = {
