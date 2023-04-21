@@ -18,44 +18,59 @@ local g = vim.g
 --    folder_arrows = 1,
 -- }
 
-local tree_cb = require'nvim-tree.config'.nvim_tree_callback
--- default mappings
-local list = {
-  { key = {"<CR>", "l", "<2-LeftMouse>"}, cb = tree_cb("edit") },
-  { key = {"<2-RightMouse>", "<C-]>"},    cb = tree_cb("cd") },
-  { key = "<C-v>",                        cb = tree_cb("vsplit") },
-  { key = "<C-x>",                        cb = tree_cb("split") },
-  { key = "<C-t>",                        cb = tree_cb("tabnew") },
-  { key = "<",                            cb = tree_cb("prev_sibling") },
-  { key = ">",                            cb = tree_cb("next_sibling") },
-  { key = "P",                            cb = tree_cb("parent_node") },
-  { key = "j",                            cb = tree_cb("close_node") },
-  { key = "<S-CR>",                       cb = tree_cb("close_node") },
-  { key = "<Tab>",                        cb = tree_cb("preview") },
-  { key = "J",                            cb = tree_cb("first_sibling") },
-  { key = "L",                            cb = tree_cb("last_sibling") },
-  -- { key = "I",                            cb = tree_cb("toggle_ignored") },
-  { key = "<BS>",                         cb = tree_cb("toggle_dotfiles") },
-  { key = "R",                            cb = tree_cb("refresh") },
-  { key = "T",                            cb = tree_cb("create") },
-  { key = "d",                            cb = tree_cb("cut") },
-  -- { key = "D",                            cb = tree_cb("trash") },
-  { key = "D",                            cb = tree_cb("remove") },
-  { key = "r",                            cb = tree_cb("rename") },
-  -- { key = "<C-r>",                        cb = tree_cb("full_rename") },
-  { key = "c",                            cb = tree_cb("full_rename") },
-  { key = "p",                            cb = tree_cb("paste") },
-  { key = "yy",                           cb = tree_cb("copy") },
-  { key = "yn",                           cb = tree_cb("copy_name") },
-  { key = "yp",                           cb = tree_cb("copy_path") },
-  { key = "ya",                           cb = tree_cb("copy_absolute_path") },
-  { key = "[c",                           cb = tree_cb("prev_git_item") },
-  { key = "]c",                           cb = tree_cb("next_git_item") },
-  { key = "h",                            cb = tree_cb("dir_up") },
-  { key = "s",                            cb = tree_cb("system_open") },
-  { key = "q",                            cb = tree_cb("close") },
-  { key = "?",                            cb = tree_cb("toggle_help") },
-}
+local function on_attach(bufnr)
+  local api = require('nvim-tree.api')
+
+  local function opts(desc)
+    return { desc = 'nvim-tree: ' .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
+  end
+
+
+  -- Default mappings not inserted as:
+  --  remove_keymaps = true
+  --  OR
+  --  view.mappings.custom_only = true
+
+
+  -- Mappings migrated from view.mappings.list
+  --
+  -- You will need to insert "your code goes here" for any mappings with a custom action_cb
+  vim.keymap.set('n', '<CR>', api.node.open.edit, opts('Open'))
+  vim.keymap.set('n', 'l', api.node.open.edit, opts('Open'))
+  vim.keymap.set('n', '<2-LeftMouse>', api.node.open.edit, opts('Open'))
+  vim.keymap.set('n', '<2-RightMouse>', api.tree.change_root_to_node, opts('CD'))
+  vim.keymap.set('n', '<C-]>', api.tree.change_root_to_node, opts('CD'))
+  vim.keymap.set('n', '<C-v>', api.node.open.vertical, opts('Open: Vertical Split'))
+  vim.keymap.set('n', '<C-x>', api.node.open.horizontal, opts('Open: Horizontal Split'))
+  vim.keymap.set('n', '<C-t>', api.node.open.tab, opts('Open: New Tab'))
+  vim.keymap.set('n', '<', api.node.navigate.sibling.prev, opts('Previous Sibling'))
+  vim.keymap.set('n', '>', api.node.navigate.sibling.next, opts('Next Sibling'))
+  vim.keymap.set('n', 'P', api.node.navigate.parent, opts('Parent Directory'))
+  vim.keymap.set('n', 'j', api.node.navigate.parent_close, opts('Close Directory'))
+  vim.keymap.set('n', '<S-CR>', api.node.navigate.parent_close, opts('Close Directory'))
+  vim.keymap.set('n', '<Tab>', api.node.open.preview, opts('Open Preview'))
+  vim.keymap.set('n', 'J', api.node.navigate.sibling.first, opts('First Sibling'))
+  vim.keymap.set('n', 'L', api.node.navigate.sibling.last, opts('Last Sibling'))
+  vim.keymap.set('n', '<BS>', api.tree.toggle_hidden_filter, opts('Toggle Dotfiles'))
+  vim.keymap.set('n', 'R', api.tree.reload, opts('Refresh'))
+  vim.keymap.set('n', 'T', api.fs.create, opts('Create'))
+  vim.keymap.set('n', 'd', api.fs.cut, opts('Cut'))
+  vim.keymap.set('n', 'D', api.fs.remove, opts('Delete'))
+  vim.keymap.set('n', 'r', api.fs.rename, opts('Rename'))
+  vim.keymap.set('n', 'c', api.fs.rename_sub, opts('Rename: Omit Filename'))
+  vim.keymap.set('n', 'p', api.fs.paste, opts('Paste'))
+  vim.keymap.set('n', 'yy', api.fs.copy.node, opts('Copy'))
+  vim.keymap.set('n', 'yn', api.fs.copy.filename, opts('Copy Name'))
+  vim.keymap.set('n', 'yp', api.fs.copy.relative_path, opts('Copy Relative Path'))
+  vim.keymap.set('n', 'ya', api.fs.copy.absolute_path, opts('Copy Absolute Path'))
+  vim.keymap.set('n', '[c', api.node.navigate.git.prev, opts('Prev Git'))
+  vim.keymap.set('n', ']c', api.node.navigate.git.next, opts('Next Git'))
+  vim.keymap.set('n', 'h', api.tree.change_root_to_parent, opts('Up'))
+  vim.keymap.set('n', 's', api.node.run.system, opts('Run System'))
+  vim.keymap.set('n', 'q', api.tree.close, opts('Close'))
+  vim.keymap.set('n', '?', api.tree.toggle_help, opts('Help'))
+
+end
 
 g.nvim_tree_icons = {
    default = "",
@@ -99,11 +114,6 @@ local options = {
    view = {
       side = "left",
       width = 30,
-      hide_root_folder = true,
-      mappings = {
-        custom_only = true,
-        list=list,
-      }
    },
    git = {
       enable = true,
@@ -121,7 +131,9 @@ local options = {
       indent_markers = {
          enable = false,
       },
+      root_folder_label = true,
    },
+   on_attach = on_attach
 }
 
 nvimtree.setup(options)

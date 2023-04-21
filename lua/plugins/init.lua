@@ -45,9 +45,9 @@ require("lazy").setup({
 		"rebelot/heirline.nvim",
 		event = "BufRead",
 		enabled = status.heirline,
-    config = function ()
-      require("plugins.configs.heirline")
-    end
+		config = function()
+			require("plugins.configs.heirline")
+		end,
 	},
 
 	{
@@ -81,9 +81,9 @@ require("lazy").setup({
 		config = function()
 			require("plugins.configs.gitsigns")
 		end,
-    init = function ()
-      require("utils").lazy_load "gitsigns.nvim"
-    end
+		init = function()
+			require("utils").lazy_load("gitsigns.nvim")
+		end,
 	},
 
 	-- lsp stuff
@@ -95,9 +95,9 @@ require("lazy").setup({
 		config = function()
 			require("plugins.configs.lsp.lspconfig")
 		end,
-    init = function ()
-      require("utils").lazy_load "nvim-lspconfig"
-    end
+		init = function()
+			require("utils").lazy_load("nvim-lspconfig")
+		end,
 	},
 
 	{
@@ -193,9 +193,9 @@ require("lazy").setup({
 	{
 		"nvim-telescope/telescope.nvim",
 		enabled = status.telescope,
-    -- lazy = false,
-    -- cmd = "Telescope",
-    event = "BufRead",
+		-- lazy = false,
+		-- cmd = "Telescope",
+		event = "BufRead",
 		dependencies = {
 			{
 				"nvim-telescope/telescope-fzf-native.nvim",
@@ -347,7 +347,7 @@ require("lazy").setup({
 		"dkarter/bullets.vim",
 		enabled = status.bullets,
 		ft = { "markdown" },
-    -- event = "BufRead",
+		-- event = "BufRead",
 		config = function()
 			require("plugins.configs.markdown.bullets").setup()
 		end,
@@ -422,6 +422,14 @@ require("lazy").setup({
 	{
 		"ThePrimeagen/vim-be-good",
 		cmd = { "VimBeGood" },
+	},
+
+	{
+		"danymat/neogen",
+		dependencies = "nvim-treesitter/nvim-treesitter",
+		config = true,
+		-- Uncomment next line if you want to follow only stable versions
+		-- version = "*"
 	},
 }, {
 	defaults = { lazy = true },
