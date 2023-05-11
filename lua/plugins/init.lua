@@ -427,6 +427,7 @@ require("lazy").setup({
 
 	{
     "ThePrimeagen/harpoon",
+		event = "BufRead",
     config = function ()
 			require("keymappings").harpoon()
     end
