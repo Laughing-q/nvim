@@ -420,17 +420,20 @@ require("lazy").setup({
 		cmd = { "SudaWrite", "SudaRead" },
 		enabled = status.suda,
 	},
+	{
+		"ThePrimeagen/vim-be-good",
+		cmd = { "VimBeGood" },
+	},
 
-  use({
-    "ThePrimeagen/vim-be-good",
-    cmd = {"VimBeGood"},
-  })
-
-  use({
+	{
     "ThePrimeagen/harpoon",
-    setup = function ()
+    config = function ()
 			require("keymappings").harpoon()
     end
-  })
+	},
+}, {
+	defaults = { lazy = true },
+})
+
 
 end)
