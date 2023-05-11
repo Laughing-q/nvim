@@ -24,7 +24,7 @@ for _, module in ipairs(core_modules) do
 end
 
 -- colorscheme
-local colorscheme = "tokyonight"
+local colorscheme = "kanagawa"
 -- plugin global settings
 require("plugins.configs.global").setup(colorscheme)
 
