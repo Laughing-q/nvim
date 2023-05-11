@@ -3,7 +3,6 @@ local M = {}
 M.status = {
   plenary = true,
   filetype = true,
-  impatient = true,
   devicons = true,
   blankline = true,
   treesitter = true,
@@ -43,7 +42,7 @@ M.status = {
   aerial = true,
   wildfire = true,
   surround = true,
-  rnvimr = true,
+  rnvimr = false,
   -- markdown stuff
   markdown_preview = true,
   table_mode = true,

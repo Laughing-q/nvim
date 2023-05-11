@@ -12,8 +12,9 @@ local core_modules = {
 	"options",
   "commands",
 	"keymappings",
+  "plugins",
 }
-pcall(require, "impatient")
+require("keymappings").misc()
 
 for _, module in ipairs(core_modules) do
 	local ok, err = pcall(require, module)
@@ -21,10 +22,9 @@ for _, module in ipairs(core_modules) do
 		error("Error loading " .. module .. "\n\n" .. err)
 	end
 end
-require("keymappings").misc()
 
 -- colorscheme
-local colorscheme = "tokyonight"
+local colorscheme = "kanagawa"
 -- plugin global settings
 require("plugins.configs.global").setup(colorscheme)
 

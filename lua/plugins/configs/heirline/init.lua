@@ -15,5 +15,4 @@ local statusline = {
 	component.Ruler,
 	component.ScrollBar,
 }
-require("heirline").setup(statusline)
-
+require("heirline").setup({statusline=statusline})

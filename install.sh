@@ -1,2 +1,2 @@
 #!/bin/sh
-nvim +'hi NormalFloat guibg=#1e222a' +PackerSync
+nvim +'hi NormalFloat guibg=#1e222a' +"Lazy! sync"
