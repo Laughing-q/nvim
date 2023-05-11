@@ -435,5 +435,3 @@ require("lazy").setup({
 	defaults = { lazy = true },
 })
 
-
-end)
