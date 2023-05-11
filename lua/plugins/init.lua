@@ -249,7 +249,7 @@ require("lazy").setup({
 		-- setup = function()
 		-- 	require("keymappings").bufferline()
 		-- end,
-	})
+	},
 
 	-- Terminal
 	{
