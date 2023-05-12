@@ -13,6 +13,6 @@ local statusline = {
 	component.LSP,
 	component.Treesitter,
 	component.Ruler,
-	component.ScrollBar,
+	-- component.ScrollBar,
 }
 require("heirline").setup({statusline=statusline})
