@@ -214,7 +214,7 @@ local FileName = {
         -- now, if the filename would occupy more than 1/4th of the available
         -- space, we trim the file path to its initials
         -- See Flexible Components section below for dynamic truncation
-        if not conditions.width_percent_below(#filename, 0.25) then
+        if not conditions.width_percent_below(#filename, 0.4) then
             filename = vim.fn.pathshorten(filename)
         end
         return filename
@@ -227,14 +227,14 @@ local FileFlags = {
         condition = function()
             return vim.bo.modified
         end,
-        provider = "[+]",
-        hl = { fg = "green" },
+        provider = " ●",
+        hl = { fg = "#99FF66" },
     },
     {
         condition = function()
             return not vim.bo.modifiable or vim.bo.readonly
         end,
-        provider = "",
+        provider = " ",
         hl = { fg = "orange" },
     },
 }
