@@ -104,7 +104,7 @@ local sumneko_opts = require("plugins.configs.lsp.settings.sumneko_lua")
 local pyright_opts = require("plugins.configs.lsp.settings.pyright")
 local pylsp_opts = require("plugins.configs.lsp.settings.pylsp")
 
-lspconfig.lua_ls.setup({
+lspconfig.lus_ls.setup({
 	on_attach = M.on_attach,
 	capabilities = M.capabilities,
 
