@@ -426,13 +426,21 @@ require("lazy").setup({
 	},
 
 	{
-    "ThePrimeagen/harpoon",
+		"ThePrimeagen/harpoon",
 		event = "BufRead",
-    config = function ()
+		config = function()
 			require("keymappings").harpoon()
-    end
+		end,
+	},
+
+	{
+		"danymat/neogen",
+		dependencies = "nvim-treesitter/nvim-treesitter",
+		config = true,
+		cmd = { "Neogen" },
+		-- Uncomment next line if you want to follow only stable versions
+		-- version = "*"
 	},
 }, {
 	defaults = { lazy = true },
 })
-
