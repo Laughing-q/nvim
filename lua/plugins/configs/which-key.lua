@@ -125,14 +125,7 @@ leader_key = {
 		-- 		"Sort by language",
 		-- 	},
 		-- },
-		p = {
-			name = "Packer",
-			c = { "<cmd>PackerCompile<cr>", "Compile" },
-			i = { "<cmd>PackerInstall<cr>", "Install" },
-			s = { "<cmd>PackerSync<cr>", "Sync" },
-			S = { "<cmd>PackerStatus<cr>", "Status" },
-			u = { "<cmd>PackerUpdate<cr>", "Update" },
-		},
+		p = { "<cmd> Lazy<cr>", "Lazy"},
 
 		g = {
 			name = "Git",
@@ -211,7 +204,8 @@ leader_key = {
 			a = { "<cmd>Telescope find_files hidden=true previewer=false<cr>", "Find Hidden File" },
 			w = { "<cmd>Telescope live_grep<cr>", "Find Word" },
 			M = { "<cmd>Telescope man_pages<cr>", "Man Pages" },
-			h = { "<cmd>Telescope help_tags<cr>", "Find Help" },
+			-- h = { "<cmd>Telescope help_tags<cr>", "Find Help" },
+			h = { "<cmd>Telescope harpoon marks<cr>", "Find Help" },
 			r = { "<cmd>Telescope registers<cr>", "Registers" },
 			k = { "<cmd>Telescope keymaps<cr>", "Keymaps" },
 			c = { "<cmd>Telescope commands<cr>", "Commands" },

@@ -32,7 +32,7 @@ telescope.setup({
 			horizontal = {
 				prompt_position = "top",
         mirror = true,
-				-- preview_width = 0.5,
+				preview_width = 0.5,
 				-- results_width = 0.8,
 			},
 			vertical = {
@@ -101,7 +101,7 @@ telescope.setup({
 	},
 })
 
-local extensions = { "fzf", "projects" }
+local extensions = { "fzf", "projects", "harpoon" }
 -- local packer_repos = [["extensions", "telescope-fzf-native.nvim"]]
 
 -- telescope media_files

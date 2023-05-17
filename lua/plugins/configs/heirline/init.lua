@@ -5,12 +5,14 @@ local statusline = {
 	component.Git,
 	component.Python,
 	component.Align,
+  component.FileNameBlock,
+	component.Align,
 	component.Diagnostics,
 	component.Space,
 	component.Space,
 	component.LSP,
 	component.Treesitter,
 	component.Ruler,
-	component.ScrollBar,
+	-- component.ScrollBar,
 }
 require("heirline").setup({statusline=statusline})

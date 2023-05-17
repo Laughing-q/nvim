@@ -105,7 +105,8 @@ M.misc = function()
 
 	-------------plugins mappings---------------
 	-- rnvimr
-	map("n", "R", ":RnvimrToggle<CR><C-\\><C-n>:RnvimrResize 0<CR>")
+	-- map("n", "R", ":RnvimrToggle<CR><C-\\><C-n>:RnvimrResize 0<CR>")
+  map("n", "<C-G>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
 
 	--goyo
 	map("n", "gy", ":Goyo<CR>")
@@ -153,6 +154,21 @@ M.bufferline = function()
 	-- map("n", "<leader>bc", ":BufferLineCloseLeft<CR>:BufferLineCloseRight<CR>")
 	map("n", "<leader>bc", ":BufferCloseAllButCurrent<CR>")
 	map("n", "<leader>bw", ":BufferKill<CR>")
+end
+
+M.harpoon = function ()
+  local mark = require("harpoon.mark")
+  local ui = require("harpoon.ui")
+
+  map("n", "<leader>a", mark.add_file)
+  map("n", "<C-k>", ui.toggle_quick_menu)
+
+  map("n", "<A-l>", function() ui.nav_next() end)
+  map("n", "<A-j>", function() ui.nav_prev() end)
+	map("n", "<A-1>", function() ui.nav_file(1) end)
+	map("n", "<A-2>", function() ui.nav_file(2) end)
+	map("n", "<A-3>", function() ui.nav_file(3) end)
+	map("n", "<A-4>", function() ui.nav_file(4) end)
 end
 
 return M
