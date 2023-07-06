@@ -84,6 +84,9 @@ require("lazy").setup({
 		config = function()
 			require("plugins.configs.gitsigns")
 		end,
+		init = function()
+			require("utils").lazy_load("gitsigns.nvim")
+		end,
 	},
 
 	-- lsp stuff
@@ -94,6 +97,9 @@ require("lazy").setup({
 		-- event = "BufWinEnter",
 		config = function()
 			require("plugins.configs.lsp.lspconfig")
+		end,
+		init = function()
+			require("utils").lazy_load("nvim-lspconfig")
 		end,
 	},
 
