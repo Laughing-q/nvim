@@ -16,10 +16,6 @@ M.misc = function()
 	-- map("", "j", 'v:count || mode(1)[0:1] == "no" ? "j" : "gj"', { expr = true })
 	-- map("", "k", 'v:count || mode(1)[0:1] == "no" ? "k" : "gk"', { expr = true })
 
-	-- map("", "I", "5k")
-	-- map("", "K", "5j")
-	-- map("", "J", "5h")
-	-- map("", "L", "5l")
 	map("", "I", "<nop>")
 	map("", "K", "<nop>")
 	map("", "J", "<nop>")
@@ -106,10 +102,12 @@ M.misc = function()
 	-------------plugins mappings---------------
 	-- rnvimr
 	-- map("n", "R", ":RnvimrToggle<CR><C-\\><C-n>:RnvimrResize 0<CR>")
+
+  -- tmux
   map("n", "<C-G>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
 
 	--goyo
-	map("n", "gy", ":Goyo<CR>")
+	-- map("n", "gy", ":Goyo<CR>")
 
 	-- swith true and false
 	map("n", "gw", ":Antovim<CR>")
@@ -118,8 +116,8 @@ M.misc = function()
 	map("n", "U", ":UndotreeToggle<CR>")
 
 	-- lightspeed
-	map({ "n", "v" }, "K", "<Plug>Lightspeed_s", { noremap = false, desc = "jump down" })
-	map({ "n", "v" }, "I", "<Plug>Lightspeed_S", { noremap = false, desc = "jump up" })
+	-- map({ "n", "v" }, "K", "<Plug>Lightspeed_s", { noremap = false, desc = "jump down" })
+	-- map({ "n", "v" }, "I", "<Plug>Lightspeed_S", { noremap = false, desc = "jump up" })
 
 	-- nvimtree
 	map("n", "<C-n>", ":NvimTreeToggle <CR>")

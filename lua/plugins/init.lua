@@ -12,6 +12,7 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 local status = require("plugins.opts").status
+local others = require("plugins.configs.others")
 
 require("lazy").setup({
 	{
@@ -55,7 +56,7 @@ require("lazy").setup({
 		enabled = status.blankline,
 		event = "BufRead",
 		config = function()
-			require("plugins.configs.others").blankline()
+			others.blankline()
 		end,
 	},
 
@@ -83,9 +84,6 @@ require("lazy").setup({
 		config = function()
 			require("plugins.configs.gitsigns")
 		end,
-		init = function()
-			require("utils").lazy_load("gitsigns.nvim")
-		end,
 	},
 
 	-- lsp stuff
@@ -96,9 +94,6 @@ require("lazy").setup({
 		-- event = "BufWinEnter",
 		config = function()
 			require("plugins.configs.lsp.lspconfig")
-		end,
-		init = function()
-			require("utils").lazy_load("nvim-lspconfig")
 		end,
 	},
 
@@ -141,7 +136,7 @@ require("lazy").setup({
 				"L3MON4D3/LuaSnip",
 				dependencies = "rafamadriz/friendly-snippets",
 				config = function()
-					require("plugins.configs.others").luasnip()
+					others.luasnip()
 				end,
 			},
 
@@ -160,7 +155,7 @@ require("lazy").setup({
 		"windwp/nvim-autopairs",
 		event = "InsertEnter",
 		config = function()
-			require("plugins.configs.others").autopairs()
+			others.autopairs()
 		end,
 		dependencies = "hrsh7th/nvim-cmp",
 	},
@@ -179,7 +174,7 @@ require("lazy").setup({
 		enabled = status.comment,
 		event = "BufWinEnter",
 		config = function()
-			require("plugins.configs.others").comment()
+			others.comment()
 		end,
 	},
 
@@ -274,7 +269,7 @@ require("lazy").setup({
 		enabled = status.colorizer,
 		event = "BufRead",
 		config = function()
-			require("plugins.configs.others").colorizer()
+			others.colorizer()
 		end,
 	},
 
@@ -315,7 +310,7 @@ require("lazy").setup({
 		enabled = status.rnvimr,
 		cmd = "RnvimrToggle",
 		config = function()
-			require("plugins.configs.others").rnvimr()
+			others.rnvimr()
 		end,
 	},
 	-- markdown
@@ -373,11 +368,7 @@ require("lazy").setup({
 		enabled = status.lightspeed,
 		event = "BufRead",
 		config = function()
-			require("lightspeed").setup({
-				--- f/t ---
-				limit_ft_matches = 0,
-				repeat_ft_with_target_char = false,
-			})
+      others.lightspeed()
 		end,
 	},
 
@@ -386,6 +377,9 @@ require("lazy").setup({
 		"dstein64/nvim-scrollview",
 		enabled = status.scrollview,
 		event = "BufRead",
+		config = function()
+      others.scrollview()
+		end,
 	},
 
 	-- debug

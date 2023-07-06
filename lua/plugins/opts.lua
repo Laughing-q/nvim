@@ -50,7 +50,7 @@ M.status = {
   bullets = true,
 
   vimtex = true,
-  lightspeed = true,
+  lightspeed = false,
   scrollview = true,
   dap = false,
   suda = true,

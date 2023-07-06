@@ -153,4 +153,25 @@ M.rnvimr = function()
   ]])
 end
 
+M.lightspeed = function()
+	require("lightspeed").setup({
+		--- f/t ---
+		limit_ft_matches = 0,
+		repeat_ft_with_target_char = false,
+	})
+end
+
+M.scrollview = function()
+	require("scrollview").setup({
+		-- excluded_filetypes = { "nerdtree" },
+		current_only = true,
+		winblend = 75,
+		base = "right",
+		-- column = 80,
+		signs_on_startup = { "search" }, -- search, diagnostic
+		-- diagnostics_severities = { vim.diagnostic.severity.ERROR },
+		search_symbol = "-",
+	})
+end
+
 return M
