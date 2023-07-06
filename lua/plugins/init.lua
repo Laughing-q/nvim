@@ -105,7 +105,7 @@ require("lazy").setup({
 	{
 		"williamboman/mason.nvim",
 		enabled = status.lspinstaller,
-    build = ":MasonUpdate",
+		build = ":MasonUpdate",
 		config = function()
 			require("plugins.configs.lsp.mason")
 		end,
