@@ -58,11 +58,7 @@ leader_key = {
 		["<CR>"] = { "<cmd>nohlsearch<CR>", "No Highlight" },
 
 		-- window move stuff
-		w = { "<C-w>w", "Window previous" },
-		j = { "<C-w>h", "Window left" },
-		l = { "<C-w>l", "Window right" },
-		i = { "<C-w>k", "Window up" },
-		k = { "<C-w>j", "Window down" },
+		-- w = { "<C-w>w", "Window previous" },
 
 		-- spell and wrap stuff
 		-- s = {
@@ -153,7 +149,7 @@ leader_key = {
 			},
 		},
 
-		L = {
+		l = {
 			name = "LSP",
 			l = { "<cmd>LspStop<cr>", "Close LSP" },
 			L = { "<cmd>LspStart<cr>", "Open LSP" },

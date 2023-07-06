@@ -16,6 +16,11 @@ M.misc = function()
 	-- map("", "j", 'v:count || mode(1)[0:1] == "no" ? "j" : "gj"', { expr = true })
 	-- map("", "k", 'v:count || mode(1)[0:1] == "no" ? "k" : "gk"', { expr = true })
 
+	-- map("", "I", "<nop>")
+	-- map("", "K", "<nop>")
+	-- map("", "J", "<nop>")
+	-- map("", "L", "<nop>")
+
 	map("", "I", "<nop>")
 	map("", "K", "<nop>")
 	map("", "J", "<nop>")
@@ -84,6 +89,11 @@ M.misc = function()
 	map("n", "sk", ":set splitbelow<CR>:split<CR>")
 	map("n", "sj", ":set nosplitright<CR>:vsplit<CR>:set splitright<CR>")
 	map("n", "si", ":set nosplitbelow<CR>:split<CR>:set splitbelow<CR>")
+	-- window jump
+  map("n", "J", "<C-w>h")
+  map("n", "L", "<C-w>l")
+  map("n", "I", "<C-w>k")
+  map("n", "K", "<C-w>j")
 
 	-- spell and warp
 	map("n", "sw", ":set wrap!<CR>")
