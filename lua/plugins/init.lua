@@ -370,12 +370,44 @@ require("lazy").setup({
 
 	-- faster move, jump between characters
 	{
-		"ggandor/lightspeed.nvim",
-		enabled = status.lightspeed,
-		event = "BufRead",
-		config = function()
-      others.lightspeed()
-		end,
+		"folke/flash.nvim",
+		enabled = status.flash,
+		event = "VeryLazy",
+		opts = {},
+		keys = {
+			{
+				"s",
+				mode = { "n", "x", "o" },
+				function()
+					require("flash").jump()
+				end,
+				desc = "Flash",
+			},
+			-- {
+			-- 	"s",
+			-- 	mode = { "n", "o", "x" },
+			-- 	function()
+			-- 		require("flash").treesitter()
+			-- 	end,
+			-- 	desc = "Flash Treesitter",
+			-- },
+			{
+				"r",
+				mode = "o",
+				function()
+					require("flash").remote()
+				end,
+				desc = "Remote Flash",
+			},
+			{
+				"R",
+				mode = { "o", "x" },
+				function()
+					require("flash").treesitter_search()
+				end,
+				desc = "Treesitter Search",
+			},
+		},
 	},
 
 	-- scrolling
@@ -384,7 +416,7 @@ require("lazy").setup({
 		enabled = status.scrollview,
 		event = "BufRead",
 		config = function()
-      others.scrollview()
+			others.scrollview()
 		end,
 	},
 

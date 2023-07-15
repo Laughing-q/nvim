@@ -153,14 +153,6 @@ M.rnvimr = function()
   ]])
 end
 
-M.lightspeed = function()
-	require("lightspeed").setup({
-		--- f/t ---
-		limit_ft_matches = 0,
-		repeat_ft_with_target_char = false,
-	})
-end
-
 M.scrollview = function()
 	require("scrollview").setup({
 		-- excluded_filetypes = { "nerdtree" },
