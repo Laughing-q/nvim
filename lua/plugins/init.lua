@@ -476,23 +476,11 @@ require("lazy").setup({
 	},
 	{
 		"Laughing-q/lf.nvim",
-    cmd = {"Lf"},
+		cmd = { "Lf" },
 		config = function()
-			-- This feature will not work if the plugin is lazy-loaded
-			vim.g.lf_netrw = 1
-
 			require("lf").setup({
 				escape_quit = false,
-				border = "rounded",
-        default_cmd = "lfimg",
-			})
-
-			vim.api.nvim_create_autocmd({
-				event = "User",
-				pattern = "LfTermEnter",
-				callback = function(a)
-					vim.api.nvim_buf_set_keymap(a.buf, "t", "q", "q", { nowait = true })
-				end,
+				default_cmd = "lfimg",
 			})
 		end,
 		requires = { "toggleterm.nvim" },
