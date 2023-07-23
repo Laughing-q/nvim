@@ -38,6 +38,8 @@ func! CompileRunGcc()
 		set splitbelow
 		:sp
 		:term go run .
+	elseif &filetype == 'lua'
+    :luafile %
 	endif
 endfunc
 ]]
