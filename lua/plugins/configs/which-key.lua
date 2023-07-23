@@ -72,7 +72,7 @@ leader_key = {
 		-- },
 
 		-- nvimtree
-		e = { ":NvimTreeFocus <CR>", "NvimTree Focus" },
+		-- e = { ":NvimTreeFocus <CR>", "NvimTree Focus" },
 
 		-- functions and values
 		v = { "<cmd>AerialToggle<CR>", "Aerial" },

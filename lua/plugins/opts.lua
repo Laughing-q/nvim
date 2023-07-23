@@ -22,7 +22,8 @@ M.status = {
   autopairs = true,
   dashboard = false,
   comment = true,
-  nvimtree = true,
+  nvimtree = false,
+  lf = true,
   -- telescope stuff
   telescope = true,
   fzf = true,

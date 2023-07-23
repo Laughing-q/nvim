@@ -131,7 +131,7 @@ M.misc = function()
 	-- map({ "n", "v" }, "I", "<Plug>Lightspeed_S", { noremap = false, desc = "jump up" })
 
 	-- nvimtree
-	map("n", "<C-n>", ":NvimTreeToggle <CR>")
+	-- map("n", "<C-n>", ":NvimTreeToggle <CR>")
 
 	-- others keymapping in which-key setting
 end

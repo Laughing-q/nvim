@@ -476,6 +476,7 @@ require("lazy").setup({
 	},
 	{
 		"Laughing-q/lf.nvim",
+		enabled = status.lf,
 		cmd = { "Lf" },
 		config = function()
 			require("lf").setup({
