@@ -113,6 +113,7 @@ M.misc = function()
 	-- rnvimr
 	-- map("n", "R", ":RnvimrToggle<CR><C-\\><C-n>:RnvimrResize 0<CR>")
 	map("n", "R", ":Lf<CR>")
+	map("n", "<C-N>", ":Lf<CR>")   -- another key for LF
 
   -- tmux
   map("n", "<C-G>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
