@@ -413,6 +413,7 @@ require("lazy").setup({
 	-- scrolling
 	{
 		"dstein64/nvim-scrollview",
+    commit = "c076ebeb7227589d4cb54bc65e7d30c2d036f38c",
 		enabled = status.scrollview,
 		event = "BufRead",
 		config = function()
