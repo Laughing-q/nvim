@@ -33,7 +33,9 @@ M.misc = function()
 	map("n", "S", ":w <CR>")
 
 	-- fast home and end
-	map("", "<C-l>", "$")
+	map("n", "<C-l>", "$")
+  -- ignore the return sign
+	map("v", "<C-l>", "$h")
 	map("", "<C-j>", "_")
 
 	-- insert moving
