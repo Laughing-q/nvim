@@ -105,7 +105,7 @@ M.misc = function()
 	map("n", "\\p", ":echo expand('%:p')<CR>")
 	map("n", "\\w", ":pwd<CR>")
 	-- <++>
-	map("n", "<LEADER><LEADER>", "<Esc>/<++><CR>:nohlsearch<CR>c4l")
+	map("n", "<LEADER><LEADER>", "<Esc>/<++><CR>:nohlsearch<CR>\"_c4l")
 	-- figlet
 	map("n", "tx", ":r !figlet ")
 
