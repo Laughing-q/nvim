@@ -299,10 +299,12 @@ require("lazy").setup({
 
 	-- faster select
 	{
-		"gcmt/wildfire.vim",
-		enabled = status.wildfire,
-		event = "BufRead",
-		-- disable = true,
+		"sustech-data/wildfire.nvim",
+		event = "VeryLazy",
+		dependencies = { "nvim-treesitter/nvim-treesitter" },
+		config = function()
+			require("wildfire").setup()
+		end,
 	},
 	{
 		"tpope/vim-surround",
@@ -413,7 +415,7 @@ require("lazy").setup({
 	-- scrolling
 	{
 		"dstein64/nvim-scrollview",
-    commit = "c076ebeb7227589d4cb54bc65e7d30c2d036f38c",
+		commit = "c076ebeb7227589d4cb54bc65e7d30c2d036f38c",
 		enabled = status.scrollview,
 		event = "BufRead",
 		config = function()
