@@ -112,15 +112,6 @@ require("lazy").setup({
 		end,
 	},
 
-	{
-		"jose-elias-alvarez/null-ls.nvim",
-		enabled = status.null_ls,
-		dependencies = "nvim-lspconfig",
-		config = function()
-			require("plugins.configs.lsp.null-ls").setup()
-		end,
-	},
-
 	-- TODO: remove it or config it
 	-- {
 	-- 	-- "andymass/vim-matchup",
