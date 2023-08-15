@@ -27,7 +27,7 @@ require("lazy").setup({
 	},
 
 	{
-		"kyazdani42/nvim-web-devicons",
+		"nvim-tree/nvim-web-devicons",
 		event = "BufRead",
 		enabled = status.devicons,
 	},
@@ -481,6 +481,17 @@ require("lazy").setup({
 			})
 		end,
 		requires = { "toggleterm.nvim" },
+	},
+	{
+		"nvimdev/lspsaga.nvim",
+    event = "VeryLazy",
+		config = function()
+			require("lspsaga").setup({})
+		end,
+		dependencies = {
+			"nvim-treesitter/nvim-treesitter", -- optional
+			"nvim-tree/nvim-web-devicons", -- optional
+		},
 	},
 }, {
 	defaults = { lazy = true },
