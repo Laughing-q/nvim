@@ -470,6 +470,18 @@ require("lazy").setup({
 		-- Uncomment next line if you want to follow only stable versions
 		-- version = "*"
 	},
+	{
+		"Laughing-q/lf.nvim",
+		enabled = status.lf,
+		cmd = { "Lf" },
+		config = function()
+			require("lf").setup({
+				escape_quit = false,
+				default_cmd = "lfimg",
+			})
+		end,
+		requires = { "toggleterm.nvim" },
+	},
 }, {
 	defaults = { lazy = true },
 })

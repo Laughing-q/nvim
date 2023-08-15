@@ -105,7 +105,7 @@ M.misc = function()
 	map("n", "\\p", ":echo expand('%:p')<CR>")
 	map("n", "\\w", ":pwd<CR>")
 	-- <++>
-	map("n", "<LEADER><LEADER>", "<Esc>/<++><CR>:nohlsearch<CR>c4l")
+	map("n", "<LEADER><LEADER>", "<Esc>/<++><CR>:nohlsearch<CR>\"_c4l")
 	-- figlet
 	map("n", "tx", ":r !figlet ")
 
@@ -114,6 +114,8 @@ M.misc = function()
 	-------------plugins mappings---------------
 	-- rnvimr
 	-- map("n", "R", ":RnvimrToggle<CR><C-\\><C-n>:RnvimrResize 0<CR>")
+	map("n", "R", ":Lf<CR>")
+	map("n", "<C-N>", ":Lf<CR>")   -- another key for LF
 
   -- tmux
   map("n", "<C-G>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
@@ -132,7 +134,7 @@ M.misc = function()
 	-- map({ "n", "v" }, "I", "<Plug>Lightspeed_S", { noremap = false, desc = "jump up" })
 
 	-- nvimtree
-	map("n", "<C-n>", ":NvimTreeToggle <CR>")
+	-- map("n", "<C-n>", ":NvimTreeToggle <CR>")
 
 	-- others keymapping in which-key setting
 end
