@@ -486,7 +486,7 @@ require("lazy").setup({
 		"nvimdev/lspsaga.nvim",
     event = "VeryLazy",
 		config = function()
-			require("lspsaga").setup({})
+      require("plugins.configs.lspsaga")
 		end,
 		dependencies = {
 			"nvim-treesitter/nvim-treesitter", -- optional
