@@ -6,7 +6,7 @@ require("lspsaga").setup({
 			vsplit = "<C-v>",
 			split = "<C-x>",
 			shuttle = "[w",
-			toggle_or_req = "l",
+			toggle_or_req = {"l", "<CR>"},
 			close = "<C-c>k",
 			tabe = "t",
 			quit = "q",
@@ -18,7 +18,7 @@ require("lspsaga").setup({
 		layout = "float",
 		keys = {
 			shuttle = "[w",
-			toggle_or_open = "l",
+			toggle_or_open = {"l", "<CR>"},
 			vsplit = "<C-v>",
 			split = "<C-x>",
 			close = "<C-c>k",
