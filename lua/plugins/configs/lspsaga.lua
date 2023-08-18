@@ -41,9 +41,9 @@ require("lspsaga").setup({
 		max_height = 0.5,
 		left_width = 0.3,
 		keys = {
-			toggle_or_jump = { "l", "<CR>" },
+			toggle_or_jump = "l",
 			quit = "q",
-			jump = "e",
+			jump = "<CR>",
 		},
 	},
 	-- ui = {
