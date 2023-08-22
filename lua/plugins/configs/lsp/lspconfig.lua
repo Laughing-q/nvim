@@ -130,6 +130,11 @@ lspconfig.clangd.setup{
 	capabilities = M.capabilities,
 }
 
+lspconfig.cmake.setup{
+	on_attach = M.on_attach,
+	capabilities = M.capabilities,
+}
+
 -- lspconfig.pylsp.setup({
 -- 	on_attach = M.on_attach,
 -- 	capabilities = M.capabilities,
