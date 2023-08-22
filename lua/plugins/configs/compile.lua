@@ -40,6 +40,11 @@ func! CompileRunGcc()
 		:term go run .
 	elseif &filetype == 'lua'
     :luafile %
+	elseif &filetype == 'cmake'
+		set splitbelow
+		:sp
+    :term cmake_build . build
+    :$
 	endif
 endfunc
 ]]
