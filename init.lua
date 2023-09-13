@@ -10,9 +10,8 @@
 local core_modules = {
 	"autocmds",
 	"options",
-  "commands",
 	"keymappings",
-  "plugins",
+	"plugins",
 }
 require("keymappings").misc()
 

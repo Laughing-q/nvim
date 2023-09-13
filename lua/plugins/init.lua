@@ -32,16 +32,6 @@ require("lazy").setup({
 		enabled = status.devicons,
 	},
 
-	-- statueline
-	{
-		"feline-nvim/feline.nvim",
-		event = "BufRead",
-		enabled = status.feline,
-		config = function()
-			require("plugins.configs.feline")
-		end,
-	},
-
 	{
 		"rebelot/heirline.nvim",
 		event = "BufRead",
@@ -80,12 +70,9 @@ require("lazy").setup({
 	{
 		"lewis6991/gitsigns.nvim",
 		enabled = status.gitsigns,
-		-- event = "BufRead",
+		event = "VeryLazy",
 		config = function()
 			require("plugins.configs.gitsigns")
-		end,
-		init = function()
-			require("utils").lazy_load("gitsigns.nvim")
 		end,
 	},
 
@@ -94,12 +81,9 @@ require("lazy").setup({
 		"neovim/nvim-lspconfig",
 		enabled = status.lspconfig,
 		dependencies = { "mason.nvim" },
-		-- event = "BufWinEnter",
+		event = "VeryLazy",
 		config = function()
 			require("plugins.configs.lsp.lspconfig")
-		end,
-		init = function()
-			require("utils").lazy_load("nvim-lspconfig")
 		end,
 	},
 
@@ -112,17 +96,10 @@ require("lazy").setup({
 		end,
 	},
 
-	-- TODO: remove it or config it
-	-- {
-	-- 	-- "andymass/vim-matchup",
-	-- 	"Laughing-q/vim-matchup",
-	-- 	enabled = status.matchup,
-	-- },
-
 	-- load luasnips + cmp related in insert mode only
-
 	{
 		"hrsh7th/nvim-cmp",
+		event = "InsertEnter",
 		enabled = status.cmp,
 		config = function()
 			require("plugins.configs.cmp")
@@ -157,15 +134,6 @@ require("lazy").setup({
 		dependencies = "hrsh7th/nvim-cmp",
 	},
 
-	-- dashboard
-	{
-		"glepnir/dashboard-nvim",
-		enabled = status.dashboard,
-		config = function()
-			require("plugins.configs.dashboard")
-		end,
-	},
-
 	{
 		"numToStr/Comment.nvim",
 		enabled = status.comment,
@@ -175,21 +143,9 @@ require("lazy").setup({
 		end,
 	},
 
-	-- file managing , picker etc
-	{
-		"kyazdani42/nvim-tree.lua",
-		enabled = status.nvimtree,
-		cmd = { "NvimTreeToggle", "NvimTreeFocus" },
-		config = function()
-			require("plugins.configs.nvimtree")
-		end,
-	},
-
 	{
 		"nvim-telescope/telescope.nvim",
 		enabled = status.telescope,
-		-- lazy = false,
-		-- cmd = "Telescope",
 		event = "BufRead",
 		dependencies = {
 			{
@@ -231,19 +187,6 @@ require("lazy").setup({
 		enabled = status.kanagawa,
 	},
 
-	-- bufferline
-	{
-		"akinsho/bufferline.nvim",
-		enabled = status.bufferline,
-		event = "BufWinEnter",
-		config = function()
-			require("plugins.configs.bufferline").setup()
-		end,
-		-- setup = function()
-		-- 	require("keymappings").bufferline()
-		-- end,
-	},
-
 	-- Terminal
 	{
 		"akinsho/toggleterm.nvim",
@@ -277,7 +220,6 @@ require("lazy").setup({
 		cmd = { "UndotreeToggle" },
 	},
 	-- functions and values
-	--
 	{
 		"stevearc/aerial.nvim",
 		enabled = status.aerial,
@@ -305,15 +247,7 @@ require("lazy").setup({
 			require("nvim-surround").setup()
 		end,
 	},
-	-- rnvimr
-	{
-		"kevinhwang91/rnvimr",
-		enabled = status.rnvimr,
-		cmd = "RnvimrToggle",
-		config = function()
-			others.rnvimr()
-		end,
-	},
+
 	-- markdown
 	{
 		"iamcco/markdown-preview.nvim",
@@ -321,7 +255,6 @@ require("lazy").setup({
 			vim.fn["mkdp#util#install"]()
 		end,
 		enabled = status.markdown_preview,
-		-- event = "BufRead",
 		ft = { "markdown" },
 	},
 	{
@@ -330,7 +263,7 @@ require("lazy").setup({
 		-- event = "BufRead",
 		ft = { "markdown" },
 		config = function()
-			require("plugins.configs.markdown.table_mode").setup()
+			require("plugins.configs.markdown").table_mode()
 		end,
 	},
 	{
@@ -339,7 +272,7 @@ require("lazy").setup({
 		-- event = "BufRead",
 		ft = { "markdown" },
 		config = function()
-			require("plugins.configs.markdown.markdown_toc").setup()
+			require("plugins.configs.markdown").markdown_toc()
 		end,
 	},
 	{
@@ -348,7 +281,7 @@ require("lazy").setup({
 		ft = { "markdown" },
 		-- event = "BufRead",
 		config = function()
-			require("plugins.configs.markdown.bullets").setup()
+			require("plugins.configs.markdown").bullets()
 		end,
 	},
 	-- latex
@@ -363,48 +296,6 @@ require("lazy").setup({
 		end,
 	},
 
-	-- faster move, jump between characters
-	{
-		"folke/flash.nvim",
-		enabled = status.flash,
-		event = "VeryLazy",
-		opts = {},
-		keys = {
-			{
-				"s",
-				mode = { "n", "x", "o" },
-				function()
-					require("flash").jump()
-				end,
-				desc = "Flash",
-			},
-			-- {
-			-- 	"s",
-			-- 	mode = { "n", "o", "x" },
-			-- 	function()
-			-- 		require("flash").treesitter()
-			-- 	end,
-			-- 	desc = "Flash Treesitter",
-			-- },
-			{
-				"r",
-				mode = "o",
-				function()
-					require("flash").remote()
-				end,
-				desc = "Remote Flash",
-			},
-			{
-				"R",
-				mode = { "o", "x" },
-				function()
-					require("flash").treesitter_search()
-				end,
-				desc = "Treesitter Search",
-			},
-		},
-	},
-
 	-- scrolling
 	{
 		"dstein64/nvim-scrollview",
@@ -415,34 +306,6 @@ require("lazy").setup({
 			others.scrollview()
 		end,
 	},
-
-	-- debug
-	{
-		"mfussenegger/nvim-dap",
-		event = "BufRead",
-		enabled = status.dap,
-	},
-
-	-- use {
-	--    "xuhdev/vim-latex-live-preview",
-	-- }
-
-	-- remote, rarely used it
-	-- {
-	-- 	"chipsenkbeil/distant.nvim",
-	-- 	cmd = "DistantLaunch",
-	-- 	-- DistantLaunch ip mode=ssh ssh.user=username
-	-- 	config = function()
-	-- 		require("distant").setup({
-	-- 			-- Applies Chip's personal settings to every machine you connect to
-	-- 			--
-	-- 			-- 1. Ensures that distant servers terminate with no connections
-	-- 			-- 2. Provides navigation bindings for remote directories
-	-- 			-- 3. Provides keybinding to jump into a remote file's parent directory
-	-- 			["*"] = require("distant.settings").chip_default(),
-	-- 		})
-	-- 	end,
-	-- })
 
 	{
 		"lambdalisue/suda.vim",

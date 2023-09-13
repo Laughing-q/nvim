@@ -12,14 +12,6 @@ M.misc = function()
 	map("", "gi", "gk")
 	map("", "gk", "gj")
 	map("", "gh", "gi")
-	-- Remap for dealing with word wrap
-	-- map("", "j", 'v:count || mode(1)[0:1] == "no" ? "j" : "gj"', { expr = true })
-	-- map("", "k", 'v:count || mode(1)[0:1] == "no" ? "k" : "gk"', { expr = true })
-
-	-- map("", "I", "<nop>")
-	-- map("", "K", "<nop>")
-	-- map("", "J", "<nop>")
-	-- map("", "L", "<nop>")
 
 	map("", "I", "<nop>")
 	map("", "K", "<nop>")
@@ -46,15 +38,10 @@ M.misc = function()
 	map("i", "<A-k>", "<Down>")
 	map("i", "<C-j>", "<ESC>^i")
 
-	-- command
-	-- map("", ";", ":")
-
 	--terminal
 	map("n", "tek", ":execute 16 .. 'new +terminal' | let b:term_type = 'hori' | startinsert <CR>")
 	map("n", "tel", ":execute 'vnew +terminal' | let b:term_type = 'vert' | startinsert <CR>")
 	map("t", "JK", "<C-\\><C-n><C-w>w")
-	-- map("n", "jk", "<C-w>wa")
-	-- map("t", "JK", "<C-\\><C-n> :lua require('utils').close_buffer() <CR>")
 
 	-- indent
 	map("n", ">", ">>")
@@ -112,16 +99,11 @@ M.misc = function()
   map("x", "<leader>p", "\"_dP")
 
 	-------------plugins mappings---------------
-	-- rnvimr
-	-- map("n", "R", ":RnvimrToggle<CR><C-\\><C-n>:RnvimrResize 0<CR>")
 	map("n", "R", ":Lf<CR>")
 	map("n", "<C-N>", ":Lf<CR>")   -- another key for LF
 
   -- tmux
   map("n", "<C-G>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
-
-	--goyo
-	-- map("n", "gy", ":Goyo<CR>")
 
 	-- swith true and false
 	map("n", "gw", ":Antovim<CR>")
@@ -129,46 +111,10 @@ M.misc = function()
 	-- undotree
 	map("n", "U", ":UndotreeToggle<CR>")
 
-	-- lightspeed
-	-- map({ "n", "v" }, "K", "<Plug>Lightspeed_s", { noremap = false, desc = "jump down" })
-	-- map({ "n", "v" }, "I", "<Plug>Lightspeed_S", { noremap = false, desc = "jump up" })
-
-	-- nvimtree
-	-- map("n", "<C-n>", ":NvimTreeToggle <CR>")
-
   -- lspsaga
   map("n", "gr", ":Lspsaga finder<CR>")
   map("n", "gD", ":Lspsaga peek_definition<CR>")
 	-- others keymapping in which-key setting
-end
-
-
-M.bufferline = function()
-	map("n", "<A-l>", ":BufferLineCycleNext<CR>")
-	map("n", "<A-j>", ":BufferLineCyclePrev<CR>")
-	map("n", "<A-;>", ":BufferLineMoveNext<CR>")
-	map("n", "<A-h>", ":BufferLineMovePrev<CR>")
-	map("n", "<A-1>", ":BufferLineGoToBuffer 1<CR>")
-	map("n", "<A-2>", ":BufferLineGoToBuffer 2<CR>")
-	map("n", "<A-3>", ":BufferLineGoToBuffer 3<CR>")
-	map("n", "<A-4>", ":BufferLineGoToBuffer 4<CR>")
-	map("n", "<A-5>", ":BufferLineGoToBuffer 5<CR>")
-	map("n", "<A-6>", ":BufferLineGoToBuffer 6<CR>")
-	map("n", "<A-7>", ":BufferLineGoToBuffer 7<CR>")
-	map("n", "<A-8>", ":BufferLineGoToBuffer 8<CR>")
-	map("n", "<A-9>", ":BufferLineGoToBuffer 9<CR>")
-
-	map("n", "<leader>bl", ":BufferLineCloseRight<CR>")
-	map("n", "<leader>bj", ":BufferLineCloseLeft<CR>")
-	map("n", "<leader>bg", ":BufferLinePick<CR>")
-	map("n", "<leader>bd", ":BufferLineSortByDirectory<CR>")
-	map("n", "<leader>bL", ":BufferLineSortByExtension<CR>")
-	map("n", "<leader>bt", ":BufferLineSortByTabs<CR>")
-	map("n", "<leader>bp", ":BufferLineTogglePin<CR>")
-	-- map("n", "<leader>bp", ":BufferLinePickClose<CR>")
-	-- map("n", "<leader>bc", ":BufferLineCloseLeft<CR>:BufferLineCloseRight<CR>")
-	map("n", "<leader>bc", ":BufferCloseAllButCurrent<CR>")
-	map("n", "<leader>bw", ":BufferKill<CR>")
 end
 
 M.harpoon = function ()

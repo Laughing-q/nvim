@@ -1,6 +1,21 @@
 local M = {}
 
-M.setup = function()
+M.bullets = function()
+	vim.cmd([[
+  let g:bullets_enabled_file_types = ['markdown', 'text', 'gitcommit', 'scratch']
+  ]])
+end
+
+M.markdown_toc = function()
+	-- move to global
+	vim.g.vmt_auto_update_on_save = 1
+	vim.g.vmt_dont_insert_fence = 1
+	vim.g.vmt_cycle_list_item_markers = 1
+	vim.g.vmt_fence_text = "TOC"
+	vim.g.vmt_fence_closing_text = "/TOC"
+end
+
+M.table_mode = function()
 	-- move to globel
 	-- vim.g.table_mode_map_prefix = '<Leader>m'
 	-- vim.g.table_mode_toggle_map = 'm'

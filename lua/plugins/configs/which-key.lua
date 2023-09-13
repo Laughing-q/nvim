@@ -53,7 +53,6 @@ leader_key = {
 	-- see https://neovim.io/doc/user/map.html#:map-cmd
 
 	mappings = {
-		-- e = { "<cmd>NvimTreeToggle<CR>", "NvimTree" },
 		-- f = { "<cmd>Telescope find_files<CR>", "Find File" },
 		["<CR>"] = { "<cmd>nohlsearch<CR>", "No Highlight" },
 
@@ -70,9 +69,6 @@ leader_key = {
 			-- i = { ":set nosplitright<CR>:vsplit<CR>:set splitright<CR>", "Split up" },
 			-- j = { ":set nosplitbelow<CR>:split<CR>:set splitbelow<CR>", "Split right" },
 		-- },
-
-		-- nvimtree
-		-- e = { ":NvimTreeFocus <CR>", "NvimTree Focus" },
 
 		-- functions and values
 		v = { "<cmd>Lspsaga outline<CR>", "Lspsaga outline" },
@@ -203,7 +199,6 @@ leader_key = {
 			k = { "<cmd>Telescope keymaps<cr>", "Keymaps" },
 			c = { "<cmd>Telescope commands<cr>", "Commands" },
 			p = { "<cmd>Telescope projects previewer=false<cr>", "Projects" },
-			y = { "<cmd>Telescope neoclip<cr>", "Find Clipboard" },
 			-- m = { "<cmd>Telescope media_files<cr>", "Media" },
 		},
 		T = {
