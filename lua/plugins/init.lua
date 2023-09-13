@@ -274,7 +274,7 @@ require("lazy").setup({
 		-- event = "BufRead",
 		ft = { "markdown" },
 		config = function()
-			require("plugins.configs.markdown.table_mode").setup()
+			require("plugins.configs.markdown").table_mode()
 		end,
 	},
 	{
@@ -283,7 +283,7 @@ require("lazy").setup({
 		-- event = "BufRead",
 		ft = { "markdown" },
 		config = function()
-			require("plugins.configs.markdown.markdown_toc").setup()
+			require("plugins.configs.markdown").markdown_toc()
 		end,
 	},
 	{
@@ -292,7 +292,7 @@ require("lazy").setup({
 		ft = { "markdown" },
 		-- event = "BufRead",
 		config = function()
-			require("plugins.configs.markdown.bullets").setup()
+			require("plugins.configs.markdown").bullets()
 		end,
 	},
 	-- latex
