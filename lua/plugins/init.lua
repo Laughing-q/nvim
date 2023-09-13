@@ -32,16 +32,6 @@ require("lazy").setup({
 		enabled = status.devicons,
 	},
 
-	-- statueline
-	{
-		"feline-nvim/feline.nvim",
-		event = "BufRead",
-		enabled = status.feline,
-		config = function()
-			require("plugins.configs.feline")
-		end,
-	},
-
 	{
 		"rebelot/heirline.nvim",
 		event = "BufRead",
