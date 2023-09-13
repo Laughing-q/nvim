@@ -48,7 +48,6 @@ M.status = {
   bullets = true,
 
   vimtex = true,
-  flash = false,
   scrollview = true,
   suda = true,
 }
