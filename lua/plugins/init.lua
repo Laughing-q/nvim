@@ -84,6 +84,7 @@ require("lazy").setup({
 		event = "VeryLazy",
 		config = function()
 			require("plugins.configs.lsp.lspconfig")
+      vim.cmd("silent! do FileType")
 		end,
 	},
 
@@ -347,9 +348,9 @@ require("lazy").setup({
 	},
 	{
 		"nvimdev/lspsaga.nvim",
-    event = "VeryLazy",
+		event = "VeryLazy",
 		config = function()
-      require("plugins.configs.lspsaga")
+			require("plugins.configs.lspsaga")
 		end,
 		dependencies = {
 			"nvim-treesitter/nvim-treesitter", -- optional
