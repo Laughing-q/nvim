@@ -133,9 +133,6 @@ M.misc = function()
 	-- map({ "n", "v" }, "K", "<Plug>Lightspeed_s", { noremap = false, desc = "jump down" })
 	-- map({ "n", "v" }, "I", "<Plug>Lightspeed_S", { noremap = false, desc = "jump up" })
 
-	-- nvimtree
-	-- map("n", "<C-n>", ":NvimTreeToggle <CR>")
-
   -- lspsaga
   map("n", "gr", ":Lspsaga finder<CR>")
   map("n", "gD", ":Lspsaga peek_definition<CR>")

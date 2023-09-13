@@ -156,16 +156,6 @@ require("lazy").setup({
 		end,
 	},
 
-	-- file managing , picker etc
-	{
-		"kyazdani42/nvim-tree.lua",
-		enabled = status.nvimtree,
-		cmd = { "NvimTreeToggle", "NvimTreeFocus" },
-		config = function()
-			require("plugins.configs.nvimtree")
-		end,
-	},
-
 	{
 		"nvim-telescope/telescope.nvim",
 		enabled = status.telescope,

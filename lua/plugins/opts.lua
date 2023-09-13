@@ -19,7 +19,6 @@ M.status = {
   cmp = true,
   autopairs = true,
   comment = true,
-  nvimtree = false,
   lf = true,
   -- telescope stuff
   telescope = true,
