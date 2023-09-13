@@ -70,12 +70,9 @@ require("lazy").setup({
 	{
 		"lewis6991/gitsigns.nvim",
 		enabled = status.gitsigns,
-		-- event = "BufRead",
+		event = "VeryLazy",
 		config = function()
 			require("plugins.configs.gitsigns")
-		end,
-		init = function()
-			require("utils").lazy_load("gitsigns.nvim")
 		end,
 	},
 
@@ -84,12 +81,9 @@ require("lazy").setup({
 		"neovim/nvim-lspconfig",
 		enabled = status.lspconfig,
 		dependencies = { "mason.nvim" },
-		-- event = "BufWinEnter",
+		event = "VeryLazy",
 		config = function()
 			require("plugins.configs.lsp.lspconfig")
-		end,
-		init = function()
-			require("utils").lazy_load("nvim-lspconfig")
 		end,
 	},
 
