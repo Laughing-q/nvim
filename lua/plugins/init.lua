@@ -96,17 +96,10 @@ require("lazy").setup({
 		end,
 	},
 
-	-- TODO: remove it or config it
-	-- {
-	-- 	-- "andymass/vim-matchup",
-	-- 	"Laughing-q/vim-matchup",
-	-- 	enabled = status.matchup,
-	-- },
-
 	-- load luasnips + cmp related in insert mode only
-
 	{
 		"hrsh7th/nvim-cmp",
+		event = "InsertEnter",
 		enabled = status.cmp,
 		config = function()
 			require("plugins.configs.cmp")
@@ -153,8 +146,6 @@ require("lazy").setup({
 	{
 		"nvim-telescope/telescope.nvim",
 		enabled = status.telescope,
-		-- lazy = false,
-		-- cmd = "Telescope",
 		event = "BufRead",
 		dependencies = {
 			{
@@ -229,7 +220,6 @@ require("lazy").setup({
 		cmd = { "UndotreeToggle" },
 	},
 	-- functions and values
-	--
 	{
 		"stevearc/aerial.nvim",
 		enabled = status.aerial,
@@ -265,7 +255,6 @@ require("lazy").setup({
 			vim.fn["mkdp#util#install"]()
 		end,
 		enabled = status.markdown_preview,
-		-- event = "BufRead",
 		ft = { "markdown" },
 	},
 	{
