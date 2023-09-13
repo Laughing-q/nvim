@@ -14,7 +14,6 @@ M.status = {
   -- lsp stuff
   lspconfig = true,
   lspinstaller = true,
-  null_ls = false,
 
   -- TODO: remove it or config it
   -- matchup = true,
