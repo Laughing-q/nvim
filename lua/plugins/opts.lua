@@ -1,6 +1,9 @@
 local M = {}
 
 M.status = {
+  -- probably switch it back, keep it for a while.
+  aerial = false,
+
   plenary = true,
   filetype = true,
   devicons = true,
@@ -33,7 +36,6 @@ M.status = {
   antovim = true,
   colorizer = true,
   undotree = true,
-  aerial = false,
   wildfire = true,
   surround = true,
   -- markdown stuff
