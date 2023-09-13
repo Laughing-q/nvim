@@ -50,7 +50,6 @@ M.status = {
   vimtex = true,
   flash = false,
   scrollview = true,
-  dap = false,
   suda = true,
 }
 

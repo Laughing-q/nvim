@@ -403,13 +403,6 @@ require("lazy").setup({
 		end,
 	},
 
-	-- debug
-	{
-		"mfussenegger/nvim-dap",
-		event = "BufRead",
-		enabled = status.dap,
-	},
-
 	-- use {
 	--    "xuhdev/vim-latex-live-preview",
 	-- }
