@@ -12,14 +12,6 @@ M.misc = function()
 	map("", "gi", "gk")
 	map("", "gk", "gj")
 	map("", "gh", "gi")
-	-- Remap for dealing with word wrap
-	-- map("", "j", 'v:count || mode(1)[0:1] == "no" ? "j" : "gj"', { expr = true })
-	-- map("", "k", 'v:count || mode(1)[0:1] == "no" ? "k" : "gk"', { expr = true })
-
-	-- map("", "I", "<nop>")
-	-- map("", "K", "<nop>")
-	-- map("", "J", "<nop>")
-	-- map("", "L", "<nop>")
 
 	map("", "I", "<nop>")
 	map("", "K", "<nop>")
@@ -46,15 +38,10 @@ M.misc = function()
 	map("i", "<A-k>", "<Down>")
 	map("i", "<C-j>", "<ESC>^i")
 
-	-- command
-	-- map("", ";", ":")
-
 	--terminal
 	map("n", "tek", ":execute 16 .. 'new +terminal' | let b:term_type = 'hori' | startinsert <CR>")
 	map("n", "tel", ":execute 'vnew +terminal' | let b:term_type = 'vert' | startinsert <CR>")
 	map("t", "JK", "<C-\\><C-n><C-w>w")
-	-- map("n", "jk", "<C-w>wa")
-	-- map("t", "JK", "<C-\\><C-n> :lua require('utils').close_buffer() <CR>")
 
 	-- indent
 	map("n", ">", ">>")
@@ -118,18 +105,11 @@ M.misc = function()
   -- tmux
   map("n", "<C-G>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
 
-	--goyo
-	-- map("n", "gy", ":Goyo<CR>")
-
 	-- swith true and false
 	map("n", "gw", ":Antovim<CR>")
 
 	-- undotree
 	map("n", "U", ":UndotreeToggle<CR>")
-
-	-- lightspeed
-	-- map({ "n", "v" }, "K", "<Plug>Lightspeed_s", { noremap = false, desc = "jump down" })
-	-- map({ "n", "v" }, "I", "<Plug>Lightspeed_S", { noremap = false, desc = "jump up" })
 
   -- lspsaga
   map("n", "gr", ":Lspsaga finder<CR>")

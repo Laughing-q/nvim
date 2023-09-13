@@ -318,27 +318,6 @@ require("lazy").setup({
 		end,
 	},
 
-	-- use {
-	--    "xuhdev/vim-latex-live-preview",
-	-- }
-
-	-- remote, rarely used it
-	-- {
-	-- 	"chipsenkbeil/distant.nvim",
-	-- 	cmd = "DistantLaunch",
-	-- 	-- DistantLaunch ip mode=ssh ssh.user=username
-	-- 	config = function()
-	-- 		require("distant").setup({
-	-- 			-- Applies Chip's personal settings to every machine you connect to
-	-- 			--
-	-- 			-- 1. Ensures that distant servers terminate with no connections
-	-- 			-- 2. Provides navigation bindings for remote directories
-	-- 			-- 3. Provides keybinding to jump into a remote file's parent directory
-	-- 			["*"] = require("distant.settings").chip_default(),
-	-- 		})
-	-- 	end,
-	-- })
-
 	{
 		"lambdalisue/suda.vim",
 		cmd = { "SudaWrite", "SudaRead" },
