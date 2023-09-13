@@ -199,7 +199,6 @@ leader_key = {
 			k = { "<cmd>Telescope keymaps<cr>", "Keymaps" },
 			c = { "<cmd>Telescope commands<cr>", "Commands" },
 			p = { "<cmd>Telescope projects previewer=false<cr>", "Projects" },
-			y = { "<cmd>Telescope neoclip<cr>", "Find Clipboard" },
 			-- m = { "<cmd>Telescope media_files<cr>", "Media" },
 		},
 		T = {
