@@ -263,15 +263,7 @@ require("lazy").setup({
 			require("nvim-surround").setup()
 		end,
 	},
-	-- rnvimr
-	{
-		"kevinhwang91/rnvimr",
-		enabled = status.rnvimr,
-		cmd = "RnvimrToggle",
-		config = function()
-			others.rnvimr()
-		end,
-	},
+
 	-- markdown
 	{
 		"iamcco/markdown-preview.nvim",
