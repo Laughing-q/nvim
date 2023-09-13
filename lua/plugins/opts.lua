@@ -18,7 +18,6 @@ M.status = {
   -- matchup = true,
   cmp = true,
   autopairs = true,
-  dashboard = false,
   comment = true,
   nvimtree = false,
   lf = true,

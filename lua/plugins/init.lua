@@ -147,15 +147,6 @@ require("lazy").setup({
 		dependencies = "hrsh7th/nvim-cmp",
 	},
 
-	-- dashboard
-	{
-		"glepnir/dashboard-nvim",
-		enabled = status.dashboard,
-		config = function()
-			require("plugins.configs.dashboard")
-		end,
-	},
-
 	{
 		"numToStr/Comment.nvim",
 		enabled = status.comment,
