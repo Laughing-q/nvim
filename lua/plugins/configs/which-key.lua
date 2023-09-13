@@ -75,7 +75,7 @@ leader_key = {
 		-- e = { ":NvimTreeFocus <CR>", "NvimTree Focus" },
 
 		-- functions and values
-		v = { "<cmd>AerialToggle<CR>", "Aerial" },
+		v = { "<cmd>Lspsaga outline<CR>", "Lspsaga outline" },
 		-- Compile file
 		r = { "<cmd>call CompileRunGcc()<CR>", "Compile file" },
 		-- transparency
@@ -153,14 +153,10 @@ leader_key = {
 			name = "LSP",
 			l = { "<cmd>LspStop<cr>", "Close LSP" },
 			L = { "<cmd>LspStart<cr>", "Open LSP" },
-			a = { "vim.lsp.buf.code_action", "Code Action" },
+			a = { vim.lsp.buf.code_action, "Code Action" },
 			d = {
 				"<cmd>Telescope diagnostics bufnr=0<cr>",
 				"Document Diagnostics",
-			},
-			w = {
-				"<cmd>Telescope lsp_workspace_diagnostics<cr>",
-				"Workspace Diagnostics",
 			},
 			-- f = { "<cmd>lua vim.lsp.buf.formatting()<cr>", "Format" },
 			f = { "<cmd>call Format()<CR>", "Format" },
@@ -181,6 +177,7 @@ leader_key = {
 				"<cmd>Telescope lsp_dynamic_workspace_symbols<cr>",
 				"Workspace Symbols",
 			},
+      c = {":Lspsaga incoming_calls<CR>", "Incoming Calls"}
 		},
 		f = {
 			name = "Find",

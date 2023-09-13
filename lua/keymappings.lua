@@ -136,6 +136,9 @@ M.misc = function()
 	-- nvimtree
 	-- map("n", "<C-n>", ":NvimTreeToggle <CR>")
 
+  -- lspsaga
+  map("n", "gr", ":Lspsaga finder<CR>")
+  map("n", "gD", ":Lspsaga peek_definition<CR>")
 	-- others keymapping in which-key setting
 end
 
