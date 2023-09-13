@@ -11,7 +11,7 @@ local core_modules = {
 	"autocmds",
 	"options",
 	"keymappings",
-  "plugins",
+	"plugins",
 }
 require("keymappings").misc()
 
