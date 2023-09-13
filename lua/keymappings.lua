@@ -142,35 +142,6 @@ M.misc = function()
 	-- others keymapping in which-key setting
 end
 
-
-M.bufferline = function()
-	map("n", "<A-l>", ":BufferLineCycleNext<CR>")
-	map("n", "<A-j>", ":BufferLineCyclePrev<CR>")
-	map("n", "<A-;>", ":BufferLineMoveNext<CR>")
-	map("n", "<A-h>", ":BufferLineMovePrev<CR>")
-	map("n", "<A-1>", ":BufferLineGoToBuffer 1<CR>")
-	map("n", "<A-2>", ":BufferLineGoToBuffer 2<CR>")
-	map("n", "<A-3>", ":BufferLineGoToBuffer 3<CR>")
-	map("n", "<A-4>", ":BufferLineGoToBuffer 4<CR>")
-	map("n", "<A-5>", ":BufferLineGoToBuffer 5<CR>")
-	map("n", "<A-6>", ":BufferLineGoToBuffer 6<CR>")
-	map("n", "<A-7>", ":BufferLineGoToBuffer 7<CR>")
-	map("n", "<A-8>", ":BufferLineGoToBuffer 8<CR>")
-	map("n", "<A-9>", ":BufferLineGoToBuffer 9<CR>")
-
-	map("n", "<leader>bl", ":BufferLineCloseRight<CR>")
-	map("n", "<leader>bj", ":BufferLineCloseLeft<CR>")
-	map("n", "<leader>bg", ":BufferLinePick<CR>")
-	map("n", "<leader>bd", ":BufferLineSortByDirectory<CR>")
-	map("n", "<leader>bL", ":BufferLineSortByExtension<CR>")
-	map("n", "<leader>bt", ":BufferLineSortByTabs<CR>")
-	map("n", "<leader>bp", ":BufferLineTogglePin<CR>")
-	-- map("n", "<leader>bp", ":BufferLinePickClose<CR>")
-	-- map("n", "<leader>bc", ":BufferLineCloseLeft<CR>:BufferLineCloseRight<CR>")
-	map("n", "<leader>bc", ":BufferCloseAllButCurrent<CR>")
-	map("n", "<leader>bw", ":BufferKill<CR>")
-end
-
 M.harpoon = function ()
   local mark = require("harpoon.mark")
   local ui = require("harpoon.ui")

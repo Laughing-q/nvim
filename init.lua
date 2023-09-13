@@ -10,7 +10,6 @@
 local core_modules = {
 	"autocmds",
 	"options",
-  "commands",
 	"keymappings",
   "plugins",
 }

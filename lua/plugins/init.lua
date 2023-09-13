@@ -231,19 +231,6 @@ require("lazy").setup({
 		enabled = status.kanagawa,
 	},
 
-	-- bufferline
-	{
-		"akinsho/bufferline.nvim",
-		enabled = status.bufferline,
-		event = "BufWinEnter",
-		config = function()
-			require("plugins.configs.bufferline").setup()
-		end,
-		-- setup = function()
-		-- 	require("keymappings").bufferline()
-		-- end,
-	},
-
 	-- Terminal
 	{
 		"akinsho/toggleterm.nvim",
