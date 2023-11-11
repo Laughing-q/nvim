@@ -31,8 +31,9 @@ end
 
 M.blankline = function()
 	require("ibl").setup({
-		indent = { char = "|" },
 		enabled = true,
+		indent = { char = "▏" },
+		scope = { enabled = false },
 		exclude = {
 			filetypes = {
 				"help",
