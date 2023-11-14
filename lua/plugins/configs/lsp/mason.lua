@@ -13,9 +13,9 @@ local options = {
 
   ui = {
     icons = {
-      package_installed = " ",
+      package_installed = " ",
       package_pending = " ",
-      package_uninstalled = " ﮊ",
+      package_uninstalled = " 󰚌",
     },
     keymaps = {
       toggle_package_expand = "<CR>",

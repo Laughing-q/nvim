@@ -124,13 +124,13 @@ M.Diagnostics = {
 	},
 	{
 		provider = function(self)
-			return self.info > 0 and (" " .. self.info .. " ")
+			return self.info > 0 and (" " .. self.info .. " ")
 		end,
 		hl = { fg = colors.diag.info },
 	},
 	{
 		provider = function(self)
-			return self.hints > 0 and (" " .. self.hints)
+			return self.hints > 0 and (" " .. self.hints)
 		end,
 		hl = { fg = colors.diag.hint },
 	},
