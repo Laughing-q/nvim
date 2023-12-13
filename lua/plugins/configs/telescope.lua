@@ -32,7 +32,7 @@ telescope.setup({
 			horizontal = {
 				prompt_position = "top",
         mirror = true,
-				preview_width = 0.5,
+				preview_width = 0.6,
 				-- results_width = 0.8,
 			},
 			vertical = {

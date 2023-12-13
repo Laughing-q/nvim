@@ -47,7 +47,7 @@ end
 
 finders.fn = function ()
   local opts = vim.deepcopy(center_list)
-  opts.layout_config = { height=0.6 }
+  opts.layout_config = { height=0.6, width=0.7 }
   require"telescope.builtin".current_buffer_fuzzy_find(opts)
 end
 
