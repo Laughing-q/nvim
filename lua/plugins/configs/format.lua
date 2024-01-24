@@ -5,7 +5,8 @@ func! Format()
   elseif &filetype == 'sh'
 		silent! exec "!shfmt -w %"
   elseif &filetype == 'python'
-		silent! exec "!black --fast --quiet -l 110 %"
+		" silent! exec "!black --fast --quiet -l 120 %"
+		silent! exec "!ruff format --line-length 120 %"
 	elseif &filetype == 'lua'
 		silent! exec "!stylua %"
 	elseif &filetype == 'cpp'
