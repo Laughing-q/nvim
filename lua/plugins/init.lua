@@ -84,7 +84,7 @@ require("lazy").setup({
 		event = "VeryLazy",
 		config = function()
 			require("plugins.configs.lsp.lspconfig")
-      vim.cmd("silent! do FileType")
+			vim.cmd("silent! do FileType")
 		end,
 	},
 
@@ -252,7 +252,7 @@ require("lazy").setup({
 	-- markdown
 	{
 		"iamcco/markdown-preview.nvim",
-    build = "cd app && npm install",
+		build = "cd app && npm install",
 		enabled = status.markdown_preview,
 		ft = { "markdown" },
 	},
@@ -343,6 +343,14 @@ require("lazy").setup({
 			})
 		end,
 		requires = { "toggleterm.nvim" },
+	},
+	{
+		"kyazdani42/nvim-tree.lua",
+		enabled = status.nvimtree,
+		cmd = { "NvimTreeToggle", "NvimTreeFocus" },
+		config = function()
+			require("plugins.configs.nvimtree")
+		end,
 	},
 	{
 		"nvimdev/lspsaga.nvim",

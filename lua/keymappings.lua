@@ -100,7 +100,7 @@ M.misc = function()
 
 	-------------plugins mappings---------------
 	map("n", "R", ":Lf<CR>")
-	map("n", "<C-N>", ":Lf<CR>")   -- another key for LF
+	map("n", "<C-N>", ":NvimTreeToggle<CR>")   -- another key for LF
 
   -- tmux
   map("n", "<C-G>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
