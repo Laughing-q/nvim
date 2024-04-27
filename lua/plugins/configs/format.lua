@@ -15,6 +15,8 @@ func! Format()
 		silent! exec "!cmake-format --enable-markup -i %"
 	elseif &filetype == 'json'
 		silent! exec "!prettier -w %"
+	elseif &filetype == 'yaml'
+		silent! exec "!prettier -w %"
 	endif
   :e!
 endfunc
