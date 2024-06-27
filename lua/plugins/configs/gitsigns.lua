@@ -5,28 +5,24 @@ end
 
 local opts = {
 	signs = {
-		add = {
-			text = "+",
-      -- text = "▎",
-		},
-		change = {
-			text = "~",
-      -- text = "▎",
-		},
-		delete = {
-			text = "-",
-      -- text = "契",
-		},
-		topdelete = {
-			text = "-",
-      -- text = "契",
-		},
-		changedelete = {
-			text = "+",
-      -- text = "▎",
-		},
+		add = { text = "┃" },
+		change = { text = "┃" },
+		delete = { text = "_" },
+		topdelete = { text = "‾" },
+		changedelete = { text = "~" },
+		untracked = { text = "┆" },
 	},
-	numhl = false,
+	-- signs = {
+	-- 	add = {
+	-- 		text = "+",
+	--      -- text = "▎",
+	-- 	},
+	-- 	change = {
+	-- 		text = "~",
+	--      -- text = "▎",
+	-- 	},
+	-- },
+	numhl = true,
 	linehl = false,
 	watch_gitdir = {
 		interval = 1000,
