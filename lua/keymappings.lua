@@ -98,6 +98,10 @@ M.misc = function()
 
   map("x", "<leader>p", "\"_dP")
 
+  -- quickfix
+  map("n", "[t", "<cmd>lprev<CR>zz")
+  map("n", "]t", "<cmd>lnext<CR>zz")
+
 	-------------plugins mappings---------------
 	map("n", "R", ":Lf<CR>")
 	map("n", "<C-N>", ":Lf<CR>")   -- another key for LF
