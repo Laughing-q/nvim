@@ -1,11 +1,11 @@
 local treesitter_opts = {
 	ensure_installed = {
 		"python",
-		"c",
-		"cpp",
-		"cmake",
-		"make",
-		"cuda",
+		-- "c",
+		-- "cpp",
+		-- "cmake",
+		-- "make",
+		-- "cuda",
 		"dockerfile",
 		"lua",
 		"vim",
