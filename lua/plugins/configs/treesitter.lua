@@ -12,8 +12,8 @@ local treesitter_opts = {
 		"vimdoc",
 		"bash",
 		"yaml",
-		"bibtex",
-		"latex",
+		-- "bibtex",
+		-- "latex",
 		"markdown",
 	}, -- one of "all", "maintained" (parsers with maintainers), or a list of languages
 	ignore_install = {},
