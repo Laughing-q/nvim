@@ -35,7 +35,7 @@ local options = {
 	splitbelow = true,
   wrap = false,
 
-  scrolloff = 10,
+  -- scrolloff = 10,
 
   -- global status(neovim 0.7.0)
   laststatus = 3  -- 2 for original
