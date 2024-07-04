@@ -117,7 +117,6 @@ leader_key = {
 		-- 		"Sort by language",
 		-- 	},
 		-- },
-		p = { "<cmd> Lazy<cr>", "Lazy" },
 
 		g = {
 			name = "Git",
