@@ -26,7 +26,7 @@ M.misc = function()
 
 	-- fast home and end
 	map("n", "<C-l>", "$")
-  -- ignore the return sign
+	-- ignore the return sign
 	map("v", "<C-l>", "$h")
 	map("", "<C-j>", "_")
 
@@ -79,10 +79,10 @@ M.misc = function()
 	map("n", "sj", ":set nosplitright<CR>:vsplit<CR>:set splitright<CR>")
 	map("n", "si", ":set nosplitbelow<CR>:split<CR>:set splitbelow<CR>")
 	-- window jump
-  map("n", "J", "<C-w>h")
-  map("n", "L", "<C-w>l")
-  map("n", "I", "<C-w>k")
-  map("n", "K", "<C-w>j")
+	map("n", "J", "<C-w>h")
+	map("n", "L", "<C-w>l")
+	map("n", "I", "<C-w>k")
+	map("n", "K", "<C-w>j")
 
 	-- spell and warp
 	map("n", "sw", ":set wrap!<CR>")
@@ -92,22 +92,22 @@ M.misc = function()
 	map("n", "\\p", ":echo expand('%:p')<CR>")
 	map("n", "\\w", ":pwd<CR>")
 	-- <++>
-	map("n", "<LEADER><LEADER>", "<Esc>/<++><CR>:nohlsearch<CR>\"_c4l")
+	map("n", "<LEADER><LEADER>", '<Esc>/<++><CR>:nohlsearch<CR>"_c4l')
 	-- figlet
 	map("n", "tx", ":r !figlet ")
 
-  map("x", "<leader>p", "\"_dP")
+	map("x", "<leader>p", '"_dP')
 
-  -- quickfix
-  map("n", "[t", "<cmd>lprev<CR>zz")
-  map("n", "]t", "<cmd>lnext<CR>zz")
+	-- quickfix
+	map("n", "[t", "<cmd>lprev<CR>zz")
+	map("n", "]t", "<cmd>lnext<CR>zz")
 
 	-------------plugins mappings---------------
 	map("n", "R", ":Lf<CR>")
-	map("n", "<C-N>", ":Lf<CR>")   -- another key for LF
+	map("n", "<C-N>", ":Lf<CR>") -- another key for LF
 
-  -- tmux
-  map("n", "<C-G>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
+	-- tmux
+	map("n", "<C-G>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
 
 	-- swith true and false
 	map("n", "gw", ":Antovim<CR>")
@@ -115,25 +115,37 @@ M.misc = function()
 	-- undotree
 	map("n", "U", ":UndotreeToggle<CR>")
 
-  -- lspsaga
-  map("n", "gr", ":Lspsaga finder<CR>")
-  map("n", "gD", ":Lspsaga peek_definition<CR>")
+	-- lspsaga
+	map("n", "gr", ":Lspsaga finder<CR>")
+	map("n", "gD", ":Lspsaga peek_definition<CR>")
 	-- others keymapping in which-key setting
 end
 
-M.harpoon = function ()
-  local mark = require("harpoon.mark")
-  local ui = require("harpoon.ui")
+M.harpoon = function()
+	local mark = require("harpoon.mark")
+	local ui = require("harpoon.ui")
 
-  map("n", "<leader>a", mark.add_file)
-  map("n", "<C-k>", ui.toggle_quick_menu)
+	map("n", "<leader>a", mark.add_file)
+	map("n", "<C-k>", ui.toggle_quick_menu)
 
-  map("n", "<A-l>", function() ui.nav_next() end)
-  map("n", "<A-j>", function() ui.nav_prev() end)
-	map("n", "<A-1>", function() ui.nav_file(1) end)
-	map("n", "<A-2>", function() ui.nav_file(2) end)
-	map("n", "<A-3>", function() ui.nav_file(3) end)
-	map("n", "<A-4>", function() ui.nav_file(4) end)
+	map("n", "<A-l>", function()
+		ui.nav_next()
+	end)
+	map("n", "<A-j>", function()
+		ui.nav_prev()
+	end)
+	map("n", "<A-1>", function()
+		ui.nav_file(1)
+	end)
+	map("n", "<A-2>", function()
+		ui.nav_file(2)
+	end)
+	map("n", "<A-3>", function()
+		ui.nav_file(3)
+	end)
+	map("n", "<A-4>", function()
+		ui.nav_file(4)
+	end)
 end
 
 return M
