@@ -59,16 +59,6 @@ M.setup = function(colorscheme)
 		tokyonight_setpup()
 	end
 
-	-- kanagawa
-	-- set barbar highlight for kanagawa
-	if colorscheme == "kanagawa" then
-		-- require('kanagawa').setup({transparent = true})
-		vim.cmd([[hi BufferCurrent guibg=#363646]])
-		vim.cmd([[hi BufferCurrentSign guibg=#363646]])
-		vim.cmd([[hi BufferCurrentMod guibg=#363646]])
-		vim.cmd([[hi BufferCurrentMod guifg=#E5AB0E]])
-	end
-
 	--------------plugins-------------
 	-- vim-table-mode
 	vim.g.table_mode_map_prefix = "<Leader>m"
