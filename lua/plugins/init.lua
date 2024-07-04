@@ -118,7 +118,7 @@ require("lazy").setup({
 	{
 		"nvim-telescope/telescope.nvim",
 		enabled = status.telescope,
-		event = "BufRead",
+    event = 'VimEnter',
 		dependencies = {
 			{
 				"nvim-telescope/telescope-fzf-native.nvim",
@@ -145,7 +145,7 @@ require("lazy").setup({
 	{
 		"folke/which-key.nvim",
 		enabled = status.which_key,
-		event = "BufRead",
+		event = "VimEnter",
 		config = function()
 			require("plugins.configs.which-key").setup()
 		end,
@@ -154,7 +154,7 @@ require("lazy").setup({
 	{
 		"folke/tokyonight.nvim",
 		enabled = status.tokyonight,
-		lazy = false, -- make sure we load this during startup if it is your main colorscheme
+		lazy = true, -- make sure we load this during startup if it is your main colorscheme
 		priority = 1000, -- make sure to load this before all the other start plugins
 	},
 	{
@@ -166,7 +166,7 @@ require("lazy").setup({
 	{
 		"akinsho/toggleterm.nvim",
 		enabled = status.terminal,
-		event = "BufWinEnter",
+		event = "VeryLazy",
 		config = function()
 			require("plugins.configs.terminal").setup()
 		end,
