@@ -182,7 +182,7 @@ require("lazy").setup({
 	{
 		"norcalli/nvim-colorizer.lua",
 		enabled = status.colorizer,
-		event = "BufRead",
+    cmd = "ColorizerToggle",
 		config = function()
 			others.colorizer()
 		end,
@@ -192,13 +192,13 @@ require("lazy").setup({
 	{
 		"Laughing-q/undotree",
 		enabled = status.undotree,
-		cmd = { "UndotreeToggle" },
+		cmd = "UndotreeToggle",
 	},
 	-- functions and values
 	{
 		"stevearc/aerial.nvim",
 		enabled = status.aerial,
-		cmd = { "AerialToggle" },
+		cmd = "AerialToggle",
 		config = function()
 			-- require('aerial').setup({})
 			require("plugins.configs.aerial")
@@ -210,9 +210,7 @@ require("lazy").setup({
 		"sustech-data/wildfire.nvim",
 		event = "VeryLazy",
 		dependencies = { "nvim-treesitter/nvim-treesitter" },
-		config = function()
-			require("wildfire").setup()
-		end,
+		config = true,
 	},
 	{
 		"kylechui/nvim-surround",
