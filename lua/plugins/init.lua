@@ -116,15 +116,6 @@ require("lazy").setup({
 	},
 
 	{
-		"numToStr/Comment.nvim",
-		enabled = status.comment,
-		event = "BufWinEnter",
-		config = function()
-			others.comment()
-		end,
-	},
-
-	{
 		"nvim-telescope/telescope.nvim",
 		enabled = status.telescope,
 		event = "BufRead",
