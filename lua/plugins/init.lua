@@ -20,12 +20,6 @@ require("lazy").setup({
 		enabled = status.plenary,
 	},
 
-	-- faster startup time
-	{
-		"nathom/filetype.nvim",
-		enabled = status.filetype,
-	},
-
 	{
 		"nvim-tree/nvim-web-devicons",
 		event = "BufRead",
@@ -84,7 +78,7 @@ require("lazy").setup({
 		event = "VeryLazy",
 		config = function()
 			require("plugins.configs.lsp.lspconfig")
-      vim.cmd("silent! do FileType")
+			vim.cmd("silent! do FileType")
 		end,
 	},
 
@@ -252,7 +246,7 @@ require("lazy").setup({
 	-- markdown
 	{
 		"iamcco/markdown-preview.nvim",
-    build = "cd app && npm install",
+		build = "cd app && npm install",
 		enabled = status.markdown_preview,
 		ft = { "markdown" },
 	},
