@@ -13,7 +13,6 @@ local core_modules = {
 	"keymappings",
 	"plugins",
 }
-require("keymappings").misc()
 
 for _, module in ipairs(core_modules) do
 	local ok, err = pcall(require, module)
