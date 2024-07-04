@@ -13,10 +13,6 @@ M.misc = function()
 	map("", "gk", "gj")
 	map("", "gh", "gi")
 
-	map("", "I", "<nop>")
-	map("", "K", "<nop>")
-	map("", "J", "<nop>")
-	map("", "L", "<nop>")
 	map("", "H", "I")
 
 	-- enter, quit and save
@@ -62,7 +58,7 @@ M.misc = function()
 	map("n", "<Right>", ":vertical resize +1<CR>")
 
 	-- move up/down the view port without moving the cursor
-	map("n", "<C-Y>", "5<C-y>")
+	map("n", "<C-Y>", "5<C-y>")   -- rarely used
 	map("n", "<C-E>", "5<C-e>")
 	map("n", "<C-D>", "<C-D>zz")
 	map("n", "<C-U>", "<C-U>zz")
@@ -78,6 +74,7 @@ M.misc = function()
 	map("n", "sk", ":set splitbelow<CR>:split<CR>")
 	map("n", "sj", ":set nosplitright<CR>:vsplit<CR>:set splitright<CR>")
 	map("n", "si", ":set nosplitbelow<CR>:split<CR>:set splitbelow<CR>")
+
 	-- window jump
 	map("n", "J", "<C-w>h")
 	map("n", "L", "<C-w>l")
@@ -88,23 +85,21 @@ M.misc = function()
 	map("n", "sw", ":set wrap!<CR>")
 	map("n", "ss", ":set spell!<CR>")
 
-	-- file path
+	-- file path(rarely used)
 	map("n", "\\p", ":echo expand('%:p')<CR>")
 	map("n", "\\w", ":pwd<CR>")
+
 	-- <++>
 	map("n", "<LEADER><LEADER>", '<Esc>/<++><CR>:nohlsearch<CR>"_c4l')
-	-- figlet
-	map("n", "tx", ":r !figlet ")
 
 	map("x", "<leader>p", '"_dP')
 
-	-- quickfix
+	-- location list
 	map("n", "[t", "<cmd>lprev<CR>zz")
 	map("n", "]t", "<cmd>lnext<CR>zz")
 
 	-------------plugins mappings---------------
 	map("n", "R", ":Lf<CR>")
-	map("n", "<C-N>", ":Lf<CR>") -- another key for LF
 
 	-- tmux
 	map("n", "<C-G>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
