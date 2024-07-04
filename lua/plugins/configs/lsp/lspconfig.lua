@@ -6,43 +6,43 @@ end
 
 local M = {}
 
-require "plugins.configs.lsp.ui"
+require("plugins.configs.lsp.ui")
 
 -- Highlight word
 local function setup_document_highlight(client, bufnr)
-  local status_ok, highlight_supported = pcall(function()
-    return client.supports_method "textDocument/documentHighlight"
-  end)
-  if not status_ok or not highlight_supported then
-    return
-  end
-  vim.cmd [[hi LspReferenceRead cterm=bold ctermbg=red guibg=#145b7d]]
-  vim.cmd [[hi LspReferenceText cterm=bold ctermbg=red guibg=#63434f]]
-  vim.cmd [[hi LspReferenceWrite cterm=bold ctermbg=red guibg=#145b7d]]
-  local group = "lsp_document_highlight"
-  local hl_events = { "CursorHold", "CursorHoldI" }
+	local status_ok, highlight_supported = pcall(function()
+		return client.supports_method("textDocument/documentHighlight")
+	end)
+	if not status_ok or not highlight_supported then
+		return
+	end
+	vim.cmd([[hi LspReferenceRead cterm=bold ctermbg=red guibg=#145b7d]])
+	vim.cmd([[hi LspReferenceText cterm=bold ctermbg=red guibg=#63434f]])
+	vim.cmd([[hi LspReferenceWrite cterm=bold ctermbg=red guibg=#145b7d]])
+	local group = "lsp_document_highlight"
+	local hl_events = { "CursorHold", "CursorHoldI" }
 
-  local ok, hl_autocmds = pcall(vim.api.nvim_get_autocmds, {
-    group = group,
-    buffer = bufnr,
-    event = hl_events,
-  })
+	local ok, hl_autocmds = pcall(vim.api.nvim_get_autocmds, {
+		group = group,
+		buffer = bufnr,
+		event = hl_events,
+	})
 
-  if ok and #hl_autocmds > 0 then
-    return
-  end
+	if ok and #hl_autocmds > 0 then
+		return
+	end
 
-  vim.api.nvim_create_augroup(group, { clear = false })
-  vim.api.nvim_create_autocmd(hl_events, {
-    group = group,
-    buffer = bufnr,
-    callback = vim.lsp.buf.document_highlight,
-  })
-  vim.api.nvim_create_autocmd("CursorMoved", {
-    group = group,
-    buffer = bufnr,
-    callback = vim.lsp.buf.clear_references,
-  })
+	vim.api.nvim_create_augroup(group, { clear = false })
+	vim.api.nvim_create_autocmd(hl_events, {
+		group = group,
+		buffer = bufnr,
+		callback = vim.lsp.buf.document_highlight,
+	})
+	vim.api.nvim_create_autocmd("CursorMoved", {
+		group = group,
+		buffer = bufnr,
+		callback = vim.lsp.buf.clear_references,
+	})
 end
 
 -- keymapping
@@ -50,12 +50,6 @@ local function lsp_keymaps(bufnr)
 	local function buf_set_keymap(...)
 		vim.api.nvim_buf_set_keymap(bufnr, ...)
 	end
-	local function buf_set_option(...)
-		vim.api.nvim_buf_set_option(bufnr, ...)
-	end
-
-	-- Enable completion triggered by <c-x><c-o>
-	buf_set_option("omnifunc", "v:lua.vim.lsp.omnifunc")
 
 	-- Mappings.
 	local opts = { noremap = true, silent = true }
@@ -86,7 +80,7 @@ end
 M.on_attach = function(client, bufnr)
 	-- Highlight
 	-- lsp_highlight_document(client)
-  setup_document_highlight(client, bufnr)
+	setup_document_highlight(client, bufnr)
 	-- Keymappings
 	lsp_keymaps(bufnr)
 end
@@ -111,29 +105,29 @@ lspconfig.lua_ls.setup({
 	settings = sumneko_opts.settings,
 })
 
-lspconfig.bashls.setup{
+lspconfig.bashls.setup({
 	on_attach = M.on_attach,
 	capabilities = M.capabilities,
 
 	filetype = { "sh", "bash" },
-}
+})
 
-lspconfig.pyright.setup{
+lspconfig.pyright.setup({
 	on_attach = M.on_attach,
 	capabilities = M.capabilities,
 
 	settings = pyright_opts.settings,
-}
+})
 
-lspconfig.clangd.setup{
+lspconfig.clangd.setup({
 	on_attach = M.on_attach,
 	capabilities = M.capabilities,
-}
+})
 
-lspconfig.cmake.setup{
+lspconfig.cmake.setup({
 	on_attach = M.on_attach,
 	capabilities = M.capabilities,
-}
+})
 
 -- lspconfig.pylsp.setup({
 -- 	on_attach = M.on_attach,
