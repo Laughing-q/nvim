@@ -289,7 +289,7 @@ require("lazy").setup({
 		"ThePrimeagen/harpoon",
 		event = "VimEnter",
 		config = function()
-			require("keymappings").harpoon()
+			others.harpoon()
 		end,
 	},
 
