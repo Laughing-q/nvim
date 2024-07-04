@@ -200,7 +200,6 @@ require("lazy").setup({
 		enabled = status.aerial,
 		cmd = "AerialToggle",
 		config = function()
-			-- require('aerial').setup({})
 			require("plugins.configs.aerial")
 		end,
 	},
@@ -216,9 +215,7 @@ require("lazy").setup({
 		"kylechui/nvim-surround",
 		version = "*", -- Use for stability; omit to use `main` branch for the latest features
 		event = "VeryLazy",
-		config = function()
-			require("nvim-surround").setup()
-		end,
+		config = true,
 	},
 
 	-- markdown
@@ -272,7 +269,7 @@ require("lazy").setup({
 		"dstein64/nvim-scrollview",
 		commit = "c076ebeb7227589d4cb54bc65e7d30c2d036f38c",
 		enabled = status.scrollview,
-		event = "BufRead",
+		event = "VeryLazy",
 		config = function()
 			others.scrollview()
 		end,
@@ -290,7 +287,7 @@ require("lazy").setup({
 
 	{
 		"ThePrimeagen/harpoon",
-		event = "BufRead",
+		event = "VimEnter",
 		config = function()
 			require("keymappings").harpoon()
 		end,
@@ -301,8 +298,6 @@ require("lazy").setup({
 		dependencies = "nvim-treesitter/nvim-treesitter",
 		config = true,
 		cmd = { "Neogen" },
-		-- Uncomment next line if you want to follow only stable versions
-		-- version = "*"
 	},
 	{
 		"Laughing-q/lf.nvim",
