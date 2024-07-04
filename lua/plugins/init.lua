@@ -41,6 +41,7 @@ require("lazy").setup({
 	{
 		"nvim-treesitter/nvim-treesitter",
 		enabled = status.treesitter,
+		build = ":TSUpdate",
 		event = "BufRead",
 		config = function()
 			require("plugins.configs.treesitter")
@@ -68,7 +69,7 @@ require("lazy").setup({
 	{
 		"neovim/nvim-lspconfig",
 		enabled = status.lspconfig,
-		dependencies = { "mason.nvim" },
+		dependencies = { "mason.nvim", config = true },
 		event = "VeryLazy",
 		config = function()
 			require("plugins.configs.lsp.lspconfig")
@@ -76,16 +77,8 @@ require("lazy").setup({
 		end,
 	},
 
-	{
-		"williamboman/mason.nvim",
-		enabled = status.lspinstaller,
-		build = ":MasonUpdate",
-		config = function()
-			require("plugins.configs.lsp.mason")
-		end,
-	},
-
 	-- load luasnips + cmp related in insert mode only
+
 	{
 		"hrsh7th/nvim-cmp",
 		event = "InsertEnter",
@@ -149,9 +142,9 @@ require("lazy").setup({
 					require("plugins.configs.telescope_ex.project").setup()
 				end,
 			},
-      {
-        "nvim-tree/nvim-web-devicons"
-      }
+			{
+				"nvim-tree/nvim-web-devicons",
+			},
 		},
 		config = function()
 			require("plugins.configs.telescope")
