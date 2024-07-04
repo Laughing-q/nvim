@@ -21,12 +21,6 @@ require("lazy").setup({
 	},
 
 	{
-		"nvim-tree/nvim-web-devicons",
-		event = "BufRead",
-		enabled = status.devicons,
-	},
-
-	{
 		"rebelot/heirline.nvim",
 		event = "BufRead",
 		enabled = status.heirline,
@@ -155,6 +149,9 @@ require("lazy").setup({
 					require("plugins.configs.telescope_ex.project").setup()
 				end,
 			},
+      {
+        "nvim-tree/nvim-web-devicons"
+      }
 		},
 		config = function()
 			require("plugins.configs.telescope")
