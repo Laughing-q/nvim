@@ -113,7 +113,6 @@ require("lazy").setup({
 		config = function()
 			others.autopairs()
 		end,
-		dependencies = "hrsh7th/nvim-cmp",
 	},
 
 	{

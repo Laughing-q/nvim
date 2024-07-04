@@ -1,10 +1,9 @@
 local M = {}
 
 M.autopairs = function()
-	local present1, autopairs = pcall(require, "nvim-autopairs")
-	local present2, cmp_autopairs = pcall(require, "nvim-autopairs.completion.cmp")
+	local present, autopairs = pcall(require, "nvim-autopairs")
 
-	if not (present1 or present2) then
+	if not present then
 		return
 	end
 
@@ -15,18 +14,11 @@ M.autopairs = function()
 	local Rule = require("nvim-autopairs.rule")
 	local npairs = require("nvim-autopairs")
 	local cond = require("nvim-autopairs.conds")
-	npairs.add_rule(Rule("**", "**", "markdown"))
-	npairs.add_rule(Rule("$", "$", "tex"))
-	npairs.add_rules(
-		{
-			Rule("'", "'", "python"):with_pair(cond.before_text_check("f")),
-		}
-		-- Rule("$", "$", 'tex')
-		-- Rule("**", "**", "markdown")
-	)
-	-- not needed if you disable cmp, the above var related to cmp tooo! override default config for autopairs
-	local cmp = require("cmp")
-	cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
+	npairs.add_rules({
+		Rule("'", "'", "python"):with_pair(cond.before_text_check("f")),
+		Rule("$", "$", "tex"),
+		Rule("**", "**", "markdown"),
+	})
 end
 
 M.blankline = function()
