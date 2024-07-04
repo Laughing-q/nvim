@@ -98,6 +98,10 @@ M.misc = function()
 	map("n", "[t", "<cmd>lprev<CR>zz")
 	map("n", "]t", "<cmd>lnext<CR>zz")
 
+	-- comment
+	map("n", "<LEADER>c", "gcc", { remap = true })
+	map("v", "<LEADER>c", "gc", { remap = true })
+
 	-------------plugins mappings---------------
 	map("n", "R", ":Lf<CR>")
 

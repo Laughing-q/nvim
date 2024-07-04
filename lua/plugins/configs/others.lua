@@ -1,10 +1,9 @@
 local M = {}
 
 M.autopairs = function()
-	local present1, autopairs = pcall(require, "nvim-autopairs")
-	local present2, cmp_autopairs = pcall(require, "nvim-autopairs.completion.cmp")
+	local present, autopairs = pcall(require, "nvim-autopairs")
 
-	if not (present1 or present2) then
+	if not present then
 		return
 	end
 
@@ -15,18 +14,11 @@ M.autopairs = function()
 	local Rule = require("nvim-autopairs.rule")
 	local npairs = require("nvim-autopairs")
 	local cond = require("nvim-autopairs.conds")
-	npairs.add_rule(Rule("**", "**", "markdown"))
-	npairs.add_rule(Rule("$", "$", "tex"))
-	npairs.add_rules(
-		{
-			Rule("'", "'", "python"):with_pair(cond.before_text_check("f")),
-		}
-		-- Rule("$", "$", 'tex')
-		-- Rule("**", "**", "markdown")
-	)
-	-- not needed if you disable cmp, the above var related to cmp tooo! override default config for autopairs
-	local cmp = require("cmp")
-	cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
+	npairs.add_rules({
+		Rule("'", "'", "python"):with_pair(cond.before_text_check("f")),
+		Rule("$", "$", "tex"),
+		Rule("**", "**", "markdown"),
+	})
 end
 
 M.blankline = function()
@@ -69,57 +61,6 @@ M.colorizer = function()
 			mode = "background", -- Set the display mode.
 		})
 		vim.cmd("ColorizerReloadAllBuffers")
-	end
-end
-
-M.comment = function()
-	local present, nvim_comment = pcall(require, "Comment")
-	if present then
-		nvim_comment.setup({
-			---Add a space b/w comment and the line
-			padding = true,
-			---Whether the cursor should stay at its position
-			sticky = true,
-			---Lines to be ignored while (un)comment
-			ignore = nil,
-			---LHS of toggle mappings in NORMAL mode
-			toggler = {
-				---Line-comment toggle keymap
-				line = "<leader>c",
-				---Block-comment toggle keymap
-				block = "gbc",
-			},
-			---LHS of operator-pending mappings in NORMAL and VISUAL mode
-			opleader = {
-				---Line-comment keymap
-				line = "<leader>c",
-				---Block-comment keymap
-				block = "gb",
-			},
-			---LHS of extra mappings
-			extra = {
-				---Add comment on the line above
-				above = "gcO",
-				---Add comment on the line below
-				below = "gco",
-				---Add comment at the end of line
-				eol = "gcA",
-			},
-			---Enable keybindings
-			---NOTE: If given `false` then the plugin won't create any mappings
-			mappings = {
-				---Operator-pending mapping; `gcc` `gbc` `gc[count]{motion}` `gb[count]{motion}`
-				basic = true,
-				---Extra mapping; `gco`, `gcO`, `gcA`
-				extra = false,
-				---Extended mapping; `g>` `g<` `g>[count]{motion}` `g<[count]{motion}`
-				extended = false,
-			},
-			---Function to call before (un)comment
-			pre_hook = nil,
-			---Function to call after (un)comment
-			post_hook = nil,
-		})
 	end
 end
 

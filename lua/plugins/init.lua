@@ -21,12 +21,6 @@ require("lazy").setup({
 	},
 
 	{
-		"nvim-tree/nvim-web-devicons",
-		event = "BufRead",
-		enabled = status.devicons,
-	},
-
-	{
 		"rebelot/heirline.nvim",
 		event = "BufRead",
 		enabled = status.heirline,
@@ -47,6 +41,7 @@ require("lazy").setup({
 	{
 		"nvim-treesitter/nvim-treesitter",
 		enabled = status.treesitter,
+		build = ":TSUpdate",
 		event = "BufRead",
 		config = function()
 			require("plugins.configs.treesitter")
@@ -74,7 +69,7 @@ require("lazy").setup({
 	{
 		"neovim/nvim-lspconfig",
 		enabled = status.lspconfig,
-		dependencies = { "mason.nvim" },
+		dependencies = { "mason.nvim", config = true },
 		event = "VeryLazy",
 		config = function()
 			require("plugins.configs.lsp.lspconfig")
@@ -82,16 +77,8 @@ require("lazy").setup({
 		end,
 	},
 
-	{
-		"williamboman/mason.nvim",
-		enabled = status.lspinstaller,
-		build = ":MasonUpdate",
-		config = function()
-			require("plugins.configs.lsp.mason")
-		end,
-	},
-
 	-- load luasnips + cmp related in insert mode only
+
 	{
 		"hrsh7th/nvim-cmp",
 		event = "InsertEnter",
@@ -126,22 +113,12 @@ require("lazy").setup({
 		config = function()
 			others.autopairs()
 		end,
-		dependencies = "hrsh7th/nvim-cmp",
-	},
-
-	{
-		"numToStr/Comment.nvim",
-		enabled = status.comment,
-		event = "BufWinEnter",
-		config = function()
-			others.comment()
-		end,
 	},
 
 	{
 		"nvim-telescope/telescope.nvim",
 		enabled = status.telescope,
-		event = "BufRead",
+    event = 'VimEnter',
 		dependencies = {
 			{
 				"nvim-telescope/telescope-fzf-native.nvim",
@@ -155,6 +132,9 @@ require("lazy").setup({
 					require("plugins.configs.telescope_ex.project").setup()
 				end,
 			},
+			{
+				"nvim-tree/nvim-web-devicons",
+			},
 		},
 		config = function()
 			require("plugins.configs.telescope")
@@ -165,7 +145,7 @@ require("lazy").setup({
 	{
 		"folke/which-key.nvim",
 		enabled = status.which_key,
-		event = "BufRead",
+		event = "VimEnter",
 		config = function()
 			require("plugins.configs.which-key").setup()
 		end,
@@ -174,7 +154,7 @@ require("lazy").setup({
 	{
 		"folke/tokyonight.nvim",
 		enabled = status.tokyonight,
-		lazy = false, -- make sure we load this during startup if it is your main colorscheme
+		lazy = true, -- make sure we load this during startup if it is your main colorscheme
 		priority = 1000, -- make sure to load this before all the other start plugins
 	},
 	{
@@ -186,7 +166,7 @@ require("lazy").setup({
 	{
 		"akinsho/toggleterm.nvim",
 		enabled = status.terminal,
-		event = "BufWinEnter",
+		event = "VeryLazy",
 		config = function()
 			require("plugins.configs.terminal").setup()
 		end,
@@ -202,7 +182,7 @@ require("lazy").setup({
 	{
 		"norcalli/nvim-colorizer.lua",
 		enabled = status.colorizer,
-		event = "BufRead",
+    cmd = "ColorizerToggle",
 		config = function()
 			others.colorizer()
 		end,
@@ -212,15 +192,14 @@ require("lazy").setup({
 	{
 		"Laughing-q/undotree",
 		enabled = status.undotree,
-		cmd = { "UndotreeToggle" },
+		cmd = "UndotreeToggle",
 	},
 	-- functions and values
 	{
 		"stevearc/aerial.nvim",
 		enabled = status.aerial,
-		cmd = { "AerialToggle" },
+		cmd = "AerialToggle",
 		config = function()
-			-- require('aerial').setup({})
 			require("plugins.configs.aerial")
 		end,
 	},
@@ -230,17 +209,13 @@ require("lazy").setup({
 		"sustech-data/wildfire.nvim",
 		event = "VeryLazy",
 		dependencies = { "nvim-treesitter/nvim-treesitter" },
-		config = function()
-			require("wildfire").setup()
-		end,
+		config = true,
 	},
 	{
 		"kylechui/nvim-surround",
 		version = "*", -- Use for stability; omit to use `main` branch for the latest features
 		event = "VeryLazy",
-		config = function()
-			require("nvim-surround").setup()
-		end,
+		config = true,
 	},
 
 	-- markdown
@@ -294,7 +269,7 @@ require("lazy").setup({
 		"dstein64/nvim-scrollview",
 		commit = "c076ebeb7227589d4cb54bc65e7d30c2d036f38c",
 		enabled = status.scrollview,
-		event = "BufRead",
+		event = "VeryLazy",
 		config = function()
 			others.scrollview()
 		end,
@@ -312,7 +287,7 @@ require("lazy").setup({
 
 	{
 		"ThePrimeagen/harpoon",
-		event = "BufRead",
+		event = "VimEnter",
 		config = function()
 			require("keymappings").harpoon()
 		end,
@@ -323,8 +298,6 @@ require("lazy").setup({
 		dependencies = "nvim-treesitter/nvim-treesitter",
 		config = true,
 		cmd = { "Neogen" },
-		-- Uncomment next line if you want to follow only stable versions
-		-- version = "*"
 	},
 	{
 		"Laughing-q/lf.nvim",
