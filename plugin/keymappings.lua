@@ -117,4 +117,5 @@ map("n", "U", ":UndotreeToggle<CR>")
 
 -- lspsaga
 map("n", "gr", ":Lspsaga finder<CR>")
-map("n", "gD", ":Lspsaga peek_definition<CR>")
+-- map("n", "gD", ":Lspsaga peek_definition<CR>")
+map("n", "gD", ":vsplit<CR>:lua vim.lsp.buf.definition()<CR>")
