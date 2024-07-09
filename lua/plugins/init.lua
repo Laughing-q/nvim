@@ -221,6 +221,7 @@ require("lazy").setup({
 	-- markdown
 	{
 		"iamcco/markdown-preview.nvim",
+    cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
 		build = "cd app && npm install",
 		enabled = status.markdown_preview,
 		ft = { "markdown" },
