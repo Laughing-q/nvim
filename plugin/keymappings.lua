@@ -100,6 +100,9 @@ map("n", "]t", "<cmd>lnext<CR>zz")
 map("n", "<LEADER>c", "gcc", { remap = true })
 map("v", "<LEADER>c", "gc", { remap = true })
 
+-- mark
+map("n", "M", "`")
+
 -------------plugins mappings---------------
 map("n", "R", ":Lf<CR>")
 
