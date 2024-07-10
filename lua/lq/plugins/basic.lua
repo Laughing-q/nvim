@@ -68,14 +68,6 @@ return {
 	},
 
 	{
-		"ThePrimeagen/harpoon",
-		event = "VimEnter",
-		config = function()
-			require("lq.configs.others").harpoon()
-		end,
-	},
-
-	{
 		"danymat/neogen",
 		dependencies = "nvim-treesitter/nvim-treesitter",
 		config = true,
