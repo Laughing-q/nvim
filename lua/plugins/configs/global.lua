@@ -59,21 +59,6 @@ M.setup = function(colorscheme)
 		tokyonight_setpup()
 	end
 
-	--------------plugins-------------
-	-- vim-table-mode
-	vim.g.table_mode_map_prefix = "<Leader>m"
-	vim.g.table_mode_toggle_map = "m"
-
-	-- -- vim-markdown-toc
-	-- vim.g.vmt_auto_update_on_save = 1
-	-- vim.g.vmt_dont_insert_fence = 1
-	-- vim.g.vmt_cycle_list_item_markers = 1
-	-- vim.g.vmt_fence_text = 'TOC'
-	-- vim.g.vmt_fence_closing_text = '/TOC'
-
-	-- vimtex
-	-- vim.g.vimtex_view_method = 'zathura'
-
 	-- nvim-scrollview
 	vim.cmd([[
       hi ScrollView ctermbg=159 guibg=LightCyan
