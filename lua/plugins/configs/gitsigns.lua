@@ -69,17 +69,17 @@ local opts = {
 		map("n", "<leader>gj", gitsigns.toggle_linehl, { desc = "Toggle Line Highlight" })
 		map("n", "<leader>gp", gitsigns.preview_hunk, { desc = "Git Preview Hunk" })
 
-		map("n", "<leader>gr", gitsigns.reset_hunk, { desc = "git reset hunk" })
+		map("n", "<leader>gr", gitsigns.reset_hunk, { desc = "Git reset hunk" })
 		map("v", "<leader>gr", function()
 			gitsigns.reset_hunk({ vim.fn.line("."), vim.fn.line("v") })
-		end, { desc = "git reset hunk" })
-		map("n", "<leader>gR", gitsigns.reset_buffer, { desc = "git reset buffer" })
-		map("n", "<leader>gs", gitsigns.stage_hunk, { desc = "git stage hunk" })
+		end, { desc = "Git reset hunk" })
+		map("n", "<leader>gR", gitsigns.reset_buffer, { desc = "Git reset buffer" })
+		map("n", "<leader>gs", gitsigns.stage_hunk, { desc = "Git stage hunk" })
 		map("v", "<leader>gs", function()
 			gitsigns.stage_hunk({ vim.fn.line("."), vim.fn.line("v") })
-		end, { desc = "git stage hunk" })
-		map("n", "<leader>gu", gitsigns.undo_stage_hunk, { desc = "git undo stage" })
-		map("n", "<leader>gd", gitsigns.diffthis, { desc = "git diff" })
+		end, { desc = "Git stage hunk" })
+		map("n", "<leader>gu", gitsigns.undo_stage_hunk, { desc = "Git undo stage" })
+		map("n", "<leader>gd", gitsigns.diffthis, { desc = "Git diff" })
 	end,
 }
 
