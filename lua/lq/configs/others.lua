@@ -1,28 +1,5 @@
 local M = {}
 
-M.blankline = function()
-	require("ibl").setup({
-		enabled = true,
-		indent = { char = "▏" },
-		scope = { enabled = false },
-		exclude = {
-			filetypes = {
-				"help",
-				"terminal",
-				"dashboard",
-				"packer",
-				"lspinfo",
-				"TelescopePrompt",
-				"TelescopeResults",
-			},
-			buftypes = { "terminal" },
-		},
-		whitespace = {
-			remove_blankline_trail = true,
-		},
-	})
-end
-
 M.luasnip = function()
 	local present, luasnip = pcall(require, "luasnip")
 	if not present then

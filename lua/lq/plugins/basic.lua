@@ -8,13 +8,6 @@ return {
 	},
 
 	{
-		"lukas-reineke/indent-blankline.nvim",
-		event = "VimEnter",
-		config = function()
-			require("lq.configs.others").blankline()
-		end,
-	},
-	{
 		"lewis6991/gitsigns.nvim",
 		event = "VeryLazy",
 		config = function()
