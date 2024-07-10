@@ -1,20 +1,5 @@
 local M = {}
 
-M.luasnip = function()
-	local present, luasnip = pcall(require, "luasnip")
-	if not present then
-		return
-	end
-
-	luasnip.config.set_config({
-		history = true,
-		updateevents = "TextChanged,TextChangedI",
-	})
-
-	require("luasnip/loaders/from_vscode").load({ paths = {} })
-	require("luasnip/loaders/from_vscode").load()
-end
-
 M.scrollview = function()
 	require("scrollview").setup({
 		-- excluded_filetypes = { "nerdtree" },
