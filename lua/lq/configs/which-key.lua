@@ -53,38 +53,13 @@ leader_key = {
 	-- see https://neovim.io/doc/user/map.html#:map-cmd
 
 	mappings = {
-		-- f = { "<cmd>Telescope find_files<CR>", "Find File" },
-		["<CR>"] = { "<cmd>nohlsearch<CR>", "No Highlight" },
-
-		-- window move stuff
-		-- w = { "<C-w>w", "Window previous" },
-
-		-- spell and wrap stuff
-		-- s = {
-		-- name = "spell and wrap",
-		-- s = { ":set spell!<CR>", "Spell check" },
-		-- w = { ":set wrap!<CR>", "Set wrap" },
-		-- l = { ":set splitright<CR>:vsplit<CR>", "Split left" },
-		-- k = { ":set splitbelow<CR>:split<CR>", "Split down" },
-		-- i = { ":set nosplitright<CR>:vsplit<CR>:set splitright<CR>", "Split up" },
-		-- j = { ":set nosplitbelow<CR>:split<CR>:set splitbelow<CR>", "Split right" },
-		-- },
-
 		-- functions and values
 		v = { "<cmd>Lspsaga outline<CR>", "Lspsaga outline" },
 		-- Compile file
 		r = { "<cmd>call CompileRunGcc()<CR>", "Compile file" },
-		-- transparency
-		-- t = { "<cmd>call TransparentToggle<CR>", "Compile file" },
 
 		-- fold
 		o = { "za", "Fold" },
-		-- markdown
-		m = {
-			name = "Markdown",
-			g = { "<cmd>GenTocGFM<CR>", "GenToc" },
-			-- m = { "<cmd>TableModeToggle<CR>", "TableMode" },
-		},
 
 		l = {
 			name = "LSP",
@@ -115,12 +90,6 @@ leader_key = {
 				"Workspace Symbols",
 			},
 			c = { ":Lspsaga incoming_calls<CR>", "Incoming Calls" },
-		},
-		T = {
-			name = "Treesitter",
-			i = { ":TSConfigInfo<cr>", "Info" },
-			h = { ":TSHighlightCapturesUnderCursor<cr>", "Highlight" },
-			p = { ":TSPlaygroundToggle<cr>", "Playground" },
 		},
 	},
 }
