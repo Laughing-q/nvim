@@ -28,8 +28,5 @@ return {
 	{
 		"dkarter/bullets.vim",
 		ft = { "markdown" },
-		config = function()
-			require("lq.configs.markdown").bullets()
-		end,
 	},
 }
