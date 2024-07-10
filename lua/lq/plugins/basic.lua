@@ -23,14 +23,6 @@ return {
 	},
 
 	{
-		"windwp/nvim-autopairs",
-		event = "InsertEnter",
-		config = function()
-			require("lq.configs.others").autopairs()
-		end,
-	},
-
-	{
 		"folke/which-key.nvim",
 		event = "VimEnter",
 		config = function()
