@@ -126,13 +126,6 @@ require("lazy").setup({
 				build = "make",
 			},
 			{
-				"ahmedkhalf/project.nvim",
-				enabled = status.project,
-				config = function()
-					require("plugins.configs.telescope_ex.project").setup()
-				end,
-			},
-			{
 				"nvim-tree/nvim-web-devicons",
 			},
 		},
