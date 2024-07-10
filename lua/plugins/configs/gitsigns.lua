@@ -80,6 +80,7 @@ local opts = {
 		end, { desc = "Git stage hunk" })
 		map("n", "<leader>gu", gitsigns.undo_stage_hunk, { desc = "Git undo stage" })
 		map("n", "<leader>gd", gitsigns.diffthis, { desc = "Git diff" })
+		map("n", "<leader>gc", "<cmd>!git commit -m 'Update %'<CR>", { desc = "Git commit current file" })
 	end,
 }
 
