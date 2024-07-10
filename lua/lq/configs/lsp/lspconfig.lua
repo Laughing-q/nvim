@@ -6,7 +6,7 @@ end
 
 local M = {}
 
-require("plugins.configs.lsp.ui")
+require("lq.configs.lsp.ui")
 
 -- Highlight word
 local function setup_document_highlight(client, bufnr)
@@ -94,8 +94,8 @@ if not status_ok then
 end
 M.capabilities = cmp_nvim_lsp.default_capabilities(capabilities)
 
-local sumneko_opts = require("plugins.configs.lsp.settings.sumneko_lua")
-local pyright_opts = require("plugins.configs.lsp.settings.pyright")
+local sumneko_opts = require("lq.configs.lsp.settings.sumneko_lua")
+local pyright_opts = require("lq.configs.lsp.settings.pyright")
 
 lspconfig.lua_ls.setup({
 	on_attach = M.on_attach,

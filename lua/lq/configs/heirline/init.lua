@@ -1,4 +1,4 @@
-local component = require("plugins.configs.heirline.components")
+local component = require("lq.configs.heirline.components")
 
 local statusline = {
 	hl = { bg = "#1f2335" },
