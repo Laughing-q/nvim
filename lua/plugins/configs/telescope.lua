@@ -34,7 +34,7 @@ telescope.setup({
 			},
 			vertical = {
 				prompt_position = "top",
-				mirror = true,
+				mirror = false,
 			},
 		},
 		file_sorter = require("telescope.sorters").get_fuzzy_file,
