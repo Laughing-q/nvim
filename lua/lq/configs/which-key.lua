@@ -1,6 +1,6 @@
 local M = {}
-require("plugins.configs.compile")
-require("plugins.configs.format")
+require("lq.configs.compile")
+require("lq.configs.format")
 local leader_key = {}
 
 leader_key = {

@@ -61,7 +61,7 @@ M.add_exec = function(opts)
   end
 
   local exec_func = string.format(
-    "<cmd>lua require('plugins.configs.terminal')._exec_toggle({ cmd = '%s', count = %d, direction = '%s'})<CR>",
+    "<cmd>lua require('lq.configs.terminal')._exec_toggle({ cmd = '%s', count = %d, direction = '%s'})<CR>",
     opts.cmd,
     opts.count,
     opts.direction
