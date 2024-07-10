@@ -1,3 +1,4 @@
+-- plugins here are not used
 return {
 	{
 		"stevearc/aerial.nvim",
