@@ -12,7 +12,7 @@ return {
 		"nvimdev/lspsaga.nvim",
 		event = "VeryLazy",
 		config = function()
-			require("plugins.configs.lspsaga")
+			require("lq.configs.lspsaga")
 		end,
 		dependencies = {
 			"nvim-treesitter/nvim-treesitter", -- optional

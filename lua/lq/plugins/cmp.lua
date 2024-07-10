@@ -3,7 +3,7 @@ return {
 		"hrsh7th/nvim-cmp",
 		event = "InsertEnter",
 		config = function()
-			require("plugins.configs.cmp")
+			require("lq.configs.cmp")
 		end,
 		dependencies = {
 			{

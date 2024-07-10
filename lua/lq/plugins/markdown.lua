@@ -14,7 +14,7 @@ return {
 			vim.g.table_mode_toggle_map = "m"
 		end,
 		config = function()
-			require("plugins.configs.markdown").table_mode()
+			require("lq.configs.markdown").table_mode()
 		end,
 	},
 	{
@@ -22,14 +22,14 @@ return {
 		ft = { "markdown" },
 		cmd = { "GenTocGFM" },
 		config = function()
-			require("plugins.configs.markdown").markdown_toc()
+			require("lq.configs.markdown").markdown_toc()
 		end,
 	},
 	{
 		"dkarter/bullets.vim",
 		ft = { "markdown" },
 		config = function()
-			require("plugins.configs.markdown").bullets()
+			require("lq.configs.markdown").bullets()
 		end,
 	},
 }

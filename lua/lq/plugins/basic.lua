@@ -3,7 +3,7 @@ return {
 		"rebelot/heirline.nvim",
 		event = "BufRead",
 		config = function()
-			require("plugins.configs.heirline")
+			require("lq.configs.heirline")
 		end,
 	},
 
