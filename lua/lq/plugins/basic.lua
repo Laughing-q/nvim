@@ -45,14 +45,6 @@ return {
 		cmd = { "Antovim" },
 	},
 
-	{
-		"norcalli/nvim-colorizer.lua",
-		cmd = "ColorizerToggle",
-		config = function()
-			require("lq.configs.others").colorizer()
-		end,
-	},
-
 	-- undotree
 	{
 		"Laughing-q/undotree",
