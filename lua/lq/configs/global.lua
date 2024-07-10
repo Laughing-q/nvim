@@ -58,15 +58,6 @@ M.setup = function(colorscheme)
 	if colorscheme == "tokyonight" then
 		tokyonight_setpup()
 	end
-
-	-- nvim-scrollview
-	vim.cmd([[
-      hi ScrollView ctermbg=159 guibg=LightCyan
-    ]])
-	vim.g.scrollview_winblend = 80
-	vim.g.scrollview_hide_on_intersect = true
-	vim.g.scrollview_character = ""
-	vim.g.scrollview_current_only = true
 end
 
 return M

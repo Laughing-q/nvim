@@ -83,7 +83,6 @@ return {
 
 	{
 		"dstein64/nvim-scrollview",
-		commit = "c076ebeb7227589d4cb54bc65e7d30c2d036f38c",
 		event = "VeryLazy",
 		config = function()
 			require("lq.configs.others").scrollview()
