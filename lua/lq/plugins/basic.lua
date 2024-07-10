@@ -8,25 +8,10 @@ return {
 	},
 
 	{
-		"lukas-reineke/indent-blankline.nvim",
-		event = "VimEnter",
-		config = function()
-			require("lq.configs.others").blankline()
-		end,
-	},
-	{
 		"lewis6991/gitsigns.nvim",
 		event = "VeryLazy",
 		config = function()
 			require("lq.configs.gitsigns")
-		end,
-	},
-
-	{
-		"windwp/nvim-autopairs",
-		event = "InsertEnter",
-		config = function()
-			require("lq.configs.others").autopairs()
 		end,
 	},
 
@@ -53,14 +38,6 @@ return {
 		cmd = { "Antovim" },
 	},
 
-	{
-		"norcalli/nvim-colorizer.lua",
-		cmd = "ColorizerToggle",
-		config = function()
-			require("lq.configs.others").colorizer()
-		end,
-	},
-
 	-- undotree
 	{
 		"Laughing-q/undotree",
@@ -82,28 +59,12 @@ return {
 	},
 
 	{
-		"dstein64/nvim-scrollview",
-		event = "VeryLazy",
-		config = function()
-			require("lq.configs.others").scrollview()
-		end,
-	},
-
-	{
 		"lambdalisue/suda.vim",
 		cmd = { "SudaWrite", "SudaRead" },
 	},
 	{
 		"ThePrimeagen/vim-be-good",
 		cmd = { "VimBeGood" },
-	},
-
-	{
-		"ThePrimeagen/harpoon",
-		event = "VimEnter",
-		config = function()
-			require("lq.configs.others").harpoon()
-		end,
 	},
 
 	{

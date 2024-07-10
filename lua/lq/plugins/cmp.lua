@@ -11,7 +11,13 @@ return {
 				"L3MON4D3/LuaSnip",
 				dependencies = "rafamadriz/friendly-snippets",
 				config = function()
-					require("lq.configs.others").luasnip()
+					require("luasnip").config.set_config({
+						history = true,
+						updateevents = "TextChanged,TextChangedI",
+					})
+
+					require("luasnip/loaders/from_vscode").load({ paths = {} })
+					require("luasnip/loaders/from_vscode").load()
 				end,
 			},
 
