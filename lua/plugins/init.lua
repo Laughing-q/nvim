@@ -118,7 +118,7 @@ require("lazy").setup({
 	{
 		"nvim-telescope/telescope.nvim",
 		enabled = status.telescope,
-    event = 'VimEnter',
+		event = "VimEnter",
 		dependencies = {
 			{
 				"nvim-telescope/telescope-fzf-native.nvim",
@@ -175,7 +175,7 @@ require("lazy").setup({
 	{
 		"norcalli/nvim-colorizer.lua",
 		enabled = status.colorizer,
-    cmd = "ColorizerToggle",
+		cmd = "ColorizerToggle",
 		config = function()
 			others.colorizer()
 		end,
@@ -214,7 +214,7 @@ require("lazy").setup({
 	-- markdown
 	{
 		"iamcco/markdown-preview.nvim",
-    cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+		cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
 		build = "cd app && npm install",
 		enabled = status.markdown_preview,
 		ft = { "markdown" },
@@ -224,6 +224,10 @@ require("lazy").setup({
 		enabled = status.table_mode,
 		-- event = "BufRead",
 		ft = { "markdown" },
+		init = function()
+			vim.g.table_mode_map_prefix = "<Leader>m"
+			vim.g.table_mode_toggle_map = "m"
+		end,
 		config = function()
 			require("plugins.configs.markdown").table_mode()
 		end,
