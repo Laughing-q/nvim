@@ -8,15 +8,4 @@ return {
 			vim.cmd("silent! do FileType")
 		end,
 	},
-	{
-		"nvimdev/lspsaga.nvim",
-		event = "VeryLazy",
-		config = function()
-			require("lq.configs.lspsaga")
-		end,
-		dependencies = {
-			"nvim-treesitter/nvim-treesitter", -- optional
-			"nvim-tree/nvim-web-devicons", -- optional
-		},
-	},
 }
