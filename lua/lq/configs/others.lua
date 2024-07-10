@@ -1,18 +1,5 @@
 local M = {}
 
-M.scrollview = function()
-	require("scrollview").setup({
-		-- excluded_filetypes = { "nerdtree" },
-		current_only = true,
-		winblend = 75,
-		base = "right",
-		-- column = 80,
-		signs_on_startup = { "search" }, -- search, diagnostic
-		-- diagnostics_severities = { vim.diagnostic.severity.ERROR },
-		search_symbol = "-",
-	})
-end
-
 M.harpoon = function()
 	-- harpoon
 	local mark = require("harpoon.mark")

@@ -59,14 +59,6 @@ return {
 	},
 
 	{
-		"dstein64/nvim-scrollview",
-		event = "VeryLazy",
-		config = function()
-			require("lq.configs.others").scrollview()
-		end,
-	},
-
-	{
 		"lambdalisue/suda.vim",
 		cmd = { "SudaWrite", "SudaRead" },
 	},
