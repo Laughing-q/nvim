@@ -16,10 +16,6 @@ M.markdown_toc = function()
 end
 
 M.table_mode = function()
-	-- move to globel
-	-- vim.g.table_mode_map_prefix = '<Leader>m'
-	-- vim.g.table_mode_toggle_map = 'm'
-
 	vim.g.table_mode_corner = "+"
 	vim.g.table_mode_separator = "|"
 	vim.g.table_mode_separator_map = "<Bar>"
