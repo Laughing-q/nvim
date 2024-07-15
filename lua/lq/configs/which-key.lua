@@ -74,14 +74,14 @@ leader_key = {
 			f = { "<cmd>call Format()<CR>", "Format" },
 			-- f = { "<cmd>lua vim.lsp.buf.range_formatting()<cr>", "Format" },
 			h = { "<cmd>LspInfo<cr>", "Info" },
-			k = {
-				vim.diagnostic.goto_next,
-				"Next Diagnostic",
-			},
-			i = {
-				vim.diagnostic.goto_prev,
-				"Prev Diagnostic",
-			},
+			-- k = {
+			-- 	vim.diagnostic.goto_next,
+			-- 	"Next Diagnostic",
+			-- },
+			-- i = {
+			-- 	vim.diagnostic.goto_prev,
+			-- 	"Prev Diagnostic",
+			-- },
 			q = { vim.diagnostic.setloclist, "Quickfix" },
 			r = { vim.lsp.buf.rename, "Rename" },
 			s = { "<cmd>Telescope lsp_document_symbols<cr>", "Document Symbols" },
