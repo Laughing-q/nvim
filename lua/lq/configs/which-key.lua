@@ -21,23 +21,11 @@ leader_key = {
 			},
 			spelling = { enabled = true, suggestions = 20 }, -- use which-key for spelling hints
 		},
-		icons = {
-			breadcrumb = "»", -- symbol used in the command line area that shows your active key combo
-			separator = "➜", -- symbol used between a key and it's label
-			group = "+", -- symbol prepended to a group
-		},
-		window = {
-			border = "single", -- none, single, double, shadow
-			position = "bottom", -- bottom, top
-			margin = { 1, 0, 1, 0 }, -- extra window margin [top, right, bottom, left]
-			padding = { 2, 2, 2, 2 }, -- extra window padding [top, right, bottom, left]
-		},
 		layout = {
 			height = { min = 4, max = 25 }, -- min and max height of the columns
 			width = { min = 20, max = 50 }, -- min and max width of the columns
 			spacing = 3, -- spacing between columns
 		},
-		hidden = { "<silent>", "<cmd>", "<Cmd>", "<CR>", "call", "lua", "^:", "^ " }, -- hide mapping boilerplate
 		show_help = true, -- show help message on the command line when the popup is visible
 	},
 
@@ -53,57 +41,51 @@ leader_key = {
 	-- see https://neovim.io/doc/user/map.html#:map-cmd
 
 	mappings = {
-		-- functions and values
-		v = { "<cmd>Lspsaga outline<CR>", "Lspsaga outline" },
-		-- Compile file
-		r = { "<cmd>call CompileRunGcc()<CR>", "Compile file" },
+		{ "<leader>l", group = "LSP", nowait = true, remap = false },
+		{ "<leader>lL", "<cmd>LspStart<cr>", desc = "Open LSP", nowait = true, remap = false },
+		{
+			"<leader>lS",
+			"<cmd>Telescope lsp_dynamic_workspace_symbols<cr>",
+			desc = "Workspace Symbols",
+			nowait = true,
+			remap = false,
+		},
+		{ "<leader>la", vim.lsp.buf.code_action, desc = "Code Action", nowait = true, remap = false },
+		{ "<leader>lc", ":Lspsaga incoming_calls<CR>", desc = "Incoming Calls", nowait = true, remap = false },
+		{
+			"<leader>ld",
+			"<cmd>Telescope diagnostics bufnr=0<cr>",
+			desc = "Document Diagnostics",
+			nowait = true,
+			remap = false,
+		},
+		{ "<leader>lf", "<cmd>call Format()<CR>", desc = "Format", nowait = true, remap = false },
+		{ "<leader>lh", "<cmd>LspInfo<cr>", desc = "Info", nowait = true, remap = false },
+		{ "<leader>ll", "<cmd>LspStop<cr>", desc = "Close LSP", nowait = true, remap = false },
+		{ "<leader>lq", vim.diagnostic.setloclist, desc = "Quickfix", nowait = true, remap = false },
+		{ "<leader>lr", vim.lsp.buf.rename, desc = "Rename", nowait = true, remap = false },
+		{
+			"<leader>ls",
+			"<cmd>Telescope lsp_document_symbols<cr>",
+			desc = "Document Symbols",
+			nowait = true,
+			remap = false,
+		},
 
 		-- fold
-		o = { "za", "Fold" },
-
-		l = {
-			name = "LSP",
-			l = { "<cmd>LspStop<cr>", "Close LSP" },
-			L = { "<cmd>LspStart<cr>", "Open LSP" },
-			a = { vim.lsp.buf.code_action, "Code Action" },
-			d = {
-				"<cmd>Telescope diagnostics bufnr=0<cr>",
-				"Document Diagnostics",
-			},
-			-- f = { "<cmd>lua vim.lsp.buf.formatting()<cr>", "Format" },
-			f = { "<cmd>call Format()<CR>", "Format" },
-			-- f = { "<cmd>lua vim.lsp.buf.range_formatting()<cr>", "Format" },
-			h = { "<cmd>LspInfo<cr>", "Info" },
-			-- k = {
-			-- 	vim.diagnostic.goto_next,
-			-- 	"Next Diagnostic",
-			-- },
-			-- i = {
-			-- 	vim.diagnostic.goto_prev,
-			-- 	"Prev Diagnostic",
-			-- },
-			q = { vim.diagnostic.setloclist, "Quickfix" },
-			r = { vim.lsp.buf.rename, "Rename" },
-			s = { "<cmd>Telescope lsp_document_symbols<cr>", "Document Symbols" },
-			S = {
-				"<cmd>Telescope lsp_dynamic_workspace_symbols<cr>",
-				"Workspace Symbols",
-			},
-			c = { ":Lspsaga incoming_calls<CR>", "Incoming Calls" },
-		},
+		{ "<leader>o", "za", desc = "Fold", nowait = true, remap = false },
+		-- Compile file
+		{ "<leader>r", "<cmd>call CompileRunGcc()<CR>", desc = "Compile file", nowait = true, remap = false },
+		-- functions and values
+		{ "<leader>v", "<cmd>Lspsaga outline<CR>", desc = "Lspsaga outline", nowait = true, remap = false },
 	},
 }
 
 M.setup = function()
 	local which_key = require("which-key")
-
 	which_key.setup(leader_key.setup)
-
-	local opts = leader_key.opts
-
 	local mappings = leader_key.mappings
-
-	which_key.register(mappings, opts)
+	which_key.add(mappings)
 end
 
 return M
