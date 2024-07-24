@@ -59,7 +59,7 @@ leader_key = {
 			nowait = true,
 			remap = false,
 		},
-		{ "<leader>lf", "<cmd>call Format()<CR>", desc = "Format", nowait = true, remap = false },
+		{ "<leader>lf", "<cmd>call Format()<CR>zz", desc = "Format", nowait = true, remap = false },
 		{ "<leader>lh", "<cmd>LspInfo<cr>", desc = "Info", nowait = true, remap = false },
 		{ "<leader>ll", "<cmd>LspStop<cr>", desc = "Close LSP", nowait = true, remap = false },
 		{ "<leader>lq", vim.diagnostic.setloclist, desc = "Quickfix", nowait = true, remap = false },
