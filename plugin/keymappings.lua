@@ -103,6 +103,9 @@ map("v", "<LEADER>c", "gc", { remap = true })
 -- mark
 map("n", "M", "`")
 
+-- personal test file
+map("n", "g1", "<cmd>e /home/laughing/codes/ultralytics/runs/1.py<CR>zz")
+
 -------------plugins mappings---------------
 map("n", "R", ":Lf<CR>")
 
