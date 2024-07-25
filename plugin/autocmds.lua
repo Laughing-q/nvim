@@ -25,3 +25,25 @@ vim.cmd([[ autocmd BufWinLeave *.tex silent !texclear %; ]])
 
 -- yank highlight
 vim.cmd([[ autocmd TextYankPost * silent lua vim.highlight.on_yank({higroup = 'Search', timeout = 50}) ]])
+
+-- markdown snippets
+vim.cmd([[
+    autocmd Filetype markdown inoremap <buffer> ,f <++>
+    autocmd Filetype markdown inoremap <buffer> ,n ---<Enter><Enter>
+    autocmd Filetype markdown inoremap <buffer> ,b **** <++><Esc>F*hi
+    autocmd Filetype markdown inoremap <buffer> ,sb <sub></sub> <++><Esc>Fs2hi
+    autocmd Filetype markdown inoremap <buffer> ,sp <sup></sup> <++><Esc>Fs2hi
+    autocmd Filetype markdown inoremap <buffer> ,i ** <++><Esc>F*i
+    autocmd Filetype markdown inoremap <buffer> ,d `` <++><Esc>F`i
+    autocmd Filetype markdown inoremap <buffer> ,c ```<Enter><++><Enter>```<Enter><Enter><++><Esc>4kA
+    autocmd Filetype markdown inoremap <buffer> ,m - [ ] 
+    autocmd Filetype markdown inoremap <buffer> ,p ![](<++>) <++><Esc>F[a
+    autocmd Filetype markdown inoremap <buffer> ,a [](<++>) <++><Esc>F[a
+    autocmd Filetype markdown inoremap <buffer> ,1 #<Space><Enter><++><Esc>kA
+    autocmd Filetype markdown inoremap <buffer> ,2 ##<Space><Enter><++><Esc>kA
+    autocmd Filetype markdown inoremap <buffer> ,3 ###<Space><Enter><++><Esc>kA
+    autocmd Filetype markdown inoremap <buffer> ,4 ####<Space><Enter><++><Esc>kA
+    autocmd Filetype markdown inoremap <buffer> ,l --------<Enter>
+    autocmd Filetype markdown inoremap <buffer> ,l --------<Enter>
+    autocmd Filetype markdown inoremap <buffer> ,w <details><Enter><summary></summary><Enter><Enter><++><Enter></details><Esc>3ki
+  ]])
