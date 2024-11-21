@@ -122,3 +122,27 @@ map("n", "U", ":UndotreeToggle<CR>")
 map("n", "gr", ":Lspsaga finder<CR>")
 -- map("n", "gD", ":Lspsaga peek_definition<CR>")
 map("n", "gD", ":vsplit<CR>:lua vim.lsp.buf.definition()<CR>")
+
+-- copliot
+map(
+	{ "v", "n" },
+	"<leader>ke",
+	"<cmd>CopilotChatExplain<CR>",
+	{ desc = "CopilotExplain", nowait = true, remap = false }
+)
+map({ "v", "n" }, "<leader>kr", "<cmd>CopilotChatReview<CR>", { desc = "CopilotReview", nowait = true, remap = false })
+map({ "v", "n" }, "<leader>kf", "<cmd>CopilotChatFix<CR>", { desc = "CopilotFix", nowait = true, remap = false })
+map(
+	{ "v", "n" },
+	"<leader>ko",
+	"<cmd>CopilotChatOptimize<CR>",
+	{ desc = "CopilotOptimize", nowait = true, remap = false }
+)
+map({ "v", "n" }, "<leader>kd", "<cmd>CopilotChatDocs<CR>", { desc = "CopilotDocs", nowait = true, remap = false })
+map({ "v", "n" }, "<leader>kt", "<cmd>CopilotChatTests<CR>", { desc = "CopilotTests", nowait = true, remap = false })
+map(
+	{ "v", "n" },
+	"<leader>kc",
+	"<cmd>CopilotChatCommit<CR>",
+	{ desc = "CopilotCommitInfo", nowait = true, remap = false }
+)
