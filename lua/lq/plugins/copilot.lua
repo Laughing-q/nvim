@@ -75,7 +75,7 @@ return {
 					},
 				},
 				selection = function(source)
-          local select = require("CopilotChat.select")
+					local select = require("CopilotChat.select")
 					return select.visual(source) or select.line(source)
 				end,
 
