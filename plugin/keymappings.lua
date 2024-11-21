@@ -124,6 +124,7 @@ map("n", "gr", ":Lspsaga finder<CR>")
 map("n", "gD", ":vsplit<CR>:lua vim.lsp.buf.definition()<CR>")
 
 -- copliot
+map("n", "<leader>kk", "<cmd>CopilotChat<CR>", { desc = "CopilotChat", nowait = true, remap = false })
 map(
 	{ "v", "n" },
 	"<leader>ke",
