@@ -8,7 +8,7 @@ func! Format()
 		" silent! exec "!black --fast --quiet -l 120 %"
 		silent! exec "!ruff format --line-length 120 %"
 	elseif &filetype == 'lua'
-		silent! exec "!stylua %"
+		silent! exec "!stylua --column-width 120 %"
 	elseif &filetype == 'cpp'
 		silent! exec "!clang-format --style=Microsoft -i %"
 	elseif &filetype == 'cmake'
