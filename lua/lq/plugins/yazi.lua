@@ -1,11 +1,12 @@
 return {
 	{
 		"mikavilpas/yazi.nvim",
-		event = "VeryLazy",
+		-- event = "VeryLazy",
+		cmd = { "Yazi" },
 		keys = {
 			-- 👇 in this section, choose your own keymappings!
 			{
-				"<leader>-",
+				"R",
 				"<cmd>Yazi<cr>",
 				desc = "Open yazi at the current file",
 			},
