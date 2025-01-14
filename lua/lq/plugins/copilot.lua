@@ -21,7 +21,7 @@ return {
 			build = "make tiktoken", -- Only on MacOS or Linux
 			opts = {
 				debug = false, -- Enable debug logging (same as 'log_level = 'debug')
-				log_level = "info", -- Log level to use, 'trace', 'debug', 'info', 'warn', 'error', 'fatal'
+				log_level = "info", -- Log level to use, 'trace', 'debug', 'info', 'warn', 'error', 'fatal'copCopilotC-Nvim/CopilotChat.nvio
 				proxy = nil, -- [protocol://]host[:port] Use this proxy
 				allow_insecure = false, -- Allow insecure server connections
 
@@ -48,11 +48,35 @@ return {
 					local select = require("CopilotChat.select")
 					return select.visual(source) or select.line(source)
 				end,
+				prompts = {
+					Explain = {
+						prompt = "> /COPILOT_EXPLAIN\n\nWrite an explanation for the selected code as paragraphs of text.",
+					},
+					Review = {
+						prompt = "> /COPILOT_REVIEW\n\nReview the selected code.",
+						-- see config.lua for implementation
+					},
+					Fix = {
+						prompt = "> /COPILOT_GENERATE\n\nThere is a problem in this code. Rewrite the code to show it with the bug fixed.",
+					},
+					Optimize = {
+						prompt = "> /COPILOT_GENERATE\n\nOptimize the selected code to improve performance and readability.",
+					},
+					Docs = {
+						prompt = "> /COPILOT_GENERATE\n\nPlease add documentation comments to the selected code, and please use Google-Style docstring if it's a function.",
+					},
+					Tests = {
+						prompt = "> /COPILOT_GENERATE\n\nPlease generate tests for my code.",
+					},
+					Commit = {
+						prompt = "> #git:staged\n\nWrite commit message for the change with commitizen convention. Make sure the title has maximum 50 characters and message is wrapped at 72 characters. Wrap the whole message in code block with language gitcommit.",
+					},
+				},
 
 				-- default mappings
 				mappings = {
 					complete = {
-						insert = "",   -- mapping to empty string disables default completion so it reuse the copilot one
+						insert = "", -- mapping to empty string disables default completion so it reuse the copilot one
 					},
 					close = {
 						normal = "Q",
