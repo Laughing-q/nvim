@@ -108,6 +108,7 @@ map("n", "g1", "<cmd>e /home/laughing/codes/ultralytics/runs/1.py<CR>zz")
 
 -------------plugins mappings---------------
 map("n", "R", ":Lf<CR>")
+map("n", "<C-N>", ":NvimTreeToggle<CR>")
 
 -- tmux
 map("n", "<C-G>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
