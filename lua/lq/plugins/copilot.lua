@@ -22,7 +22,7 @@ return {
 			opts = {
 				debug = false, -- Enable debug logging (same as 'log_level = 'debug')
 				log_level = "info", -- Log level to use, 'trace', 'debug', 'info', 'warn', 'error', 'fatal'copCopilotC-Nvim/CopilotChat.nvio
-				proxy = nil, -- [protocol://]host[:port] Use this proxy
+				proxy = "http://127.0.0.1:7892", -- [protocol://]host[:port] Use this proxy
 				allow_insecure = false, -- Allow insecure server connections
 
 				model = "claude-3.7-sonnet", -- Default model to use, see ':CopilotChatModels' for available models (can be specified manually in prompt via $).
