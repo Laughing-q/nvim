@@ -2,7 +2,7 @@ return {
 	-- more settings see https://github.com/microsoft/pyright/blob/main/packages/vscode-pyright/package.json
 	settings = {
 		basedpyright = {
-			typeCheckingMode = "recommended",
+			typeCheckingMode = "off",
 			analysis = {
 				autoSearchPaths = true,
 				autoImportCompletions = false,
@@ -10,9 +10,10 @@ return {
 				useLibraryCodeForTypes = true,
 				logLevel = "Warning",
 				diagnosticSeverityOverrides = {
-					reportUnusedImport = "none",
-					reportMissingImports = "none",
-          reportUnknownVariableType = "none"
+					-- reportUnusedImport = "none",
+					-- reportMissingImports = "none",
+					-- reportUnknownVariableType = "none",
+					reportPrivateLocalImportUsage = "warning",
 				},
 			},
 		},
