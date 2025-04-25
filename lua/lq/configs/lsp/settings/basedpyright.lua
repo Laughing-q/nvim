@@ -12,7 +12,7 @@ return {
 				diagnosticSeverityOverrides = {
 					reportUnusedImport = "none",
 					reportMissingImports = "none",
-          reportUnknownVariableType = "hint"
+          reportUnknownVariableType = "none"
 				},
 			},
 		},
