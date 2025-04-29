@@ -25,7 +25,7 @@ return {
 				proxy = "http://127.0.0.1:7892", -- [protocol://]host[:port] Use this proxy
 				allow_insecure = false, -- Allow insecure server connections
 
-				model = "gpt-4o-2024-11-20", -- Default model to use, see ':CopilotChatModels' for available models (can be specified manually in prompt via $).
+				model = "gpt-4o", -- Default model to use, see ':CopilotChatModels' for available models (can be specified manually in prompt via $).
         -- model = "claude-3.7-sonnet",
 				agent = "copilot", -- Default agent to use, see ':CopilotChatAgents' for available agents (can be specified manually in prompt via @).
 				context = nil, -- Default context to use (can be specified manually in prompt via #).
