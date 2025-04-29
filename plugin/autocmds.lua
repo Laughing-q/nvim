@@ -10,7 +10,9 @@
 vim.cmd([[ au TermOpen term://* setlocal nonumber norelativenumber ]])
 
 -- Open a file from its last left off position
-vim.cmd([[ au BufReadPost * if expand('%:p') !~# '\m/\.git/' && line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif ]])
+vim.cmd(
+	[[ au BufReadPost * if expand('%:p') !~# '\m/\.git/' && line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif ]]
+)
 -- File extension specific tabbing
 -- vim.cmd [[ autocmd Filetype python setlocal expandtab tabstop=4 shiftwidth=4 softtabstop=4 ]]
 
@@ -47,3 +49,9 @@ vim.cmd([[
     autocmd Filetype markdown inoremap <buffer> ,l --------<Enter>
     autocmd Filetype markdown inoremap <buffer> ,w <details><Enter><summary></summary><Enter><Enter><++><Enter></details><Esc>3ki
   ]])
+
+vim.api.nvim_create_autocmd({ "BufWritePost" }, {
+	callback = function()
+		require("lint").try_lint()
+	end,
+})
