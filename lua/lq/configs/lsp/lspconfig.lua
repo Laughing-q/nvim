@@ -95,7 +95,8 @@ end
 M.capabilities = cmp_nvim_lsp.default_capabilities(capabilities)
 
 local sumneko_opts = require("lq.configs.lsp.settings.sumneko_lua")
-local pyright_opts = require("lq.configs.lsp.settings.basedpyright")
+-- local basedpyrgiht = require("lq.configs.lsp.settings.basedpyright")
+local pyright = require("lq.configs.lsp.settings.pyright")
 
 lspconfig.lua_ls.setup({
 	on_attach = M.on_attach,
@@ -111,11 +112,18 @@ lspconfig.bashls.setup({
 	filetype = { "sh", "bash" },
 })
 
-lspconfig.basedpyright.setup({
+-- lspconfig.basedpyright.setup({
+-- 	on_attach = M.on_attach,
+-- 	capabilities = M.capabilities,
+--
+-- 	settings = basedpyrgiht.settings,
+-- })
+
+lspconfig.pyright.setup({
 	on_attach = M.on_attach,
 	capabilities = M.capabilities,
 
-	settings = pyright_opts.settings,
+	settings = pyright.settings,
 })
 
 lspconfig.clangd.setup({
