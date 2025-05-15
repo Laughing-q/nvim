@@ -134,14 +134,6 @@ local opts = {
 		vim.keymap.set("n", "<leader>gL", function()
 			git_blame_link()
 		end, { buffer = bufnr, desc = "Generate GitHub link for current line's commit" })
-
-		-- -- Optional: Add keymap to open the link in browser if you have a plugin for it
-		-- vim.keymap.set("n", "<leader>go", function()
-		-- 	local url = generate_github_commit_link()
-		-- 	if url and vim.fn.exists(":OpenBrowser") > 0 then
-		-- 		vim.cmd("OpenBrowser " .. url)
-		-- 	end
-		-- end, { buffer = bufnr, desc = "Open GitHub link for current line's commit" })
 	end,
 }
 
