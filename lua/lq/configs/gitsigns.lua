@@ -80,7 +80,7 @@ local opts = {
 	sign_priority = 6,
 	update_debounce = 200,
 	status_formatter = nil, -- Use default
-	current_line_blame = false, -- Enable this for easier access to blame info
+	current_line_blame = false, -- disable this as it's a bit annoying
 
 	on_attach = function(bufnr)
 		local function map(mode, l, r, opts)
