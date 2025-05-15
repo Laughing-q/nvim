@@ -36,7 +36,7 @@ local git_blame_link = async.create(1, function()
 	local url = nil
 	if pr_number then
 		url = string.format("https://github.com/%s/pull/%s", repo, pr_number)
-	elseif result.sha:match("^0+$") == nil then
+	elseif result.sha:match("^0+$") == nil then  -- "sha" would be all zero values if not commit yet
 		url = string.format("https://github.com/%s/commit/%s", repo, result.sha)
 	end
 	if url ~= nil then
