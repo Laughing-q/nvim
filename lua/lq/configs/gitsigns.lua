@@ -44,8 +44,8 @@ local git_blame_link = async.create(1, function()
 		-- vim.fn.setreg("+", url)
 		-- print("Commit URL copied to clipboard: " .. url)
 		vim.fn.system({ "xdg-open", url }) -- Open the URL in the default browser
-  else
-    print("Not a commit or PR")
+	else
+		print("Not a commit or PR")
 	end
 end)
 
