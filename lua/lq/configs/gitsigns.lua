@@ -39,8 +39,9 @@ local git_blame_link = async.create(1, function()
     url = string.format("https://github.com/%s/commit/%s", repo, result.sha)
   end
 	-- Copy to clipboard
-	vim.fn.setreg("+", url)
-	print("Commit URL copied to clipboard: " .. url)
+	-- vim.fn.setreg("+", url)
+  -- print("Commit URL copied to clipboard: " .. url)
+  vim.fn.system({"xdg-open", url}) -- Open the URL in the default browser
 end)
 
 local opts = {
