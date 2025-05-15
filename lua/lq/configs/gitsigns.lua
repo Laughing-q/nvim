@@ -31,14 +31,16 @@ local git_blame_link = async.create(1, function()
 
 	local repo = get_git_repo() or "lewis6991/gitsigns.nvim"
 	local result = util.convert_blame_info(assert(bcache:get_blame(lnum, {})))
-  -- for k, v in pairs(result) do
-  --   print(k, v)
-  -- end
-	local commit_url = string.format("https://github.com/%s/commit/%s", repo, result.sha)
-
+  local pr_number = result.summary:match("#(%d+)")  -- match the PR number "#123"
+  local url = nil
+  if pr_number then
+    url = string.format("https://github.com/%s/pull/%s", repo, pr_number)
+  else
+    url = string.format("https://github.com/%s/commit/%s", repo, result.sha)
+  end
 	-- Copy to clipboard
-	vim.fn.setreg("+", commit_url)
-	print("Commit URL copied to clipboard: " .. commit_url)
+	vim.fn.setreg("+", url)
+	print("Commit URL copied to clipboard: " .. url)
 end)
 
 local opts = {
