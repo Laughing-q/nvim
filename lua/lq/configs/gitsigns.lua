@@ -18,6 +18,7 @@ local function get_git_repo()
 	return repo and repo:gsub("%.git$", "") or nil
 end
 
+-- reference the source code of gitsigns.nvim repo
 local async = require("gitsigns.async")
 local git_blame_link = async.create(1, function()
 	local cache = require("gitsigns.cache").cache
