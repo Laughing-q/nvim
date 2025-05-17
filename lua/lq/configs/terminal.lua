@@ -48,8 +48,6 @@ local terminal_opts = {
 	-- laughing.builtin.terminal.execs[#laughing.builtin.terminal.execs+1] = {"gdb", "tg", "GNU Debugger"}
 	execs = {
     { "lazygit", "<leader>gg", "LazyGit", "float" },
-    -- { "lfimg", "R", "LF", "float" },
-		-- { "lf", "<leader>.", "f" },
 	},
 }
 
