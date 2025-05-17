@@ -32,17 +32,21 @@ local git_blame_link = async.create(1, function()
 
 	local repo = get_git_repo() or "lewis6991/gitsigns.nvim"
 	local result = util.convert_blame_info(assert(bcache:get_blame(lnum, {})))
-  local pr_number = result.summary:match("#(%d+)")  -- match the PR number "#123"
-  local url = nil
-  if pr_number then
-    url = string.format("https://github.com/%s/pull/%s", repo, pr_number)
-  else
-    url = string.format("https://github.com/%s/commit/%s", repo, result.sha)
-  end
-	-- Copy to clipboard
-	-- vim.fn.setreg("+", url)
-  -- print("Commit URL copied to clipboard: " .. url)
-  vim.fn.system({"xdg-open", url}) -- Open the URL in the default browser
+	local pr_number = result.summary:match("#(%d+)") -- match the PR number "#123"
+	local url = nil
+	if pr_number then
+		url = string.format("https://github.com/%s/pull/%s", repo, pr_number)
+	elseif result.sha:match("^0+$") == nil then  -- "sha" would be all zero values if not commit yet
+		url = string.format("https://github.com/%s/commit/%s", repo, result.sha)
+	end
+	if url ~= nil then
+		-- Copy to clipboard
+		-- vim.fn.setreg("+", url)
+		-- print("Commit URL copied to clipboard: " .. url)
+		vim.fn.system({ "xdg-open", url }) -- Open the URL in the default browser
+	else
+		print("Not a commit or PR")
+	end
 end)
 
 local opts = {
@@ -82,13 +86,13 @@ local opts = {
 	update_debounce = 200,
 	status_formatter = nil, -- Use default
 	current_line_blame = false, -- disable this as it's a bit annoying
-  preview_config = {
-    border = "rounded",
-    style = "minimal",
-    relative = "cursor",
-    row = 0,
-    col = 1,
-  },
+	preview_config = {
+		border = "rounded",
+		style = "minimal",
+		relative = "cursor",
+		row = 0,
+		col = 1,
+	},
 
 	on_attach = function(bufnr)
 		local function map(mode, l, r, opts)
