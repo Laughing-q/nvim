@@ -107,8 +107,6 @@ map("n", "M", "`")
 map("n", "g1", "<cmd>e /home/laughing/codes/ultralytics/runs/1.py<CR>zz")
 
 -------------plugins mappings---------------
--- map("n", "R", ":Lf<CR>")
-
 -- tmux
 map("n", "<C-G>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
 
