@@ -78,13 +78,7 @@ end
 
 M._exec_toggle = function(opt)
   local Terminal = require("toggleterm.terminal").Terminal
-  local cmd
-  if opt.cmd == "lfimg" then
-    cmd = opt.cmd .. " " .. vim.api.nvim_buf_get_name(0)
-  else
-    cmd = opt.cmd
-  end
-  local term = Terminal:new { cmd = cmd, count = opt.count, direction = opt.direction }
+  local term = Terminal:new { cmd = opt.cmd, count = opt.count, direction = opt.direction }
   term:toggle(terminal_opts.size, opt.direction)
 end
 
