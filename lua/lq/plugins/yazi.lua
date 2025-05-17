@@ -1,6 +1,6 @@
 return {
 	{
-		"mikavilpas/yazi.nvim",
+		"Laughing-q/yazi.nvim",
 		-- event = "VeryLazy",
 		cmd = { "Yazi" },
 		keys = {
@@ -27,10 +27,14 @@ return {
 		opts = {
 			-- if you want to open yazi instead of netrw, see below for more info
 			open_for_directories = false,
-			keymaps = {
-				show_help = "<f1>",
-			},
+			highlight_hovered_buffers_in_same_directory = false,
+			-- log_level = vim.log.levels.DEBUG,
+			-- keymaps = {
+			-- 	show_help = "<f1>",
+			-- },
 			floating_window_scaling_factor = 0.7,
+			integrations = { resolve_relative_path_application = "realpath" },
+			clipboard_register = "+",
 		},
 	},
 }
