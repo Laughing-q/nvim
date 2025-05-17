@@ -73,15 +73,4 @@ return {
 		config = true,
 		cmd = { "Neogen" },
 	},
-	{
-		"Laughing-q/lf.nvim",
-		cmd = { "Lf" },
-		config = function()
-			require("lf").setup({
-				escape_quit = false,
-				default_cmd = "lfimg",
-			})
-		end,
-		requires = { "toggleterm.nvim" },
-	},
 }
