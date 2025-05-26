@@ -28,7 +28,7 @@ telescope.setup({
 		layout_config = {
 			horizontal = {
 				prompt_position = "top",
-        mirror = true,
+				mirror = true,
 				preview_width = 0.5,
 				-- results_width = 0.8,
 			},
@@ -120,6 +120,11 @@ end, { desc = "Find Hidden File" })
 
 vim.keymap.set("n", "<leader>fj", builtin.grep_string, { desc = "Find Word under the cursor" })
 vim.keymap.set("n", "<leader>fw", builtin.live_grep, { desc = "Find Word" })
+vim.keymap.set("n", "<leader>fW", function()
+	builtin.live_grep({
+		additional_args = { "--case-sensitive" },
+	})
+end, { desc = "Find Word in case-sensitive" })
 vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "Find Help" })
 vim.keymap.set("n", "<leader>fr", builtin.registers, { desc = "Find Registers" })
 vim.keymap.set("n", "<leader>fk", builtin.keymaps, { desc = "Find Keymaps" })
