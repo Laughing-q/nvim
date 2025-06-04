@@ -119,12 +119,32 @@ vim.keymap.set("n", "<leader>fa", function()
 end, { desc = "Find Hidden File" })
 
 vim.keymap.set("n", "<leader>fj", builtin.grep_string, { desc = "Find Word under the cursor" })
-vim.keymap.set("n", "<leader>fw", builtin.live_grep, { desc = "Find Word" })
+vim.keymap.set("n", "<leader>fw", function()
+	builtin.live_grep({
+		use_regex = true,
+		additional_args = { "--multiline", "--pcre2" },
+	})
+end, { desc = "Find Word" })
 vim.keymap.set("n", "<leader>fW", function()
 	builtin.live_grep({
-		additional_args = { "--case-sensitive" },
+		use_regex = true,
+		additional_args = { "--case-sensitive", "--multiline", "--pcre2" },
 	})
 end, { desc = "Find Word in case-sensitive" })
+vim.keymap.set("n", "<leader>fd", function()
+	builtin.live_grep({
+		use_regex = true,
+		glob_pattern = { "*.md" },
+		additional_args = { "--multiline", "--pcre2" }, -- pcre2 for better regex support, i.e support (?!bash) to exclude "bash" in the context
+	})
+end, { desc = "Find Word in markdown files" })
+vim.keymap.set("n", "<leader>fp", function()
+	builtin.live_grep({
+		use_regex = true,
+		glob_pattern = { "*.py" },
+		additional_args = { "--multiline", "--pcre2" },
+	})
+end, { desc = "Find Word in python files" })
 vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "Find Help" })
 vim.keymap.set("n", "<leader>fr", builtin.registers, { desc = "Find Registers" })
 vim.keymap.set("n", "<leader>fk", builtin.keymaps, { desc = "Find Keymaps" })
