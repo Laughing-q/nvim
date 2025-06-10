@@ -135,12 +135,12 @@ local opts = {
 		map("n", "<leader>gu", gitsigns.undo_stage_hunk, { desc = "Git undo stage" })
 		map("n", "<leader>gd", gitsigns.diffthis, { desc = "Git diff" })
 		map("n", "<leader>gc", "<cmd>silent !git commit -m 'Update %:t'<CR>", { desc = "Git commit current file" })
-		map(
-			"n",
-			"<leader>gC",
-			"<cmd>silent !git add % && git commit -m 'Update %:t'<CR>",
-			{ desc = "Git commit current file" }
-		)
+    map(
+        "n",
+        "<leader>gC",
+        "<cmd>silent !git add % && git commit -m 'Update " .. vim.fn.expand('%:h:t') .. "/" .. vim.fn.expand('%:t') .. "'<CR>",
+        { desc = "Git commit current file" }
+    )
 
 		-- Add custom keymap for generating GitHub links
 		vim.keymap.set("n", "<leader>gL", function()
