@@ -64,7 +64,7 @@ return {
 						prompt = "> /COPILOT_GENERATE\n\nOptimize the selected code to improve performance and readability.",
 					},
 					Docs = {
-						prompt = "> /COPILOT_GENERATE\n\nPlease add documentation comments to the selected code, and please use Google-Style docstring if it's a function.",
+						prompt = "> /COPILOT_GENERATE\n\nPlease add Google-Style docstring to this function based on the content of this function, also update the type hints for it if needed, please make sure docstring also presents types correctly. Please only outputs the docstring and type hints, no need to output other content of this function.",
 					},
 					Tests = {
 						prompt = "> /COPILOT_GENERATE\n\nPlease generate tests for my code.",
