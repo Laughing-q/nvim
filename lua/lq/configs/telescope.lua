@@ -145,6 +145,13 @@ vim.keymap.set("n", "<leader>fp", function()
 		additional_args = { "--multiline", "--pcre2" },
 	})
 end, { desc = "Find Word in python files" })
+-- vim.keymap.set("n", "<leader>fy", function()
+-- 	builtin.live_grep({
+-- 		use_regex = true,
+-- 		glob_pattern = { "*.yaml" },
+-- 		additional_args = { "--multiline", "--pcre2" },
+-- 	})
+-- end, { desc = "Find Word in yaml files" })
 vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "Find Help" })
 vim.keymap.set("n", "<leader>fr", builtin.registers, { desc = "Find Registers" })
 vim.keymap.set("n", "<leader>fk", builtin.keymaps, { desc = "Find Keymaps" })
