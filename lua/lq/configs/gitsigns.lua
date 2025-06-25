@@ -36,7 +36,7 @@ local git_blame_link = async.create(1, function()
 	local url = nil
 	if pr_number then
 		url = string.format("https://github.com/%s/pull/%s", repo, pr_number)
-	elseif result.sha:match("^0+$") == nil then  -- "sha" would be all zero values if not commit yet
+	elseif result.sha:match("^0+$") == nil then -- "sha" would be all zero values if not commit yet
 		url = string.format("https://github.com/%s/commit/%s", repo, result.sha)
 	end
 	if url ~= nil then
@@ -135,12 +135,12 @@ local opts = {
 		map("n", "<leader>gu", gitsigns.undo_stage_hunk, { desc = "Git undo stage" })
 		map("n", "<leader>gd", gitsigns.diffthis, { desc = "Git diff" })
 		map("n", "<leader>gc", "<cmd>silent !git commit -m 'Update %:t'<CR>", { desc = "Git commit current file" })
-    map(
-        "n",
-        "<leader>gC",
-        "<cmd>silent !git add % && git commit -m 'Update " .. vim.fn.expand('%:h:t') .. "/" .. vim.fn.expand('%:t') .. "'<CR>",
-        { desc = "Git commit current file" }
-    )
+		map("n", "<leader>gC", function()
+			local folder = vim.fn.expand("%:h:t")
+			local file = vim.fn.expand("%:t")
+			local path = folder == "." and file or folder .. "/" .. file
+			vim.cmd("silent !git add % && git commit -m 'Update " .. path .. "'")
+		end, { desc = "Git commit current file" })
 
 		-- Add custom keymap for generating GitHub links
 		vim.keymap.set("n", "<leader>gL", function()
