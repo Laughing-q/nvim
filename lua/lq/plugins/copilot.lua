@@ -6,7 +6,7 @@ return {
 				expr = true,
 				replace_keycodes = false,
 			})
-			vim.g.copilot_no_tab_map = false
+			vim.g.copilot_no_tab_map = true
 		end,
 	},
 	{
@@ -25,8 +25,8 @@ return {
 				proxy = nil, -- [protocol://]host[:port] Use this proxy
 				allow_insecure = false, -- Allow insecure server connections
 
-				model = "gpt-4o", -- Default model to use, see ':CopilotChatModels' for available models (can be specified manually in prompt via $).
-        -- model = "claude-3.7-sonnet",
+				-- model = "gpt-4o", -- Default model to use, see ':CopilotChatModels' for available models (can be specified manually in prompt via $).
+        model = "claude-sonnet-4",
 				agent = "copilot", -- Default agent to use, see ':CopilotChatAgents' for available agents (can be specified manually in prompt via @).
 				context = nil, -- Default context to use (can be specified manually in prompt via #).
 				temperature = 0.1, -- GPT result temperature
@@ -64,7 +64,7 @@ return {
 						prompt = "> /COPILOT_GENERATE\n\nOptimize the selected code to improve performance and readability.",
 					},
 					Docs = {
-						prompt = "> /COPILOT_GENERATE\n\nPlease add documentation comments to the selected code, and please use Google-Style docstring if it's a function.",
+						prompt = "> /COPILOT_GENERATE\n\nPlease add Google-Style docstring to this function based on the content of this function, also update the type hints for it if needed, please make sure docstring also presents types correctly. Please only outputs the docstring and type hints, no need to output other content of this function.",
 					},
 					Tests = {
 						prompt = "> /COPILOT_GENERATE\n\nPlease generate tests for my code.",

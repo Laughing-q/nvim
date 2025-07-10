@@ -107,8 +107,6 @@ map("n", "M", "`")
 map("n", "g1", "<cmd>e /home/laughing/codes/ultralytics/runs/1.py<CR>zz")
 
 -------------plugins mappings---------------
-map("n", "R", ":Lf<CR>")
-
 -- tmux
 map("n", "<C-G>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
 
@@ -147,3 +145,12 @@ map(
 	"<cmd>CopilotChatCommit<CR>",
 	{ desc = "CopilotCommitInfo", nowait = true, remap = false }
 )
+
+map("", "]c", "]]zz", { desc = "Next class start", nowait = true, remap = true })
+map("", "]f", "]mzz", { desc = "Next function start", nowait = true, remap = true })
+map("", "[c", "[[zz", { desc = "Previous class start", nowait = true, remap = true })
+map("", "[f", "[mzz", { desc = "Previous function start", nowait = true, remap = true })
+map("", "]C", "][zz", { desc = "Next class end", nowait = true, remap = true })
+map("", "]F", "]Mzz", { desc = "Next function end", nowait = true, remap = true })
+map("", "[C", "[]zz", { desc = "Previous class end", nowait = true, remap = true })
+map("", "[F", "[Mzz", { desc = "Previous function end", nowait = true, remap = true })

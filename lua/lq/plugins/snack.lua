@@ -3,7 +3,7 @@ return {
 		"folke/snacks.nvim",
 		event = "VeryLazy",
 		opts = {
-			gitbrowse = { enabled = true },
+			gitbrowse = { enabled = true, what = "permalink" },
 		},
 		keys = {
 			{
@@ -12,7 +12,7 @@ return {
 					Snacks.gitbrowse.open({
 						open = function(url)
 							vim.fn.setreg("+", url)
-              vim.notify('Yanked url to clipboard')
+							vim.notify("Yanked url to clipboard")
 						end,
 					})
 				end,
