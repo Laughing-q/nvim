@@ -106,6 +106,9 @@ map("n", "M", "`")
 -- personal test file
 map("n", "g1", "<cmd>e /home/laughing/codes/ultralytics/runs/1.py<CR>zz")
 
+-- enforce reload
+map("n", "<C-R>", ":e!<CR>")
+
 -------------plugins mappings---------------
 -- tmux
 map("n", "<C-G>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
