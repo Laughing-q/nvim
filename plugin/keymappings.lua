@@ -109,6 +109,9 @@ map("n", "g1", "<cmd>e /home/laughing/codes/ultralytics/runs/1.py<CR>zz")
 -- enforce reload
 map("n", "<C-R>", ":e!<CR>")
 
+-- make buffer executable
+map("n", "<leader>x", ":!chmod +x %<CR>")
+
 -------------plugins mappings---------------
 -- tmux
 map("n", "<C-G>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
