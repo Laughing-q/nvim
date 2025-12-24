@@ -27,7 +27,9 @@ return {
 
 				-- model = "gpt-4o", -- Default model to use, see ':CopilotChatModels' for available models (can be specified manually in prompt via $).
         -- model = "claude-sonnet-4.5",
-        model = "gemini-3-pro-preview",
+        -- model = "gpt-5.1-codex-mini",
+        model = "gemini-3-flash-preview",
+        -- model = "gemini-3-pro-preview",
 				agent = "copilot", -- Default agent to use, see ':CopilotChatAgents' for available agents (can be specified manually in prompt via @).
 				context = nil, -- Default context to use (can be specified manually in prompt via #).
 				temperature = 0.1, -- GPT result temperature
