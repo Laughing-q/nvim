@@ -66,11 +66,4 @@ return {
 		"ThePrimeagen/vim-be-good",
 		cmd = { "VimBeGood" },
 	},
-
-	{
-		"danymat/neogen",
-		dependencies = "nvim-treesitter/nvim-treesitter",
-		config = true,
-		cmd = { "Neogen" },
-	},
 }
