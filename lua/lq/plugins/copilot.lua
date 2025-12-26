@@ -33,11 +33,19 @@ return {
 				agent = "copilot", -- Default agent to use, see ':CopilotChatAgents' for available agents (can be specified manually in prompt via @).
 				context = nil, -- Default context to use (can be specified manually in prompt via #).
 				temperature = 0.1, -- GPT result temperature
+        window = {
+          layout = 'vertical',       -- 'vertical', 'horizontal', 'float'
+          width = 0.5,              -- 50% of screen width
+          title = '🤖 AI Assistant',
+        },
 
-				question_header = "# Laughing-q ", -- Header to use for user questions
-				answer_header = "## Copilot ", -- Header to use for AI answers
-				error_header = "## Error ", -- Header to use for errors
+        headers = {
+          user = '👤 Laughing-q',
+          assistant = '🤖 Copilot',
+          tool = '🔧 Tool',
+        },
 				separator = "───", -- Separator to use in chat
+        auto_fold = true,
 
 				chat_autocomplete = true, -- Enable chat autocompletion (when disabled, requires manual `mappings.complete` trigger)
 				auto_insert_mode = true, -- Automatically enter insert mode when opening window and on new prompt
