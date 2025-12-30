@@ -104,7 +104,7 @@ map("v", "<LEADER>c", "gc", { remap = true })
 map("n", "M", "`")
 
 -- personal test file
-map("n", "g1", "<cmd>e /home/laughing/codes/ultralytics/runs/1.py<CR>zz")
+map("n", "g1", "<cmd>e /home/laughing/codes/uscripts/ultralytics/tests.py<CR>zz")
 
 -- enforce reload
 map("n", "<C-R>", ":e!<CR>")
