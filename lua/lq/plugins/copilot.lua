@@ -26,9 +26,9 @@ return {
 				allow_insecure = false, -- Allow insecure server connections
 
 				-- model = "gpt-4o", -- Default model to use, see ':CopilotChatModels' for available models (can be specified manually in prompt via $).
-        -- model = "claude-sonnet-4.5",
+        model = "claude-sonnet-4.5",
         -- model = "gpt-5.1-codex-mini",
-        model = "gemini-3-flash-preview",
+        -- model = "gemini-3-flash-preview",
         -- model = "gemini-3-pro-preview",
 				agent = "copilot", -- Default agent to use, see ':CopilotChatAgents' for available agents (can be specified manually in prompt via @).
 				context = nil, -- Default context to use (can be specified manually in prompt via #).
@@ -72,7 +72,7 @@ return {
 						prompt = "> /COPILOT_GENERATE\n\nThere is a problem in this code. Rewrite the code to show it with the bug fixed.",
 					},
 					Optimize = {
-						prompt = "> /COPILOT_GENERATE\n\nOptimize the selected code to improve performance and readability.",
+						prompt = "> /COPILOT_GENERATE\n\nOptimize the selected code to improve performance and simplicity.",
 					},
 					Docs = {
 						prompt = "> /COPILOT_GENERATE\n\nPlease add Google-Style docstring to this function based on the content of this function, also update the type hints for it if needed, please make sure docstring also presents types correctly. Please only outputs the docstring and type hints, no need to output other content of this function.",
