@@ -20,34 +20,36 @@ end
 
 -- reference the source code of gitsigns.nvim repo
 local async = require("gitsigns.async")
-local git_blame_link = async.create(1, function()
-	local cache = require("gitsigns.cache").cache
-	local bcache = cache[vim.api.nvim_get_current_buf()]
-	if not bcache then
-		return
-	end
+local git_blame_link = function()
+	async.run(function()
+		local cache = require("gitsigns.cache").cache
+		local bcache = cache[vim.api.nvim_get_current_buf()]
+		if not bcache then
+			return
+		end
 
-	local util = require("gitsigns.util")
-	local lnum = vim.api.nvim_win_get_cursor(0)[1]
+		local util = require("gitsigns.util")
+		local lnum = vim.api.nvim_win_get_cursor(0)[1]
 
-	local repo = get_git_repo() or "lewis6991/gitsigns.nvim"
-	local result = util.convert_blame_info(assert(bcache:get_blame(lnum, {})))
-	local pr_number = result.summary:match("#(%d+)") -- match the PR number "#123"
-	local url = nil
-	if pr_number then
-		url = string.format("https://github.com/%s/pull/%s", repo, pr_number)
-	elseif result.sha:match("^0+$") == nil then -- "sha" would be all zero values if not commit yet
-		url = string.format("https://github.com/%s/commit/%s", repo, result.sha)
-	end
-	if url ~= nil then
-		-- Copy to clipboard
-		-- vim.fn.setreg("+", url)
-		-- print("Commit URL copied to clipboard: " .. url)
-		vim.fn.system({ "xdg-open", url }) -- Open the URL in the default browser
-	else
-		print("Not a commit or PR")
-	end
-end)
+		local repo = get_git_repo() or "lewis6991/gitsigns.nvim"
+		local result = util.convert_blame_info(assert(bcache:get_blame(lnum, {})))
+		local pr_number = result.summary:match("#(%d+)") -- match the PR number "#123"
+		local url = nil
+		if pr_number then
+			url = string.format("https://github.com/%s/pull/%s", repo, pr_number)
+		elseif result.sha:match("^0+$") == nil then -- "sha" would be all zero values if not commit yet
+			url = string.format("https://github.com/%s/commit/%s", repo, result.sha)
+		end
+		if url ~= nil then
+			-- Copy to clipboard
+			-- vim.fn.setreg("+", url)
+			-- print("Commit URL copied to clipboard: " .. url)
+			vim.fn.system({ "xdg-open", url }) -- Open the URL in the default browser
+		else
+			print("Not a commit or PR")
+		end
+	end)
+end
 
 local opts = {
 	signs = {
