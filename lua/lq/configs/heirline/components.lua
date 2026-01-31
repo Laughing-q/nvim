@@ -138,14 +138,14 @@ M.Diagnostics = {
 
 M.LSP = {
 	-- condition = function ()
-	--   return next(vim.lsp.buf_get_clients()) ~= nil
+	--   return next(vim.lsp.get_clients()()) ~= nil
 	-- end,
 	condition = conditions.lsp_attached,
 
 	{
 		provider = function()
 			local names = {}
-			for _, server in pairs(vim.lsp.buf_get_clients()) do
+			for _, server in pairs(vim.lsp.get_clients()) do
 				table.insert(names, server.name)
 			end
 			return "🦁" .. table.concat(names, " ") .. ""
