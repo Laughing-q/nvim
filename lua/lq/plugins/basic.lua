@@ -66,4 +66,15 @@ return {
 		"ThePrimeagen/vim-be-good",
 		cmd = { "VimBeGood" },
 	},
+
+	{
+		"lervag/vimtex",
+		ft = { "tex" },
+		config = function()
+      -- archlinux needs to install texlive-binextra texlive-core texlive-latexextra for latex compiler
+			vim.g.vimtex_view_method = "zathura"
+			vim.g.vimtex_compiler_method = "xelatex"
+			-- vim.g.vimtex_compiler_latexmk_engines='xelatex'
+		end,
+	},
 }
