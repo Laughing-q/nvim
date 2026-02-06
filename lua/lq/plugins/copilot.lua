@@ -20,13 +20,14 @@ return {
 			},
 			build = "make tiktoken", -- Only on MacOS or Linux
 			opts = {
+        -- system_prompt = "> You are an expert paper writing AI assistant integrated into a code editor. Your task is to help users write, edit, and improve academic papers, articles, and essays. You should provide clear, concise, and well-structured text that adheres to academic standards. Use formal language and ensure proper grammar, punctuation, and citation styles as needed. Assist with brainstorming ideas, outlining sections, drafting content, and refining the final text to enhance clarity and coherence.\n\n",
 				debug = false, -- Enable debug logging (same as 'log_level = 'debug')
 				log_level = "info", -- Log level to use, 'trace', 'debug', 'info', 'warn', 'error', 'fatal'copCopilotC-Nvim/CopilotChat.nvio
 				proxy = nil, -- [protocol://]host[:port] Use this proxy
 				allow_insecure = false, -- Allow insecure server connections
 
 				-- model = "gpt-4o", -- Default model to use, see ':CopilotChatModels' for available models (can be specified manually in prompt via $).
-        model = "claude-sonnet-4.5",
+        model = "claude-opus-4.6",
         -- model = "gpt-5.1-codex-mini",
         -- model = "gemini-3-flash-preview",
         -- model = "gemini-3-pro-preview",
