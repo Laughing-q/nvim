@@ -1,19 +1,19 @@
 local M = {}
 local function warn(msg)
-    vim.cmd(string.format('echohl WarningMsg | echo "Warning: %s" | echohl None', msg))
+	vim.cmd(string.format('echohl WarningMsg | echo "Warning: %s" | echohl None', msg))
 end
 
 local terminal_opts = {
 	-- size can be a number or function which is passed the current terminal
-  size = function(term)
-    if term.direction == "horizontal" then
-      return 10
-    elseif term.direction == "vertical" then
-      return vim.o.columns * 0.4
-    else
-      return 20
-    end
-  end,
+	size = function(term)
+		if term.direction == "horizontal" then
+			return 10
+		elseif term.direction == "vertical" then
+			return vim.o.columns * 0.4
+		else
+			return 20
+		end
+	end,
 	open_mapping = [[<c-\>]],
 	hide_numbers = true, -- hide the number column in toggleterm buffers
 	shade_filetypes = {},
@@ -25,6 +25,7 @@ local terminal_opts = {
 	-- direction = 'vertical' | 'horizontal' | 'window' | 'float',
 	direction = "float",
 	close_on_exit = true, -- close the terminal window when the process exits
+	auto_scroll = false, -- automatically scroll to the bottom on terminal output
 	shell = vim.o.shell, -- change the default shell
 	-- This field is only relevant if direction is set to 'float'
 	float_opts = {
@@ -47,54 +48,54 @@ local terminal_opts = {
 	-- laughing.builtin.terminal.execs = {{}} to overwrite
 	-- laughing.builtin.terminal.execs[#laughing.builtin.terminal.execs+1] = {"gdb", "tg", "GNU Debugger"}
 	execs = {
-    { "lazygit", "<leader>gg", "LazyGit", "float" },
+		{ "lazygit", "<leader>gg", "LazyGit", "float" },
 	},
 }
 
 M.add_exec = function(opts)
-  local binary = opts.cmd:match "(%S+)"
-  if vim.fn.executable(binary) ~= 1 then
-    warn("Skipping configuring executable " .. binary .. ". Please make sure it is installed properly.")
-    return
-  end
+	local binary = opts.cmd:match("(%S+)")
+	if vim.fn.executable(binary) ~= 1 then
+		warn("Skipping configuring executable " .. binary .. ". Please make sure it is installed properly.")
+		return
+	end
 
-  local exec_func = string.format(
-    "<cmd>lua require('lq.configs.terminal')._exec_toggle({ cmd = '%s', count = %d, direction = '%s'})<CR>",
-    opts.cmd,
-    opts.count,
-    opts.direction
-  )
+	local exec_func = string.format(
+		"<cmd>lua require('lq.configs.terminal')._exec_toggle({ cmd = '%s', count = %d, direction = '%s'})<CR>",
+		opts.cmd,
+		opts.count,
+		opts.direction
+	)
 
-  -- this will slowdown the startup time.
-  -- local wk_status_ok, wk = pcall(require, "which-key")
-  -- if not wk_status_ok then
-  --   return
-  -- end
-  -- wk.register({ [opts.keymap] = { exec_func, opts.label } }, { mode = "n" })
-  -- wk.register({ [opts.keymap] = { exec_func, opts.label } }, { mode = "t" })
+	-- this will slowdown the startup time.
+	-- local wk_status_ok, wk = pcall(require, "which-key")
+	-- if not wk_status_ok then
+	--   return
+	-- end
+	-- wk.register({ [opts.keymap] = { exec_func, opts.label } }, { mode = "n" })
+	-- wk.register({ [opts.keymap] = { exec_func, opts.label } }, { mode = "t" })
 
-  vim.api.nvim_set_keymap("n", opts.keymap, exec_func, { noremap=true, silent = true })
+	vim.api.nvim_set_keymap("n", opts.keymap, exec_func, { noremap = true, silent = true })
 end
 
 M._exec_toggle = function(opt)
-  local Terminal = require("toggleterm.terminal").Terminal
-  local term = Terminal:new { cmd = opt.cmd, count = opt.count, direction = opt.direction }
-  term:toggle(terminal_opts.size, opt.direction)
+	local Terminal = require("toggleterm.terminal").Terminal
+	local term = Terminal:new({ cmd = opt.cmd, count = opt.count, direction = opt.direction })
+	term:toggle(terminal_opts.size, opt.direction)
 end
 
 M.setup = function()
 	local terminal = require("toggleterm")
 	terminal.setup(terminal_opts)
-  for i, exec in pairs(terminal_opts.execs) do
-    local opt = {
-      cmd = exec[1],
-      keymap = exec[2],
-      label = exec[3],
-      count = i + 1,
-      direction = exec[4] or terminal_opts.direction,
-      size = terminal_opts.size,
-    }
-    M.add_exec(opt)
+	for i, exec in pairs(terminal_opts.execs) do
+		local opt = {
+			cmd = exec[1],
+			keymap = exec[2],
+			label = exec[3],
+			count = i + 1,
+			direction = exec[4] or terminal_opts.direction,
+			size = terminal_opts.size,
+		}
+		M.add_exec(opt)
 	end
 end
 
