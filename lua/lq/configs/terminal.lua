@@ -49,6 +49,7 @@ local terminal_opts = {
 	-- laughing.builtin.terminal.execs[#laughing.builtin.terminal.execs+1] = {"gdb", "tg", "GNU Debugger"}
 	execs = {
 		{ "lazygit", "<leader>gg", "LazyGit", "float" },
+		{ "kimi --continue", "<leader>K", "kimi", "float" },
 	},
 }
 
@@ -91,7 +92,7 @@ M.setup = function()
 			cmd = exec[1],
 			keymap = exec[2],
 			label = exec[3],
-			count = i + 1,
+			count = i + 10,
 			direction = exec[4] or terminal_opts.direction,
 			size = terminal_opts.size,
 		}
