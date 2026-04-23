@@ -27,7 +27,7 @@ return {
 				allow_insecure = false, -- Allow insecure server connections
 
 				-- model = "gpt-4o", -- Default model to use, see ':CopilotChatModels' for available models (can be specified manually in prompt via $).
-        model = "claude-opus-4.6",
+        model = "claude-sonnet-4.6",
         -- model = "gpt-5.1-codex-mini",
         -- model = "gemini-3-flash-preview",
         -- model = "gemini-3-pro-preview",
