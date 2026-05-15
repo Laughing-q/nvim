@@ -94,7 +94,7 @@ if not present then
 	return M
 end
 
-local sumneko_opts = require("lq.configs.lsp.settings.sumneko_lua")
+local lua_ls_opts = require("lq.configs.lsp.settings.lua_ls")
 -- local basedpyrgiht = require("lq.configs.lsp.settings.basedpyright")
 local pyright = require("lq.configs.lsp.settings.pyright")
 
