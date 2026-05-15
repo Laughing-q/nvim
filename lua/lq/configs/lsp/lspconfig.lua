@@ -1,9 +1,3 @@
-local present, lspconfig = pcall(require, "lspconfig")
-
-if not present then
-	return
-end
-
 local M = {}
 
 require("lq.configs.lsp.ui")
@@ -94,46 +88,58 @@ if not status_ok then
 end
 M.capabilities = cmp_nvim_lsp.default_capabilities(capabilities)
 
+-- Load nvim-lspconfig so its default server configs are registered
+local present, _ = pcall(require, "lspconfig")
+if not present then
+	return M
+end
+
 local sumneko_opts = require("lq.configs.lsp.settings.sumneko_lua")
 -- local basedpyrgiht = require("lq.configs.lsp.settings.basedpyright")
 local pyright = require("lq.configs.lsp.settings.pyright")
 
-lspconfig.lua_ls.setup({
+vim.lsp.config("lua_ls", {
 	on_attach = M.on_attach,
 	capabilities = M.capabilities,
 
 	settings = sumneko_opts.settings,
 })
+vim.lsp.enable("lua_ls")
 
-lspconfig.bashls.setup({
+vim.lsp.config("bashls", {
 	on_attach = M.on_attach,
 	capabilities = M.capabilities,
 
-	filetype = { "sh", "bash" },
+	filetypes = { "sh", "bash" },
 })
+vim.lsp.enable("bashls")
 
--- lspconfig.basedpyright.setup({
+-- vim.lsp.config("basedpyright", {
 -- 	on_attach = M.on_attach,
 -- 	capabilities = M.capabilities,
 --
 -- 	settings = basedpyrgiht.settings,
 -- })
+-- vim.lsp.enable("basedpyright")
 
-lspconfig.pyright.setup({
+vim.lsp.config("pyright", {
 	on_attach = M.on_attach,
 	capabilities = M.capabilities,
 
 	settings = pyright.settings,
 })
+vim.lsp.enable("pyright")
 
-lspconfig.clangd.setup({
+vim.lsp.config("clangd", {
 	on_attach = M.on_attach,
 	capabilities = M.capabilities,
 })
+vim.lsp.enable("clangd")
 
-lspconfig.cmake.setup({
+vim.lsp.config("cmake", {
 	on_attach = M.on_attach,
 	capabilities = M.capabilities,
 })
+vim.lsp.enable("cmake")
 
 return M
