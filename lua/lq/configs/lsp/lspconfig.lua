@@ -94,15 +94,15 @@ if not status_ok then
 end
 M.capabilities = cmp_nvim_lsp.default_capabilities(capabilities)
 
-local sumneko_opts = require("lq.configs.lsp.settings.sumneko_lua")
--- local basedpyrgiht = require("lq.configs.lsp.settings.basedpyright")
+local lua_ls_opts = require("lq.configs.lsp.settings.lua_ls")
+-- local basedpyright = require("lq.configs.lsp.settings.basedpyright")
 local pyright = require("lq.configs.lsp.settings.pyright")
 
 lspconfig.lua_ls.setup({
 	on_attach = M.on_attach,
 	capabilities = M.capabilities,
 
-	settings = sumneko_opts.settings,
+	settings = lua_ls_opts.settings,
 })
 
 lspconfig.bashls.setup({
