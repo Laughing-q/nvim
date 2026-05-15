@@ -150,11 +150,11 @@ vim.lsp.config("pyright", {
 
 	settings = pyright.settings,
 })
--- vim.lsp.enable("pyright")
+vim.lsp.enable("pyright")
 
 -- Default Python LSP: zuban (fast, low memory, Rust-based)
 -- Alternatives: jedi_language_server (lightweight), pyright (feature-rich but heavier)
-vim.lsp.enable("zuban")
+-- vim.lsp.enable("zuban")
 -- vim.lsp.enable("jedi_language_server")
 
 vim.lsp.config("clangd", {
