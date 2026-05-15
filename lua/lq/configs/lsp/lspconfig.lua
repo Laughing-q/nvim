@@ -98,6 +98,26 @@ local lua_ls_opts = require("lq.configs.lsp.settings.lua_ls")
 -- local basedpyrgiht = require("lq.configs.lsp.settings.basedpyright")
 local pyright = require("lq.configs.lsp.settings.pyright")
 
+-- Zuban: high-performance Python LSP written in Rust (by author of Jedi)
+-- Install: pip install zuban
+vim.lsp.config("zuban", {
+	on_attach = M.on_attach,
+	capabilities = M.capabilities,
+	cmd = { "zuban", "server" },
+	root_markers = { "pyproject.toml", ".git" },
+	filetypes = { "python" },
+})
+
+-- jedi-language-server: lightweight, fast, low RAM
+-- Install: pip install jedi-language-server
+vim.lsp.config("jedi_language_server", {
+	on_attach = M.on_attach,
+	capabilities = M.capabilities,
+	cmd = { "jedi-language-server" },
+	root_markers = { "pyproject.toml", ".git", "setup.py", "setup.cfg" },
+	filetypes = { "python" },
+})
+
 vim.lsp.config("lua_ls", {
 	on_attach = M.on_attach,
 	capabilities = M.capabilities,
@@ -128,7 +148,12 @@ vim.lsp.config("pyright", {
 
 	settings = pyright.settings,
 })
-vim.lsp.enable("pyright")
+-- vim.lsp.enable("pyright")
+
+-- Default Python LSP: zuban (fast, low memory, Rust-based)
+-- Alternatives: jedi_language_server (lightweight), pyright (feature-rich but heavier)
+vim.lsp.enable("zuban")
+-- vim.lsp.enable("jedi_language_server")
 
 vim.lsp.config("clangd", {
 	on_attach = M.on_attach,
