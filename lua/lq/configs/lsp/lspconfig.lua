@@ -97,6 +97,7 @@ end
 local lua_ls_opts = require("lq.configs.lsp.settings.lua_ls")
 -- local basedpyrgiht = require("lq.configs.lsp.settings.basedpyright")
 local pyright = require("lq.configs.lsp.settings.pyright")
+local zuban = require("lq.configs.lsp.settings.zuban")
 
 -- Zuban: high-performance Python LSP written in Rust (by author of Jedi)
 -- Install: pip install zuban
@@ -106,6 +107,7 @@ vim.lsp.config("zuban", {
 	cmd = { "zuban", "server" },
 	root_markers = { "pyproject.toml", ".git" },
 	filetypes = { "python" },
+	settings = zuban.settings,
 })
 
 -- jedi-language-server: lightweight, fast, low RAM
