@@ -76,6 +76,8 @@ leader_key = {
 		{ "<leader>o", "za", desc = "Fold", nowait = true, remap = false },
 		-- Compile file
 		{ "<leader>r", "<cmd>call CompileRunGcc()<CR>", desc = "Compile file", nowait = true, remap = false },
+		-- Run pytest under cursor
+		{ "<leader>R", "<cmd>call RunPytestUnderCursor()<CR>", desc = "Run pytest under cursor", nowait = true, remap = false },
 		-- functions and values
 		{ "<leader>v", "<cmd>Lspsaga outline<CR>", desc = "Lspsaga outline", nowait = true, remap = false },
 	},

@@ -1,4 +1,38 @@
-vim.cmd [[
+vim.cmd([[
+func! RunPytestUnderCursor()
+	exec "w"
+	let l:file = expand('%:p')
+	let l:save_pos = getpos('.')
+
+	" Find nearest function definition above cursor
+	let l:func_line = search('^\s*def\s', 'bnW')
+	if l:func_line == 0
+		echo "No function found under cursor"
+		call setpos('.', l:save_pos)
+		return
+	endif
+
+	let l:func_content = getline(l:func_line)
+	let l:func_name = matchstr(l:func_content, '^\s*def\s\+\zs\w\+')
+
+	" Check if inside a class (class line must be above the function)
+	let l:class_name = ""
+	let l:class_line = search('^\s*class\s', 'bnW')
+	if l:class_line > 0 && l:class_line < l:func_line
+		let l:class_content = getline(l:class_line)
+		let l:class_name = matchstr(l:class_content, '^\s*class\s\+\zs\w\+') . '::'
+	endif
+
+	call setpos('.', l:save_pos)
+
+	let l:test_path = l:file . '::' . l:class_name . l:func_name
+
+	set splitbelow
+	:sp
+	:execute 'term pytest -vv -s ' . l:test_path
+	:$
+endfunc
+
 func! CompileRunGcc()
 	exec "w"
 	if &filetype == 'c'
@@ -47,4 +81,4 @@ func! CompileRunGcc()
     :$
 	endif
 endfunc
-]]
+]])
