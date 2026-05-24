@@ -104,7 +104,29 @@ map("v", "<LEADER>c", "gc", { remap = true })
 map("n", "M", "`")
 
 -- personal test file
-map("n", "g1", "<cmd>e /home/laughing/codes/uscripts/ultralytics/tests.py<CR>zz")
+local function goto_test_file()
+	local buf_dir = vim.fn.expand("%:p:h")
+	local git_root =
+		vim.trim(vim.fn.system("git -C " .. vim.fn.shellescape(buf_dir) .. " rev-parse --show-toplevel 2>/dev/null"))
+
+	local base_dir
+	if vim.v.shell_error == 0 and git_root ~= "" then
+		base_dir = git_root
+	else
+		base_dir = buf_dir
+	end
+
+	local target
+	if vim.fn.isdirectory(base_dir .. "/runs") == 1 then
+		target = base_dir .. "/runs/1.py"
+	else
+		target = base_dir .. "/1.py"
+	end
+
+	vim.cmd("e " .. vim.fn.fnameescape(target))
+	vim.cmd("normal! zz")
+end
+map("n", "g1", goto_test_file)
 
 -- enforce reload
 map("n", "<C-R>", ":e!<CR>")
