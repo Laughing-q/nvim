@@ -21,6 +21,7 @@ local M = {}
 ---@field title string
 ---@field session_id string|nil
 ---@field spawned_at integer|nil os.time() at spawn, used to ignore stale status files
+---@field root string|nil project root at spawn, used to ignore status from other projects
 
 ---@type KimiAgent[]
 M.agents = {}
@@ -143,6 +144,20 @@ local function poll()
 				if agent and status.ts and agent.spawned_at and status.ts < agent.spawned_at then
 					agent = nil
 				end
+				-- ignore status from a different session or a different project
+				-- (the status dir is shared across all nvim instances)
+				if
+					agent
+					and agent.session_id
+					and status.session_id
+					and status.session_id ~= ""
+					and status.session_id ~= agent.session_id
+				then
+					agent = nil
+				end
+				if agent and agent.root and status.cwd and status.cwd ~= "" and status.cwd ~= agent.root then
+					agent = nil
+				end
 				if agent then
 					if status.state and agent.state ~= status.state then
 						agent.state = status.state
@@ -152,9 +167,14 @@ local function poll()
 						agent.session_id = status.session_id
 						changed = true
 					end
-					if status.title and status.title ~= "" and agent.title ~= status.title then
-						agent.title = status.title
-						changed = true
+					if status.title and status.title ~= "" then
+						-- titles come from lastPrompt and may contain newlines,
+						-- which nvim_buf_set_lines would reject
+						local title = status.title:gsub("\n", " ")
+						if agent.title ~= title then
+							agent.title = title
+							changed = true
+						end
 					end
 				end
 			end
@@ -174,7 +194,9 @@ local function start_timer()
 		1000,
 		2000,
 		vim.schedule_wrap(function()
-			if #M.agents == 0 then
+			-- stop once nothing alive remains (exited agents stay in the
+			-- registry but need no polling); spawn() restarts the timer
+			if #visible_agents() == 0 then
 				M._timer:stop()
 				M._timer:close()
 				M._timer = nil
@@ -419,7 +441,8 @@ function M.spawn(name, cmd)
 		return existing
 	end
 	local Terminal = require("toggleterm.terminal").Terminal
-	local agent = { name = name, state = "idle", title = "", session_id = nil, spawned_at = os.time() }
+	local root = project_root()
+	local agent = { name = name, state = "idle", title = "", session_id = nil, spawned_at = os.time(), root = root }
 	-- drop any stale status file from a previous life under the same name,
 	-- otherwise the poll would immediately mark the fresh agent with the
 	-- old state (e.g. "exited")
@@ -429,7 +452,7 @@ function M.spawn(name, cmd)
 		direction = "float",
 		count = next_count(),
 		display_name = name,
-		dir = project_root(),
+		dir = root,
 		env = { KIMI_AGENT_NAME = name },
 		on_exit = function()
 			agent.state = "exited"
@@ -527,7 +550,7 @@ function M.resume()
 		prompt = "Resume kimi session",
 		format_item = function(it)
 			local label = it.title ~= "" and it.title or it.id:sub(9, 24)
-			label = label:gsub("\n", " "):sub(1, 50)
+			label = vim.fn.strcharpart(label:gsub("\n", " "), 0, 50)
 			local when = it.mtime > 0 and os.date("%m-%d %H:%M", it.mtime) or "?"
 			return string.format("%s  (%s)", label, when)
 		end,
@@ -540,14 +563,21 @@ function M.resume()
 			M.toggle(open.name)
 			return
 		end
-		local name = (choice.title ~= "" and choice.title or choice.id:sub(9, 24)):gsub("\n", " "):sub(1, 30)
+		local name =
+			vim.fn.strcharpart((choice.title ~= "" and choice.title or choice.id:sub(9, 24)):gsub("\n", " "), 0, 30)
+		-- a live agent already holds this name: make it unique, otherwise
+		-- spawn() would just toggle that agent and we'd corrupt its
+		-- session_id/title below
+		if find(name) then
+			name = vim.fn.strcharpart(name, 0, 24) .. "-" .. choice.id:sub(9, 12)
+		end
 		local agent = M.spawn(name, "kimi --session " .. vim.fn.shellescape(choice.id))
 		if agent then
 			agent.session_id = choice.id
-			agent.title = choice.title:gsub("\n", " "):sub(1, 80)
-			-- the previous life of this session left an "exited" status file
-			-- behind (keyed by session id); drop it so the poll doesn't hide
-			-- the resumed agent
+			agent.title = vim.fn.strcharpart(choice.title:gsub("\n", " "), 0, 80)
+			-- sessions previously run outside nvim (no KIMI_AGENT_NAME) leave a
+			-- stale status file keyed by session id; the poll matches on
+			-- session id too, so drop it to keep the resumed agent visible
 			vim.fn.delete(STATUS_DIR .. "/" .. choice.id .. ".json")
 			refresh()
 		end
