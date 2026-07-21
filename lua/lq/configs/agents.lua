@@ -416,13 +416,9 @@ function M.toggle_last()
 	M.toggle(agent.name)
 end
 
+---@param name string agent name (sidebar always passes one)
+---@param force boolean|nil skip the confirm dialog
 function M.kill(name, force)
-	if not name then
-		M.pick("Kill agent", function(choice)
-			M.kill(choice)
-		end)
-		return
-	end
 	local agent, idx = find(name)
 	if not agent then
 		return
@@ -437,29 +433,6 @@ function M.kill(name, force)
 	end
 	vim.fn.delete(STATUS_DIR .. "/" .. name .. ".json")
 	refresh()
-end
-
----@param prompt string|nil
----@param cb fun(name:string)|nil defaults to toggling
-function M.pick(prompt, cb)
-	local agents = visible_agents()
-	if #agents == 0 then
-		notify("no agents yet — <leader>kn to spawn one")
-		return
-	end
-	vim.ui.select(agents, {
-		prompt = prompt or "Kimi agents",
-		format_item = function(a)
-			local title = a.title ~= "" and (" — " .. a.title) or ""
-			return string.format("%s %s [%s]%s", STATE_ICON[a.state] or "?", a.name, a.state, title)
-		end,
-	}, function(choice)
-		if choice then
-			(cb or function(name)
-				M.toggle(name)
-			end)(choice.name)
-		end
-	end)
 end
 
 ---Resume an existing kimi-code session of this project in a new agent float.
