@@ -6,6 +6,11 @@
 -- directory and refreshes the sidebar and the heirline component.
 -- Exited agents stay in the registry (so their float can still be toggled)
 -- but are hidden from the sidebar, picker and statusline.
+--
+-- UI notes: all colors come from semantic highlight links (Diagnostic* for
+-- states, Title/Comment/CursorLine for chrome) so the sidebar follows the
+-- active colorscheme; groups are namespaced KimiAgents* and re-applied on
+-- ColorScheme.
 
 local M = {}
 
@@ -39,6 +44,27 @@ local STATE_HL = {
 	interrupted = "DiagnosticWarn",
 	exited = "DiagnosticError",
 }
+
+---Namespaced, colorscheme-following highlight groups (default = user can override).
+local function set_hls()
+	local hls = {
+		KimiAgentsCurrent = { link = "CursorLine" }, -- agent block under the cursor
+		KimiAgentsHeader = { link = "Title" }, -- sidebar header line
+		KimiAgentsName = { bold = true }, -- agent name in its header line
+		KimiAgentsMuted = { link = "Comment" }, -- state tag, session title, preview
+	}
+	for group, def in pairs(hls) do
+		def.default = true
+		vim.api.nvim_set_hl(0, group, def)
+	end
+	-- hide the ~ column below the last sidebar line (fg = theme Normal bg)
+	local normal = vim.api.nvim_get_hl(0, { name = "Normal" })
+	if normal.bg then
+		vim.api.nvim_set_hl(0, "KimiAgentsEndOfBuffer", { fg = normal.bg, default = true })
+	end
+end
+set_hls()
+vim.api.nvim_create_autocmd("ColorScheme", { callback = set_hls })
 
 M._last = nil ---@type string|nil
 M._next_count = 101
@@ -211,23 +237,31 @@ function M._render_sidebar()
 	end
 	local agents = visible_agents()
 	local lines = { "Kimi Agents (" .. #agents .. ")", "" }
-	local hls = {}
+	-- highlight segments: { line (0-based), hl_group, col_start, col_end }
+	local segs = { { 0, "KimiAgentsHeader", 0, -1 } }
 	sb.line_map = {}
 	sb.block_map = {}
 	if #agents == 0 then
+		table.insert(segs, { #lines, "KimiAgentsMuted", 0, -1 })
 		table.insert(lines, "  no agents — n to spawn")
 	end
 	for _, a in ipairs(agents) do
-		local header = string.format("%s %s [%s]", STATE_ICON[a.state] or "?", a.name, a.state)
+		local icon = STATE_ICON[a.state] or "?"
+		local header = string.format("%s %s [%s]", icon, a.name, a.state)
 		local first = #lines + 1
 		sb.line_map[first] = a.name
 		table.insert(lines, header)
-		table.insert(hls, { line = #lines - 1, hl = STATE_HL[a.state] or "Comment" })
+		local line0 = #lines - 1
+		table.insert(segs, { line0, STATE_HL[a.state] or "Comment", 0, #icon })
+		table.insert(segs, { line0, "KimiAgentsName", #icon + 1, #icon + 1 + #a.name })
+		table.insert(segs, { line0, "KimiAgentsMuted", #icon + 1 + #a.name, -1 })
 		if a.title ~= "" then
+			table.insert(segs, { #lines, "KimiAgentsMuted", 0, -1 })
 			table.insert(lines, "  " .. a.title)
 		end
 		for _, p in ipairs(preview_lines(a)) do
-			table.insert(lines, "  │ " .. p:sub(1, 60))
+			table.insert(segs, { #lines, "KimiAgentsMuted", 0, -1 })
+			table.insert(lines, "  " .. vim.fn.strcharpart(p, 0, SIDEBAR_WIDTH - 4))
 		end
 		table.insert(sb.block_map, { first = first, last = #lines })
 		table.insert(lines, "")
@@ -235,8 +269,8 @@ function M._render_sidebar()
 	vim.bo[sb.buf].modifiable = true
 	vim.api.nvim_buf_set_lines(sb.buf, 0, -1, false, lines)
 	vim.api.nvim_buf_clear_namespace(sb.buf, NS_STATE, 0, -1)
-	for _, h in ipairs(hls) do
-		vim.api.nvim_buf_add_highlight(sb.buf, NS_STATE, h.hl, h.line, 0, 1)
+	for _, s in ipairs(segs) do
+		vim.api.nvim_buf_add_highlight(sb.buf, NS_STATE, s[2], s[1], s[3], s[4])
 	end
 	vim.bo[sb.buf].modifiable = false
 	sidebar_highlight_current()
@@ -294,7 +328,6 @@ function M.sidebar_toggle()
 		sidebar_close()
 		return
 	end
-	vim.api.nvim_set_hl(0, "KimiAgentsCurrent", { link = "CursorLine" })
 	if not sb.buf or not vim.api.nvim_buf_is_valid(sb.buf) then
 		sb.buf = vim.api.nvim_create_buf(false, true)
 		vim.bo[sb.buf].buftype = "nofile"
@@ -343,6 +376,9 @@ function M.sidebar_toggle()
 	vim.wo[sb.win].relativenumber = false
 	vim.wo[sb.win].signcolumn = "no"
 	vim.wo[sb.win].wrap = false
+	vim.wo[sb.win].list = false
+	vim.wo[sb.win].spell = false
+	vim.wo[sb.win].winhl = "EndOfBuffer:KimiAgentsEndOfBuffer"
 	M._render_sidebar()
 end
 
