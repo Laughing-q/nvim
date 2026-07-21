@@ -72,6 +72,9 @@ leader_key = {
 			remap = false,
 		},
 
+		-- kimi agent manager (bindings in lq.configs.agents)
+		{ "<leader>K", group = "kimi agents", nowait = true, remap = false },
+
 		-- fold
 		{ "<leader>o", "za", desc = "Fold", nowait = true, remap = false },
 		-- Compile file

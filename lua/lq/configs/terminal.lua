@@ -49,7 +49,7 @@ local terminal_opts = {
 	-- laughing.builtin.terminal.execs[#laughing.builtin.terminal.execs+1] = {"gdb", "tg", "GNU Debugger"}
 	execs = {
 		{ "lazygit", "<leader>gg", "LazyGit", "float" },
-		{ "kimi --continue", "<leader>K", "kimi", "float" },
+		-- kimi agents are managed dynamically by lq.configs.agents (<leader>K*)
 	},
 }
 
