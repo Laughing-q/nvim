@@ -150,26 +150,26 @@ map("n", "gr", ":Lspsaga finder<CR>")
 map("n", "gD", ":vsplit<CR>:lua vim.lsp.buf.definition()<CR>")
 
 -- copliot
-map("n", "<leader>kk", "<cmd>CopilotChat<CR>", { desc = "CopilotChat", nowait = true, remap = false })
+map("n", "<leader>Kk", "<cmd>CopilotChat<CR>", { desc = "CopilotChat", nowait = true, remap = false })
 map(
 	{ "v", "n" },
-	"<leader>ke",
+	"<leader>Ke",
 	"<cmd>CopilotChatExplain<CR>",
 	{ desc = "CopilotExplain", nowait = true, remap = false }
 )
-map({ "v", "n" }, "<leader>kr", "<cmd>CopilotChatReview<CR>", { desc = "CopilotReview", nowait = true, remap = false })
-map({ "v", "n" }, "<leader>kf", "<cmd>CopilotChatFix<CR>", { desc = "CopilotFix", nowait = true, remap = false })
+map({ "v", "n" }, "<leader>Kr", "<cmd>CopilotChatReview<CR>", { desc = "CopilotReview", nowait = true, remap = false })
+map({ "v", "n" }, "<leader>Kf", "<cmd>CopilotChatFix<CR>", { desc = "CopilotFix", nowait = true, remap = false })
 map(
 	{ "v", "n" },
-	"<leader>ko",
+	"<leader>Ko",
 	"<cmd>CopilotChatOptimize<CR>",
 	{ desc = "CopilotOptimize", nowait = true, remap = false }
 )
-map({ "v", "n" }, "<leader>kd", "<cmd>CopilotChatDocs<CR>", { desc = "CopilotDocs", nowait = true, remap = false })
-map({ "v", "n" }, "<leader>kt", "<cmd>CopilotChatTests<CR>", { desc = "CopilotTests", nowait = true, remap = false })
+map({ "v", "n" }, "<leader>Kd", "<cmd>CopilotChatDocs<CR>", { desc = "CopilotDocs", nowait = true, remap = false })
+map({ "v", "n" }, "<leader>Kt", "<cmd>CopilotChatTests<CR>", { desc = "CopilotTests", nowait = true, remap = false })
 map(
 	{ "v", "n" },
-	"<leader>kc",
+	"<leader>Kc",
 	"<cmd>CopilotChatCommit<CR>",
 	{ desc = "CopilotCommitInfo", nowait = true, remap = false }
 )

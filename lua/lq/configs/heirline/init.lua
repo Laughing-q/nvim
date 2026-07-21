@@ -10,6 +10,7 @@ local statusline = {
 	component.Diagnostics,
 	component.Space,
 	component.Space,
+	component.Agents,
 	component.LSP,
 	component.Treesitter,
 	component.Ruler,

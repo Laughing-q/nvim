@@ -29,6 +29,7 @@ return {
 		event = "VeryLazy",
 		config = function()
 			require("lq.configs.terminal").setup()
+			require("lq.configs.agents").setup()
 		end,
 	},
 
