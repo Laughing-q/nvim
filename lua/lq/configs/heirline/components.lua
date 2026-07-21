@@ -271,7 +271,7 @@ M.FileNameBlock = utils.insert(FileNameBlock,
     FileFlags,
     { provider = '%<'} -- this means that the statusline is cut here when there's not enough space
 )
--- kimi agent manager status: "● running/total" while agents exist
+-- kimi agent manager status: "  agents running/total" while live agents exist
 M.Agents = {
 	condition = function()
 		local ok, agents = pcall(require, "lq.configs.agents")
@@ -282,10 +282,10 @@ M.Agents = {
 		self.running, self.total = agents.status()
 	end,
 	provider = function(self)
-		return string.format("  %d/%d ", self.running, self.total)
+		return string.format("   agents %d/%d ", self.running, self.total)
 	end,
 	hl = function(self)
-		return { fg = self.running > 0 and colors.orange or colors.gray, bg = "#1f2335" }
+		return { fg = self.running > 0 and colors.orange or colors.green, bg = "#1f2335" }
 	end,
 }
 

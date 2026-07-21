@@ -4,6 +4,8 @@
 -- interrupted / exited) comes from kimi-code hooks (see scripts/agent-status.sh),
 -- which write $KIMI_CODE_HOME/agent-status/<name>.json; a timer polls that
 -- directory and refreshes the sidebar and the heirline component.
+-- Exited agents stay in the registry (so their float can still be toggled)
+-- but are hidden from the sidebar, picker and statusline.
 
 local M = {}
 
@@ -23,13 +25,13 @@ local INDEX_FILE = KIMI_HOME .. "/session_index.jsonl"
 
 local STATE_ICON = {
 	running = "●",
-	idle = "○",
+	idle = "●",
 	interrupted = "◐",
 	exited = "✕",
 }
 local STATE_HL = {
-	running = "DiagnosticOk",
-	idle = "Comment",
+	running = "DiagnosticWarn",
+	idle = "DiagnosticOk",
 	interrupted = "DiagnosticWarn",
 	exited = "DiagnosticError",
 }
@@ -67,6 +69,18 @@ local function find_by_session(session_id)
 		end
 	end
 	return nil
+end
+
+---Agents that are still alive (exited ones are hidden from all UI).
+---@return KimiAgent[]
+local function visible_agents()
+	local out = {}
+	for _, a in ipairs(M.agents) do
+		if a.state ~= "exited" then
+			table.insert(out, a)
+		end
+	end
+	return out
 end
 
 local function next_count()
@@ -164,13 +178,14 @@ function M._render_sidebar()
 	if not sb.buf or not vim.api.nvim_buf_is_valid(sb.buf) then
 		return
 	end
-	local lines = { "Kimi Agents (" .. #M.agents .. ")", "" }
+	local agents = visible_agents()
+	local lines = { "Kimi Agents (" .. #agents .. ")", "" }
 	local hls = {}
 	sb.line_map = {}
-	if #M.agents == 0 then
+	if #agents == 0 then
 		table.insert(lines, "  no agents — n to spawn")
 	end
-	for _, a in ipairs(M.agents) do
+	for _, a in ipairs(agents) do
 		local header = string.format("%s %s [%s]", STATE_ICON[a.state] or "?", a.name, a.state)
 		sb.line_map[#lines + 1] = a.name
 		table.insert(lines, header)
@@ -202,6 +217,31 @@ local function sidebar_agent_at_cursor()
 		end
 	end
 	return nil
+end
+
+---Move the cursor to the previous/next agent header (wraps around).
+---@param direction integer -1 for up, 1 for down
+local function sidebar_jump(direction)
+	local sb = M._sidebar
+	local headers = {}
+	for l in pairs(sb.line_map) do
+		table.insert(headers, l)
+	end
+	if #headers == 0 then
+		return
+	end
+	table.sort(headers)
+	local cur = vim.api.nvim_win_get_cursor(0)[1]
+	local target = direction < 0 and headers[#headers] or headers[1]
+	for _, l in ipairs(headers) do
+		if direction < 0 and l < cur then
+			target = l
+		elseif direction > 0 and l > cur then
+			target = l
+			break
+		end
+	end
+	vim.api.nvim_win_set_cursor(0, { target, 0 })
 end
 
 local function sidebar_close()
@@ -244,8 +284,15 @@ function M.sidebar_toggle()
 			M.resume()
 		end, vim.tbl_extend("force", opts, { desc = "resume kimi session" }))
 		vim.keymap.set("n", "q", sidebar_close, vim.tbl_extend("force", opts, { desc = "close sidebar" }))
+		-- jump between agents with one up/down (this config maps i=up, k=down)
+		vim.keymap.set("n", "i", function()
+			sidebar_jump(-1)
+		end, vim.tbl_extend("force", opts, { desc = "previous agent" }))
+		vim.keymap.set("n", "k", function()
+			sidebar_jump(1)
+		end, vim.tbl_extend("force", opts, { desc = "next agent" }))
 	end
-	vim.cmd("topleft 34vsplit")
+	vim.cmd("botright 34vsplit")
 	sb.win = vim.api.nvim_get_current_win()
 	vim.api.nvim_win_set_buf(sb.win, sb.buf)
 	vim.wo[sb.win].winfixwidth = true
@@ -313,9 +360,10 @@ function M.toggle(name)
 end
 
 function M.toggle_last()
-	local agent = (M._last and find(M._last)) or M.agents[#M.agents]
+	local visible = visible_agents()
+	local agent = (M._last and find(M._last)) or visible[#visible]
 	if not agent then
-		notify("no agents yet — <leader>Kn to spawn one")
+		notify("no agents yet — <leader>kn to spawn one")
 		return
 	end
 	M.toggle(agent.name)
@@ -347,11 +395,12 @@ end
 ---@param prompt string|nil
 ---@param cb fun(name:string)|nil defaults to toggling
 function M.pick(prompt, cb)
-	if #M.agents == 0 then
-		notify("no agents yet — <leader>Kn to spawn one")
+	local agents = visible_agents()
+	if #agents == 0 then
+		notify("no agents yet — <leader>kn to spawn one")
 		return
 	end
-	vim.ui.select(M.agents, {
+	vim.ui.select(agents, {
 		prompt = prompt or "Kimi agents",
 		format_item = function(a)
 			local title = a.title ~= "" and (" — " .. a.title) or ""
@@ -433,35 +482,37 @@ end
 
 -- -------------------------------------------------------------- statusline --
 
+---Number of live (non-exited) agents; used by the heirline condition.
 function M.count()
-	return #M.agents
+	return #visible_agents()
 end
 
----@return integer running, integer total
+---@return integer running, integer total (live agents only)
 function M.status()
 	local running = 0
-	for _, a in ipairs(M.agents) do
+	local agents = visible_agents()
+	for _, a in ipairs(agents) do
 		if a.state == "running" then
 			running = running + 1
 		end
 	end
-	return running, #M.agents
+	return running, #agents
 end
 
 -- ------------------------------------------------------------------- setup --
 
 function M.setup()
 	local map = vim.keymap.set
-	map("n", "<leader>K", M.toggle_last, { desc = "kimi: toggle last agent" })
-	map("n", "<leader>Kn", function()
+	map("n", "<leader>k", M.toggle_last, { desc = "kimi: toggle last agent" })
+	map("n", "<leader>kn", function()
 		M.spawn()
 	end, { desc = "kimi: new agent" })
-	map("n", "<leader>Kr", M.resume, { desc = "kimi: resume session" })
-	map("n", "<leader>Ka", M.sidebar_toggle, { desc = "kimi: agents sidebar" })
-	map("n", "<leader>Kl", function()
+	map("n", "<leader>kr", M.resume, { desc = "kimi: resume session" })
+	map("n", "<leader>ka", M.sidebar_toggle, { desc = "kimi: agents sidebar" })
+	map("n", "<leader>kl", function()
 		M.pick()
 	end, { desc = "kimi: list agents" })
-	map("n", "<leader>Kx", function()
+	map("n", "<leader>kx", function()
 		M.kill()
 	end, { desc = "kimi: kill agent" })
 end

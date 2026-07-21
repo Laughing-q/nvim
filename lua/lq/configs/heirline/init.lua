@@ -12,8 +12,8 @@ local statusline = {
 	component.Space,
 	component.LSP,
 	component.Treesitter,
-	component.Agents,
 	component.Ruler,
+	component.Agents,
 	-- component.ScrollBar,
 }
 require("heirline").setup({statusline=statusline})

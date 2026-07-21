@@ -73,7 +73,9 @@ leader_key = {
 		},
 
 		-- kimi agent manager (bindings in lq.configs.agents)
-		{ "<leader>K", group = "kimi agents", nowait = true, remap = false },
+		{ "<leader>k", group = "kimi agents", nowait = true, remap = false },
+		-- CopilotChat (bindings in plugin/keymappings.lua)
+		{ "<leader>K", group = "CopilotChat", nowait = true, remap = false },
 
 		-- fold
 		{ "<leader>o", "za", desc = "Fold", nowait = true, remap = false },
