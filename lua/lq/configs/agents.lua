@@ -127,6 +127,11 @@ local function refresh()
 end
 
 -- ---------------------------------------------------------------- polling --
+--
+-- Known limitation (accepted in review): killing an agent within ~2s of
+-- spawning — before its session_id is known — leaves no tombstone, so a late
+-- hook write from it can briefly leak state into an immediate same-named
+-- respawn. Self-heals on the next hook event; recover by killing/respawning.
 
 local function poll()
 	if #M.agents == 0 then
