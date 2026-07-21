@@ -24,6 +24,9 @@ local KIMI_HOME = vim.env.KIMI_CODE_HOME or (vim.fn.expand("~/.kimi-code"))
 local STATUS_DIR = KIMI_HOME .. "/agent-status"
 local INDEX_FILE = KIMI_HOME .. "/session_index.jsonl"
 
+local NS_STATE = vim.api.nvim_create_namespace("kimi_agents_state")
+local NS_CURSOR = vim.api.nvim_create_namespace("kimi_agents_cursor")
+
 local STATE_ICON = {
 	running = "●",
 	idle = "●",
@@ -40,7 +43,7 @@ local STATE_HL = {
 M._last = nil ---@type string|nil
 M._next_count = 101
 M._timer = nil
-M._sidebar = { buf = nil, win = nil, line_map = {} }
+M._sidebar = { buf = nil, win = nil, line_map = {}, block_map = {} }
 
 local function notify(msg, level)
 	vim.notify(msg, level or vim.log.levels.INFO, { title = "kimi agents" })
@@ -158,6 +161,7 @@ end
 
 -- ---------------------------------------------------------------- sidebar --
 
+local SIDEBAR_WIDTH = 42
 local PREVIEW_LINES = 2
 
 local function preview_lines(agent)
@@ -179,6 +183,27 @@ local function preview_lines(agent)
 	return out
 end
 
+---Highlight the whole block of the agent under the cursor.
+local function sidebar_highlight_current()
+	local sb = M._sidebar
+	if not sb.buf or not vim.api.nvim_buf_is_valid(sb.buf) then
+		return
+	end
+	vim.api.nvim_buf_clear_namespace(sb.buf, NS_CURSOR, 0, -1)
+	if not sb.win or not vim.api.nvim_win_is_valid(sb.win) then
+		return
+	end
+	local cur = vim.api.nvim_win_get_cursor(sb.win)[1]
+	for _, b in ipairs(sb.block_map) do
+		if cur >= b.first and cur <= b.last then
+			for l = b.first - 1, b.last - 1 do
+				vim.api.nvim_buf_add_highlight(sb.buf, NS_CURSOR, "KimiAgentsCurrent", l, 0, -1)
+			end
+			return
+		end
+	end
+end
+
 function M._render_sidebar()
 	local sb = M._sidebar
 	if not sb.buf or not vim.api.nvim_buf_is_valid(sb.buf) then
@@ -188,12 +213,14 @@ function M._render_sidebar()
 	local lines = { "Kimi Agents (" .. #agents .. ")", "" }
 	local hls = {}
 	sb.line_map = {}
+	sb.block_map = {}
 	if #agents == 0 then
 		table.insert(lines, "  no agents — n to spawn")
 	end
 	for _, a in ipairs(agents) do
 		local header = string.format("%s %s [%s]", STATE_ICON[a.state] or "?", a.name, a.state)
-		sb.line_map[#lines + 1] = a.name
+		local first = #lines + 1
+		sb.line_map[first] = a.name
 		table.insert(lines, header)
 		table.insert(hls, { line = #lines - 1, hl = STATE_HL[a.state] or "Comment" })
 		if a.title ~= "" then
@@ -202,15 +229,17 @@ function M._render_sidebar()
 		for _, p in ipairs(preview_lines(a)) do
 			table.insert(lines, "  │ " .. p:sub(1, 60))
 		end
+		table.insert(sb.block_map, { first = first, last = #lines })
 		table.insert(lines, "")
 	end
 	vim.bo[sb.buf].modifiable = true
 	vim.api.nvim_buf_set_lines(sb.buf, 0, -1, false, lines)
-	vim.api.nvim_buf_clear_namespace(sb.buf, -1, 0, -1)
+	vim.api.nvim_buf_clear_namespace(sb.buf, NS_STATE, 0, -1)
 	for _, h in ipairs(hls) do
-		vim.api.nvim_buf_add_highlight(sb.buf, -1, h.hl, h.line, 0, 1)
+		vim.api.nvim_buf_add_highlight(sb.buf, NS_STATE, h.hl, h.line, 0, 1)
 	end
 	vim.bo[sb.buf].modifiable = false
+	sidebar_highlight_current()
 end
 
 local function sidebar_agent_at_cursor()
@@ -248,6 +277,7 @@ local function sidebar_jump(direction)
 		end
 	end
 	vim.api.nvim_win_set_cursor(0, { target, 0 })
+	sidebar_highlight_current()
 end
 
 local function sidebar_close()
@@ -264,6 +294,7 @@ function M.sidebar_toggle()
 		sidebar_close()
 		return
 	end
+	vim.api.nvim_set_hl(0, "KimiAgentsCurrent", { link = "CursorLine" })
 	if not sb.buf or not vim.api.nvim_buf_is_valid(sb.buf) then
 		sb.buf = vim.api.nvim_create_buf(false, true)
 		vim.bo[sb.buf].buftype = "nofile"
@@ -277,12 +308,14 @@ function M.sidebar_toggle()
 				M.toggle(name)
 			end
 		end, vim.tbl_extend("force", opts, { desc = "toggle agent float" }))
-		vim.keymap.set("n", "d", function()
+		local kill_at_cursor = function()
 			local name = sidebar_agent_at_cursor()
 			if name then
 				M.kill(name)
 			end
-		end, vim.tbl_extend("force", opts, { desc = "kill agent" }))
+		end
+		vim.keymap.set("n", "d", kill_at_cursor, vim.tbl_extend("force", opts, { desc = "kill agent" }))
+		vim.keymap.set("n", "x", kill_at_cursor, vim.tbl_extend("force", opts, { desc = "kill agent" }))
 		vim.keymap.set("n", "n", function()
 			M.spawn()
 		end, vim.tbl_extend("force", opts, { desc = "new agent" }))
@@ -297,8 +330,12 @@ function M.sidebar_toggle()
 		vim.keymap.set("n", "k", function()
 			sidebar_jump(1)
 		end, vim.tbl_extend("force", opts, { desc = "next agent" }))
+		vim.api.nvim_create_autocmd("CursorMoved", {
+			buffer = sb.buf,
+			callback = sidebar_highlight_current,
+		})
 	end
-	vim.cmd("botright 34vsplit")
+	vim.cmd("botright " .. SIDEBAR_WIDTH .. "vsplit")
 	sb.win = vim.api.nvim_get_current_win()
 	vim.api.nvim_win_set_buf(sb.win, sb.buf)
 	vim.wo[sb.win].winfixwidth = true
@@ -524,12 +561,6 @@ function M.setup()
 	end, { desc = "kimi: new agent" })
 	map("n", "<leader>kr", M.resume, { desc = "kimi: resume session" })
 	map("n", "<leader>ka", M.sidebar_toggle, { desc = "kimi: agents sidebar" })
-	map("n", "<leader>kl", function()
-		M.pick()
-	end, { desc = "kimi: list agents" })
-	map("n", "<leader>kx", function()
-		M.kill()
-	end, { desc = "kimi: kill agent" })
 end
 
 return M
