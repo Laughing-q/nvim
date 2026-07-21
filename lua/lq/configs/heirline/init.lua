@@ -12,6 +12,7 @@ local statusline = {
 	component.Space,
 	component.LSP,
 	component.Treesitter,
+	component.Agents,
 	component.Ruler,
 	-- component.ScrollBar,
 }
