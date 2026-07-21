@@ -18,6 +18,7 @@ cwd="$(printf '%s' "$payload" | jq -r '.cwd // empty')"
 
 # Agents spawned from Neovim carry KIMI_AGENT_NAME; fall back to the session id.
 name="${KIMI_AGENT_NAME:-$session_id}"
+name="$(printf '%s' "$name" | sed 's#[/\\]#-#g; s/^[[:space:]]*//; s/[[:space:]]*$//')"
 [ -n "$name" ] || exit 0
 
 # Best-effort title: session_index.jsonl maps sessionId -> sessionDir, and
@@ -30,6 +31,8 @@ if [ -n "$session_id" ] && [ -f "$kimi_home/session_index.jsonl" ]; then
 	fi
 fi
 
+tmp_file="$(mktemp "$status_dir/.agent-status.XXXXXX")"
+trap 'rm -f "$tmp_file"' EXIT
 jq -n \
 	--arg name "$name" \
 	--arg session_id "$session_id" \
@@ -38,5 +41,5 @@ jq -n \
 	--arg cwd "$cwd" \
 	--argjson ts "$(date +%s)" \
 	'{name: $name, session_id: $session_id, state: $state, title: $title, cwd: $cwd, ts: $ts}' \
-	> "$status_dir/$name.json.tmp"
-mv -f "$status_dir/$name.json.tmp" "$status_dir/$name.json"
+	> "$tmp_file"
+mv -f "$tmp_file" "$status_dir/$name.json"

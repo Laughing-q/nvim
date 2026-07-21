@@ -270,6 +270,10 @@ function M.spawn(name, cmd)
 		return
 	end
 	name = sanitize(name)
+	if name == "" then
+		notify("agent name must not be empty", vim.log.levels.WARN)
+		return
+	end
 	local existing = find(name)
 	if existing then
 		M.toggle(name)
@@ -419,7 +423,7 @@ function M.resume()
 			return
 		end
 		local name = (choice.title ~= "" and choice.title or choice.id:sub(9, 24)):gsub("\n", " "):sub(1, 30)
-		local agent = M.spawn(name, "kimi --session " .. choice.id)
+		local agent = M.spawn(name, "kimi --session " .. vim.fn.shellescape(choice.id))
 		if agent then
 			agent.session_id = choice.id
 			agent.title = choice.title:gsub("\n", " "):sub(1, 80)
