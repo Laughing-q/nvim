@@ -367,6 +367,19 @@ function M.sidebar_toggle()
 			buffer = sb.buf,
 			callback = sidebar_highlight_current,
 		})
+		-- selection highlight only while the sidebar has focus
+		vim.api.nvim_create_autocmd({ "WinLeave", "BufLeave" }, {
+			buffer = sb.buf,
+			callback = function()
+				if vim.api.nvim_buf_is_valid(sb.buf) then
+					vim.api.nvim_buf_clear_namespace(sb.buf, NS_CURSOR, 0, -1)
+				end
+			end,
+		})
+		vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter" }, {
+			buffer = sb.buf,
+			callback = sidebar_highlight_current,
+		})
 	end
 	vim.cmd("botright " .. SIDEBAR_WIDTH .. "vsplit")
 	sb.win = vim.api.nvim_get_current_win()
