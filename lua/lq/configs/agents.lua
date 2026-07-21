@@ -70,6 +70,7 @@ vim.api.nvim_create_autocmd("ColorScheme", { callback = set_hls })
 M._last = nil ---@type string|nil
 M._next_count = 101
 M._timer = nil
+M._dead_sessions = {} ---@type table<string, boolean> session ids killed here; their hook writes are ignored
 M._sidebar = { buf = nil, win = nil, line_map = {}, block_map = {} }
 
 local function notify(msg, level)
@@ -137,11 +138,17 @@ local function poll()
 		if ok and lines[1] then
 			local ok2, status = pcall(vim.json.decode, table.concat(lines, "\n"))
 			if ok2 and type(status) == "table" then
+				-- tombstoned sessions (killed here) must never update anything:
+				-- a killed agent's late hook writes can otherwise leak into a
+				-- same-named respawn whose session_id isn't known yet
+				if status.session_id and M._dead_sessions[status.session_id] then
+					goto continue
+				end
 				local agent = (status.name and find(status.name))
 					or (status.session_id and find_by_session(status.session_id))
-				-- ignore status written before this agent was spawned (stale
+				-- ignore status written no later than this agent's spawn (stale
 				-- file from a previous life under the same name/session)
-				if agent and status.ts and agent.spawned_at and status.ts < agent.spawned_at then
+				if agent and status.ts and agent.spawned_at and status.ts <= agent.spawned_at then
 					agent = nil
 				end
 				-- ignore status from a different session or a different project
@@ -179,6 +186,7 @@ local function poll()
 				end
 			end
 		end
+		::continue::
 	end
 	if changed then
 		refresh()
@@ -499,6 +507,11 @@ function M.kill(name, force)
 		return
 	end
 	agent.term:shutdown()
+	-- tombstone the session so its late hook writes (SessionEnd fires on
+	-- shutdown) can't leak into a future same-named agent
+	if agent.session_id then
+		M._dead_sessions[agent.session_id] = true
+	end
 	table.remove(M.agents, idx)
 	if M._last == name then
 		M._last = nil
@@ -569,11 +582,19 @@ function M.resume()
 		-- spawn() would just toggle that agent and we'd corrupt its
 		-- session_id/title below
 		if find(name) then
-			name = vim.fn.strcharpart(name, 0, 24) .. "-" .. choice.id:sub(9, 12)
+			local base = vim.fn.strcharpart(name, 0, 24)
+			name = base .. "-" .. choice.id:sub(9, 16)
+			local n = 2
+			while find(name) do
+				name = base .. "-" .. n
+				n = n + 1
+			end
 		end
 		local agent = M.spawn(name, "kimi --session " .. vim.fn.shellescape(choice.id))
 		if agent then
 			agent.session_id = choice.id
+			-- a previously killed session may be tombstoned; resurrect it
+			M._dead_sessions[choice.id] = nil
 			agent.title = vim.fn.strcharpart(choice.title:gsub("\n", " "), 0, 80)
 			-- sessions previously run outside nvim (no KIMI_AGENT_NAME) leave a
 			-- stale status file keyed by session id; the poll matches on
