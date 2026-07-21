@@ -10,10 +10,10 @@ local statusline = {
 	component.Diagnostics,
 	component.Space,
 	component.Space,
+	component.Agents,
 	component.LSP,
 	component.Treesitter,
 	component.Ruler,
-	component.Agents,
 	-- component.ScrollBar,
 }
 require("heirline").setup({statusline=statusline})

@@ -15,6 +15,7 @@ local M = {}
 ---@field state "running"|"idle"|"interrupted"|"exited"
 ---@field title string
 ---@field session_id string|nil
+---@field spawned_at integer|nil os.time() at spawn, used to ignore stale status files
 
 ---@type KimiAgent[]
 M.agents = {}
@@ -108,6 +109,11 @@ local function poll()
 			if ok2 and type(status) == "table" then
 				local agent = (status.name and find(status.name))
 					or (status.session_id and find_by_session(status.session_id))
+				-- ignore status written before this agent was spawned (stale
+				-- file from a previous life under the same name/session)
+				if agent and status.ts and agent.spawned_at and status.ts < agent.spawned_at then
+					agent = nil
+				end
 				if agent then
 					if status.state and agent.state ~= status.state then
 						agent.state = status.state
@@ -327,7 +333,11 @@ function M.spawn(name, cmd)
 		return existing
 	end
 	local Terminal = require("toggleterm.terminal").Terminal
-	local agent = { name = name, state = "idle", title = "", session_id = nil }
+	local agent = { name = name, state = "idle", title = "", session_id = nil, spawned_at = os.time() }
+	-- drop any stale status file from a previous life under the same name,
+	-- otherwise the poll would immediately mark the fresh agent with the
+	-- old state (e.g. "exited")
+	vim.fn.delete(STATUS_DIR .. "/" .. name .. ".json")
 	agent.term = Terminal:new({
 		cmd = cmd or "kimi",
 		direction = "float",
@@ -476,6 +486,11 @@ function M.resume()
 		if agent then
 			agent.session_id = choice.id
 			agent.title = choice.title:gsub("\n", " "):sub(1, 80)
+			-- the previous life of this session left an "exited" status file
+			-- behind (keyed by session id); drop it so the poll doesn't hide
+			-- the resumed agent
+			vim.fn.delete(STATUS_DIR .. "/" .. choice.id .. ".json")
+			refresh()
 		end
 	end)
 end
