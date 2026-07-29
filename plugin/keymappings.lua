@@ -13,6 +13,13 @@ map("", "gh", "gi")
 
 map("", "H", "I")
 
+-- Neovim >=0.11 maps in/an in visual & operator-pending mode to treesitter node
+-- selection; that hijacks i-prefixed sequences (v then i then n triggers it
+-- instead of "up, next search") and adds a timeout delay to every vi.
+-- Drop them so i in visual mode is always just "up".
+pcall(vim.keymap.del, { "x", "o" }, "in")
+pcall(vim.keymap.del, { "x", "o" }, "an")
+
 -- enter, quit and save
 map("n", "O", "o<ESC>")
 map("n", "Q", ":q<CR>")
