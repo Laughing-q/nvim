@@ -10,6 +10,42 @@ cd ~/.config/nvim
 ./install.sh
 ```
 
+## Kimi agent manager🤖
+Manage multiple [kimi-code](https://github.com/MoonshotAI/kimi-code) CLI agents inside neovim: named agents in float terminals, a sidebar listing them with live status (`<leader>ka`), a `🤖 running/total` statusline component, and per-project agent persistence across neovim restarts.
+
+Requirements: [kimi-code CLI](https://moonshotai.github.io/kimi-code/en/) and `jq`.
+
+Agent status (running/idle/interrupted/exited) is reported by kimi-code [hooks](https://moonshotai.github.io/kimi-code/en/customization/hooks.html) via [scripts/agent-status.sh](./scripts/agent-status.sh). To enable it, append this to your kimi-code config (`$KIMI_CODE_HOME/config.toml`, default `~/.kimi-code/config.toml`):
+
+```toml
+[[hooks]]
+event = "UserPromptSubmit"
+command = "~/.config/nvim/scripts/agent-status.sh running"
+
+[[hooks]]
+event = "Stop"
+command = "~/.config/nvim/scripts/agent-status.sh idle"
+
+[[hooks]]
+event = "Interrupt"
+command = "~/.config/nvim/scripts/agent-status.sh interrupted"
+
+[[hooks]]
+event = "SessionEnd"
+command = "~/.config/nvim/scripts/agent-status.sh exited"
+```
+
+Validate with `kimi doctor`. Without these hooks everything still works, but agents will always show as `idle`.
+
+| shortcut          | action                                 | mode |
+|-------------------|----------------------------------------|------|
+| `<leader>` `k`    | toggle last active agent float         | `n`  |
+| `<leader>` `k` `n`| new named agent                        | `n`  |
+| `<leader>` `k` `r`| resume an existing kimi session        | `n`  |
+| `<leader>` `k` `a`| toggle the agents sidebar              | `n`  |
+
+Sidebar buffer mappings: `<CR>` toggle agent float, `i`/`k` jump between agents, `n` new, `r` resume, `d`/`x` kill, `q` close.
+
 ## Screenshots🖼️
 ![demo1](https://user-images.githubusercontent.com/61612323/153551187-156189ea-9e52-407c-8888-743439f5bf4c.png)
 ![demo2](https://user-images.githubusercontent.com/61612323/153551199-e7c6896f-a125-4622-ab19-03277cd32a28.png)

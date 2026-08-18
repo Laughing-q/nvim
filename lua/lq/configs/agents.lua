@@ -7,6 +7,11 @@
 -- Exited agents stay in the registry (so their float can still be toggled)
 -- but are hidden from the sidebar, picker and statusline.
 --
+-- Persistence: live agents (with a known session id) are saved per project
+-- to $KIMI_CODE_HOME/agent-registry/<hash>.json on spawn/kill/exit and
+-- VimLeavePre, and restored on setup. Restored agents have no terminal yet;
+-- it is spawned lazily on first toggle via `kimi --session <id>`.
+--
 -- UI notes: all colors come from semantic highlight links (Diagnostic* for
 -- states, Title/Comment/CursorLine for chrome) so the sidebar follows the
 -- active colorscheme; groups are namespaced KimiAgents* and re-applied on
@@ -16,12 +21,14 @@ local M = {}
 
 ---@class KimiAgent
 ---@field name string
----@field term table toggleterm Terminal
+---@field term table|nil toggleterm Terminal (nil until first toggle for restored agents)
+---@field cmd string|nil terminal command (nil means plain "kimi")
 ---@field state "running"|"idle"|"interrupted"|"exited"
 ---@field title string
 ---@field session_id string|nil
----@field spawned_at integer|nil os.time() at spawn, used to ignore stale status files
+---@field spawned_at integer|nil os.time() at terminal creation, used to ignore stale status files
 ---@field root string|nil project root at spawn, used to ignore status from other projects
+---@field _want_title boolean|nil pending /title send (fresh and restored agents)
 
 ---@type KimiAgent[]
 M.agents = {}
@@ -29,6 +36,7 @@ M.agents = {}
 local KIMI_HOME = vim.env.KIMI_CODE_HOME or (vim.fn.expand("~/.kimi-code"))
 local STATUS_DIR = KIMI_HOME .. "/agent-status"
 local INDEX_FILE = KIMI_HOME .. "/session_index.jsonl"
+local REGISTRY_DIR = KIMI_HOME .. "/agent-registry"
 
 local NS_STATE = vim.api.nvim_create_namespace("kimi_agents_state")
 local NS_CURSOR = vim.api.nvim_create_namespace("kimi_agents_cursor")
@@ -188,6 +196,27 @@ local function poll()
 							changed = true
 						end
 					end
+					-- name the kimi session itself. Sessions are created lazily
+					-- on the first prompt and /title only works while the agent
+					-- is idle, so this must wait for the first turn to end.
+					if
+						agent._want_title
+						and agent.session_id
+						and agent.state ~= "running"
+						and agent.term
+						and agent.term.job_id
+					then
+						agent._want_title = false
+						-- raw chansend: term:send would steal window focus. Text
+						-- and Enter must go in separate chunks — in one chunk the
+						-- TUI drops the Enter (verified experimentally).
+						vim.api.nvim_chan_send(agent.term.job_id, "/title " .. agent.name)
+						vim.defer_fn(function()
+							if agent.term and agent.term.job_id then
+								vim.api.nvim_chan_send(agent.term.job_id, "\r")
+							end
+						end, 300)
+					end
 				end
 			end
 		end
@@ -220,6 +249,77 @@ local function start_timer()
 	)
 end
 
+-- ------------------------------------------------------------ persistence --
+
+local function registry_path(root)
+	return REGISTRY_DIR .. "/" .. vim.fn.sha256(root):sub(1, 16) .. ".json"
+end
+
+---Persist this project's live agents so they reappear on the next nvim
+---start. Agents without a known session id are skipped: kimi creates
+---sessions lazily on the first prompt, so an agent that never got one has
+---no session to resume.
+function M.save_registry()
+	local root = project_root()
+	local out = {}
+	for _, a in ipairs(M.agents) do
+		if a.state ~= "exited" and a.session_id and a.root == root then
+			table.insert(out, { name = a.name, session_id = a.session_id, title = a.title })
+		end
+	end
+	local path = registry_path(root)
+	if #out == 0 then
+		vim.fn.delete(path)
+		return
+	end
+	vim.fn.mkdir(REGISTRY_DIR, "p")
+	local f = io.open(path, "w")
+	if not f then
+		return
+	end
+	f:write(vim.json.encode({ agents = out }))
+	f:close()
+end
+
+---Re-register agents saved by a previous nvim session of this project.
+---No terminals are spawned here; each agent resumes lazily on first toggle.
+function M.restore_registry()
+	local root = project_root()
+	local f = io.open(registry_path(root), "r")
+	if not f then
+		return
+	end
+	local ok, data = pcall(vim.json.decode, f:read("*a"))
+	f:close()
+	if not ok or type(data) ~= "table" or type(data.agents) ~= "table" then
+		return
+	end
+	local restored = 0
+	for _, e in ipairs(data.agents) do
+		if e.name and e.session_id and not find(e.name) then
+			table.insert(M.agents, {
+				name = e.name,
+				term = nil,
+				cmd = "kimi --session " .. vim.fn.shellescape(e.session_id),
+				state = "idle",
+				title = e.title or "",
+				session_id = e.session_id,
+				spawned_at = nil,
+				root = root,
+				-- also name sessions restored from before /title existed
+				_want_title = true,
+			})
+			restored = restored + 1
+		end
+	end
+	if restored > 0 then
+		M._last = M.agents[#M.agents].name
+		start_timer()
+		refresh()
+		notify(restored .. " agent(s) restored — <CR> in the sidebar to resume")
+	end
+end
+
 -- ---------------------------------------------------------------- sidebar --
 
 local SIDEBAR_WIDTH = 42
@@ -227,7 +327,7 @@ local PREVIEW_LINES = 2
 
 local function preview_lines(agent)
 	local term = agent.term
-	if not term.bufnr or not vim.api.nvim_buf_is_valid(term.bufnr) then
+	if not term or not term.bufnr or not vim.api.nvim_buf_is_valid(term.bufnr) then
 		return {}
 	end
 	local lines = vim.api.nvim_buf_get_lines(term.bufnr, -60, -1, false)
@@ -293,6 +393,10 @@ function M._render_sidebar()
 		if a.title ~= "" then
 			table.insert(segs, { #lines, "KimiAgentsMuted", 0, -1 })
 			table.insert(lines, "  " .. a.title)
+		end
+		if not a.term then
+			table.insert(segs, { #lines, "KimiAgentsMuted", 0, -1 })
+			table.insert(lines, "  <CR> to resume session")
 		end
 		for _, p in ipairs(preview_lines(a)) do
 			table.insert(segs, { #lines, "KimiAgentsMuted", 0, -1 })
@@ -432,6 +536,27 @@ end
 
 -- -------------------------------------------------------------- lifecycle --
 
+---Create the toggleterm terminal for an agent — at spawn time, or lazily on
+---first toggle for agents restored from the registry.
+local function make_terminal(agent)
+	local Terminal = require("toggleterm.terminal").Terminal
+	agent.spawned_at = os.time()
+	agent.term = Terminal:new({
+		cmd = agent.cmd or "kimi",
+		direction = "float",
+		count = next_count(),
+		display_name = agent.name,
+		dir = agent.root or project_root(),
+		env = { KIMI_AGENT_NAME = agent.name },
+		on_exit = function()
+			agent.state = "exited"
+			refresh()
+			M.save_registry()
+		end,
+	})
+	return agent.term
+end
+
 ---@param name string|nil prompt when nil
 ---@param cmd string|nil defaults to "kimi"
 function M.spawn(name, cmd)
@@ -453,29 +578,24 @@ function M.spawn(name, cmd)
 		M.toggle(name)
 		return existing
 	end
-	local Terminal = require("toggleterm.terminal").Terminal
 	local root = project_root()
-	local agent = { name = name, state = "idle", title = "", session_id = nil, spawned_at = os.time(), root = root }
+	local agent =
+		{ name = name, cmd = cmd, state = "idle", title = "", session_id = nil, spawned_at = nil, root = root }
 	-- drop any stale status file from a previous life under the same name,
 	-- otherwise the poll would immediately mark the fresh agent with the
 	-- old state (e.g. "exited")
 	vim.fn.delete(STATUS_DIR .. "/" .. name .. ".json")
-	agent.term = Terminal:new({
-		cmd = cmd or "kimi",
-		direction = "float",
-		count = next_count(),
-		display_name = name,
-		dir = root,
-		env = { KIMI_AGENT_NAME = name },
-		on_exit = function()
-			agent.state = "exited"
-			refresh()
-		end,
-	})
+	make_terminal(agent)
 	table.insert(M.agents, agent)
 	M._last = name
 	start_timer()
 	agent.term:toggle()
+	-- fresh sessions get named inside kimi itself (/title) once the session
+	-- exists — see poll(); resumed sessions already have their title
+	if not cmd then
+		agent._want_title = true
+	end
+	M.save_registry()
 	refresh()
 	return agent
 end
@@ -485,6 +605,10 @@ function M.toggle(name)
 	if not agent then
 		notify("no agent named " .. name, vim.log.levels.WARN)
 		return
+	end
+	if not agent.term then
+		-- restored agent: first toggle resumes its kimi session
+		make_terminal(agent)
 	end
 	agent.term:toggle()
 	M._last = name
@@ -511,7 +635,9 @@ function M.kill(name, force)
 	if not force and vim.fn.confirm("Kill agent '" .. name .. "'?", "&Yes\n&No", 2) ~= 1 then
 		return
 	end
-	agent.term:shutdown()
+	if agent.term then
+		agent.term:shutdown()
+	end
 	-- tombstone the session so its late hook writes (SessionEnd fires on
 	-- shutdown) can't leak into a future same-named agent
 	if agent.session_id then
@@ -522,6 +648,7 @@ function M.kill(name, force)
 		M._last = nil
 	end
 	vim.fn.delete(STATUS_DIR .. "/" .. name .. ".json")
+	M.save_registry()
 	refresh()
 end
 
@@ -605,6 +732,7 @@ function M.resume()
 			-- stale status file keyed by session id; the poll matches on
 			-- session id too, so drop it to keep the resumed agent visible
 			vim.fn.delete(STATUS_DIR .. "/" .. choice.id .. ".json")
+			M.save_registry()
 			refresh()
 		end
 	end)
@@ -632,6 +760,8 @@ end
 -- ------------------------------------------------------------------- setup --
 
 function M.setup()
+	M.restore_registry()
+	vim.api.nvim_create_autocmd("VimLeavePre", { callback = M.save_registry })
 	local map = vim.keymap.set
 	map("n", "<leader>k", M.toggle_last, { desc = "kimi: toggle last agent" })
 	map("n", "<leader>kn", function()
