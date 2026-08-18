@@ -29,6 +29,7 @@ local M = {}
 ---@field spawned_at integer|nil os.time() at terminal creation, used to ignore stale status files
 ---@field root string|nil project root at spawn, used to ignore status from other projects
 ---@field _want_title boolean|nil pending /title send (fresh and restored agents)
+---@field _suppress_exit boolean|nil restored agents: ignore "exited" until the first live status
 
 ---@type KimiAgent[]
 M.agents = {}
@@ -179,19 +180,27 @@ local function poll()
 					agent = nil
 				end
 				if agent then
-					-- a restored agent without a terminal yet must not be
-					-- hidden by a stale "exited" (fired when the previous nvim
-					-- killed the session): it stays resumable in the sidebar
+					-- a restored agent must not be hidden by a stale "exited"
+					-- (written when the previous nvim killed the session): it
+					-- stays resumable in the sidebar. The suppression holds
+					-- until the first live (non-exited) status arrives after
+					-- resume; genuine exits are covered by on_exit instead.
 					local new_state = status.state
-					if new_state == "exited" and not agent.term then
+					if new_state == "exited" and (not agent.term or agent._suppress_exit) then
 						new_state = nil
 					end
 					if new_state and agent.state ~= new_state then
 						agent.state = new_state
+						if new_state ~= "exited" then
+							agent._suppress_exit = nil
+						end
 						changed = true
 					end
 					if status.session_id and status.session_id ~= "" and not agent.session_id then
 						agent.session_id = status.session_id
+						-- persist right away; without this a crash before
+						-- VimLeavePre would lose the agent
+						M.save_registry()
 						changed = true
 					end
 					if status.title and status.title ~= "" then
@@ -209,7 +218,7 @@ local function poll()
 					if
 						agent._want_title
 						and agent.session_id
-						and agent.state ~= "running"
+						and (agent.state == "idle" or agent.state == "interrupted")
 						and agent.term
 						and agent.term.job_id
 					then
@@ -217,11 +226,17 @@ local function poll()
 						-- raw chansend: term:send would steal window focus. Text
 						-- and Enter must go in separate chunks — in one chunk the
 						-- TUI drops the Enter (verified experimentally).
-						vim.api.nvim_chan_send(agent.term.job_id, "/title " .. agent.name)
-						vim.defer_fn(function()
-							if agent.term and agent.term.job_id then
-								vim.api.nvim_chan_send(agent.term.job_id, "\r")
+						local job = agent.term.job_id
+						local function send(chunk)
+							-- the agent may have been killed since; send only if
+							-- the same agent is registered and the job is alive
+							if find(agent.name) == agent and vim.fn.jobwait({ job }, 0)[1] == -1 then
+								pcall(vim.api.nvim_chan_send, job, chunk)
 							end
+						end
+						send("/title " .. agent.name)
+						vim.defer_fn(function()
+							send("\r")
 						end, 300)
 					end
 				end
@@ -265,30 +280,82 @@ local function registry_path(root)
 	return REGISTRY_DIR .. "/" .. vim.fn.sha256(root):sub(1, 16) .. ".json"
 end
 
----Persist this project's live agents so they reappear on the next nvim
----start. Agents without a known session id are skipped: kimi creates
----sessions lazily on the first prompt, so an agent that never got one has
----no session to resume.
-function M.save_registry()
-	local root = project_root()
-	local out = {}
-	for _, a in ipairs(M.agents) do
-		if a.state ~= "exited" and a.session_id and a.root == root then
-			table.insert(out, { name = a.name, session_id = a.session_id, title = a.title })
+---Type-check a registry entry (from disk or built locally).
+local function valid_entry(e)
+	return type(e) == "table"
+		and type(e.name) == "string"
+		and type(e.session_id) == "string"
+		and (e.title == nil or type(e.title) == "string")
+end
+
+---Write one project's registry file: merge what is on disk (so concurrent
+---nvim instances of the same project don't clobber each other) with the
+---local registry (local state wins; locally exited/tombstoned sessions are
+---dropped), then write atomically via tmp + rename.
+local function write_registry(root)
+	local path = registry_path(root)
+	local merged = {}
+	local f = io.open(path, "r")
+	if f then
+		local ok, data = pcall(vim.json.decode, f:read("*a"))
+		f:close()
+		if ok and type(data) == "table" and type(data.agents) == "table" then
+			for _, e in ipairs(data.agents) do
+				if valid_entry(e) and not M._dead_sessions[e.session_id] then
+					merged[e.session_id] = { name = e.name, session_id = e.session_id, title = e.title or "" }
+				end
+			end
 		end
 	end
-	local path = registry_path(root)
+	for _, a in ipairs(M.agents) do
+		if a.session_id and a.root == root then
+			if a.state ~= "exited" then
+				merged[a.session_id] = { name = a.name, session_id = a.session_id, title = a.title }
+			else
+				merged[a.session_id] = nil
+			end
+		end
+	end
+	local out = {}
+	for _, e in pairs(merged) do
+		table.insert(out, e)
+	end
 	if #out == 0 then
 		vim.fn.delete(path)
 		return
 	end
 	vim.fn.mkdir(REGISTRY_DIR, "p")
-	local f = io.open(path, "w")
-	if not f then
+	local tmp = path .. ".tmp"
+	local wf = io.open(tmp, "w")
+	if not wf then
+		notify("failed to write agent registry " .. path, vim.log.levels.WARN)
 		return
 	end
-	f:write(vim.json.encode({ agents = out }))
-	f:close()
+	wf:write(vim.json.encode({ agents = out }))
+	wf:close()
+	local ok, err = vim.uv.fs_rename(tmp, path)
+	if not ok then
+		notify("failed to replace agent registry: " .. tostring(err), vim.log.levels.WARN)
+		vim.fn.delete(tmp)
+	end
+end
+
+---Persist live agents so they reappear on the next nvim start, once per
+---project root covered by the registry (agents can be rooted in different
+---projects when spawned while a buffer of another project is focused).
+---Agents without a known session id are skipped: kimi creates sessions
+---lazily on the first prompt, so an agent that never got one has no session
+---to resume.
+function M.save_registry()
+	local roots = { [project_root()] = true }
+	for _, a in ipairs(M.agents) do
+		if a.root then
+			roots[a.root] = true
+		end
+	end
+	for root in pairs(roots) do
+		write_registry(root)
+	end
 end
 
 ---Re-register agents saved by a previous nvim session of this project.
@@ -306,7 +373,7 @@ function M.restore_registry()
 	end
 	local restored = 0
 	for _, e in ipairs(data.agents) do
-		if e.name and e.session_id and not find(e.name) then
+		if valid_entry(e) and not find(e.name) then
 			table.insert(M.agents, {
 				name = e.name,
 				term = nil,
@@ -316,6 +383,8 @@ function M.restore_registry()
 				session_id = e.session_id,
 				spawned_at = nil,
 				root = root,
+				-- ignore stale "exited" writes until a live status arrives
+				_suppress_exit = true,
 				-- also name sessions restored from before /title existed
 				_want_title = true,
 			})
