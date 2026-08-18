@@ -315,6 +315,9 @@ function M.restore_registry()
 	if restored > 0 then
 		M._last = M.agents[#M.agents].name
 		start_timer()
+		M.sidebar_toggle()
+		-- keep focus on the file, the sidebar is just there for visibility
+		vim.cmd("wincmd p")
 		refresh()
 		notify(restored .. " agent(s) restored — <CR> in the sidebar to resume")
 	end
