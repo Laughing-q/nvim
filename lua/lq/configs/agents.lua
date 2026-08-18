@@ -147,6 +147,7 @@ local function poll()
 		return
 	end
 	local changed = false
+	local need_save = false
 	for _, entry in ipairs(vim.fn.glob(STATUS_DIR .. "/*.json", false, true)) do
 		local ok, lines = pcall(vim.fn.readfile, entry)
 		if ok and lines[1] then
@@ -189,18 +190,20 @@ local function poll()
 					if new_state == "exited" and (not agent.term or agent._suppress_exit) then
 						new_state = nil
 					end
+					if new_state and new_state ~= "exited" then
+						-- first live status: genuine "exited" writes are
+						-- meaningful again from here on
+						agent._suppress_exit = nil
+					end
 					if new_state and agent.state ~= new_state then
 						agent.state = new_state
-						if new_state ~= "exited" then
-							agent._suppress_exit = nil
-						end
 						changed = true
 					end
 					if status.session_id and status.session_id ~= "" and not agent.session_id then
 						agent.session_id = status.session_id
 						-- persist right away; without this a crash before
 						-- VimLeavePre would lose the agent
-						M.save_registry()
+						need_save = true
 						changed = true
 					end
 					if status.title and status.title ~= "" then
@@ -230,9 +233,11 @@ local function poll()
 						local function send(chunk)
 							-- the agent may have been killed since; send only if
 							-- the same agent is registered and the job is alive
-							if find(agent.name) == agent and vim.fn.jobwait({ job }, 0)[1] == -1 then
-								pcall(vim.api.nvim_chan_send, job, chunk)
-							end
+							pcall(function()
+								if find(agent.name) == agent and vim.fn.jobwait({ job }, 0)[1] == -1 then
+									vim.api.nvim_chan_send(job, chunk)
+								end
+							end)
 						end
 						send("/title " .. agent.name)
 						vim.defer_fn(function()
@@ -243,6 +248,9 @@ local function poll()
 			end
 		end
 		::continue::
+	end
+	if need_save then
+		M.save_registry()
 	end
 	if changed then
 		refresh()
@@ -325,13 +333,21 @@ local function write_registry(root)
 		return
 	end
 	vim.fn.mkdir(REGISTRY_DIR, "p")
-	local tmp = path .. ".tmp"
+	-- pid-unique tmp: concurrent nvim instances must not clobber each
+	-- other's temp file (the read-merge-write window itself is an accepted
+	-- limitation — worst case is a missing sidebar entry, recoverable via kr)
+	local tmp = string.format("%s.%d.tmp", path, vim.uv.os_getpid())
 	local wf = io.open(tmp, "w")
 	if not wf then
 		notify("failed to write agent registry " .. path, vim.log.levels.WARN)
 		return
 	end
-	wf:write(vim.json.encode({ agents = out }))
+	if not wf:write(vim.json.encode({ agents = out })) then
+		wf:close()
+		vim.fn.delete(tmp)
+		notify("failed to write agent registry " .. path, vim.log.levels.WARN)
+		return
+	end
 	wf:close()
 	local ok, err = vim.uv.fs_rename(tmp, path)
 	if not ok then
@@ -373,9 +389,19 @@ function M.restore_registry()
 	end
 	local restored = 0
 	for _, e in ipairs(data.agents) do
-		if valid_entry(e) and not find(e.name) then
+		if valid_entry(e) and not find_by_session(e.session_id) then
+			-- two nvim instances may have persisted same-named agents with
+			-- different sessions; make the name unique instead of dropping one
+			local name = e.name
+			if find(name) then
+				local base, n = name, 2
+				repeat
+					name = base .. "-" .. n
+					n = n + 1
+				until not find(name)
+			end
 			table.insert(M.agents, {
-				name = e.name,
+				name = name,
 				term = nil,
 				cmd = "kimi --session " .. vim.fn.shellescape(e.session_id),
 				state = "idle",
