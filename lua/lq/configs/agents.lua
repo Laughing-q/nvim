@@ -179,8 +179,15 @@ local function poll()
 					agent = nil
 				end
 				if agent then
-					if status.state and agent.state ~= status.state then
-						agent.state = status.state
+					-- a restored agent without a terminal yet must not be
+					-- hidden by a stale "exited" (fired when the previous nvim
+					-- killed the session): it stays resumable in the sidebar
+					local new_state = status.state
+					if new_state == "exited" and not agent.term then
+						new_state = nil
+					end
+					if new_state and agent.state ~= new_state then
+						agent.state = new_state
 						changed = true
 					end
 					if status.session_id and status.session_id ~= "" and not agent.session_id then
@@ -226,6 +233,9 @@ local function poll()
 		refresh()
 	end
 end
+
+-- exposed for the headless test suite
+M._poll = poll
 
 local function start_timer()
 	if M._timer then
