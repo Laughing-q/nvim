@@ -124,6 +124,31 @@ local function visible_agents()
 	return out
 end
 
+---Live agents that belong to the project of the current buffer.
+---@param root string|nil
+---@return KimiAgent[]
+local function project_agents(root)
+	root = root or project_root()
+	local out = {}
+	for _, a in ipairs(visible_agents()) do
+		if a.root == root then
+			table.insert(out, a)
+		end
+	end
+	return out
+end
+
+---@return KimiAgent|nil
+local function agent_in_current_buffer()
+	local buf = vim.api.nvim_get_current_buf()
+	for _, a in ipairs(M.agents) do
+		if a.term and a.term.bufnr == buf then
+			return a
+		end
+	end
+	return nil
+end
+
 local function next_count()
 	local n = M._next_count
 	M._next_count = M._next_count + 1
@@ -523,6 +548,23 @@ function M._render_sidebar()
 	sidebar_highlight_current()
 end
 
+---Keep the sidebar cursor and its selection highlight in sync with the
+---terminal session that was just activated, without stealing focus.
+---@param name string
+local function sidebar_select_agent(name)
+	local sb = M._sidebar
+	if not sb.win or not vim.api.nvim_win_is_valid(sb.win) then
+		return
+	end
+	for line, agent_name in pairs(sb.line_map) do
+		if agent_name == name then
+			vim.api.nvim_win_set_cursor(sb.win, { line, 0 })
+			sidebar_highlight_current()
+			return
+		end
+	end
+end
+
 local function sidebar_agent_at_cursor()
 	local sb = M._sidebar
 	local line = vim.api.nvim_win_get_cursor(0)[1]
@@ -561,6 +603,56 @@ local function sidebar_jump(direction)
 	sidebar_highlight_current()
 end
 
+---The free editor area to the left of the right-hand sidebar, if visible.
+---@return { row: integer, col: integer, width: integer, height: integer }|nil
+local function sidebar_float_layout()
+	local sb = M._sidebar
+	if not sb.win or not vim.api.nvim_win_is_valid(sb.win) then
+		return nil
+	end
+	local position = vim.api.nvim_win_get_position(sb.win)
+	return {
+		row = position[1],
+		col = 0,
+		-- The float frame extends two cells beyond its configured interior in
+		-- this layout; reserve both so it clears the sidebar title as well.
+		width = math.max(1, position[2] - 2),
+		height = math.max(1, vim.api.nvim_win_get_height(sb.win)),
+	}
+end
+
+---Float options that use the standard ToggleTerm layout until the sidebar is
+---visible, then fill the editor area immediately to its left.
+local function agent_float_opts()
+	return {
+		width = function()
+			local layout = sidebar_float_layout()
+			return layout and layout.width or nil
+		end,
+		height = function()
+			local layout = sidebar_float_layout()
+			return layout and layout.height or nil
+		end,
+		row = function()
+			local layout = sidebar_float_layout()
+			return layout and layout.row or nil
+		end,
+		col = function()
+			local layout = sidebar_float_layout()
+			return layout and layout.col or nil
+		end,
+	}
+end
+
+---Reflow any visible Kimi floats after the sidebar geometry changes.
+local function update_agent_float_layout()
+	for _, agent in ipairs(M.agents) do
+		if agent.term and agent.term:is_open() then
+			agent.term:update_float()
+		end
+	end
+end
+
 local function sidebar_close()
 	local sb = M._sidebar
 	if sb.win and vim.api.nvim_win_is_valid(sb.win) then
@@ -573,6 +665,7 @@ function M.sidebar_toggle()
 	local sb = M._sidebar
 	if sb.win and vim.api.nvim_win_is_valid(sb.win) then
 		sidebar_close()
+		update_agent_float_layout()
 		return
 	end
 	if not sb.buf or not vim.api.nvim_buf_is_valid(sb.buf) then
@@ -640,6 +733,7 @@ function M.sidebar_toggle()
 	vim.wo[sb.win].spell = false
 	vim.wo[sb.win].winhl = "EndOfBuffer:KimiAgentsEndOfBuffer"
 	M._render_sidebar()
+	update_agent_float_layout()
 end
 
 -- -------------------------------------------------------------- lifecycle --
@@ -652,6 +746,7 @@ local function make_terminal(agent)
 	agent.term = Terminal:new({
 		cmd = agent.cmd or "kimi",
 		direction = "float",
+		float_opts = agent_float_opts(),
 		count = next_count(),
 		display_name = agent.name,
 		dir = agent.root or project_root(),
@@ -663,6 +758,21 @@ local function make_terminal(agent)
 		end,
 	})
 	return agent.term
+end
+
+---Install navigation only in Kimi-managed terminal buffers. Other terminal
+---buffers retain their normal Ctrl-I/Ctrl-K behavior.
+local function install_terminal_navigation(agent)
+	if not agent.term or not agent.term.bufnr or not vim.api.nvim_buf_is_valid(agent.term.bufnr) then
+		return
+	end
+	local opts = { buffer = agent.term.bufnr, silent = true }
+	vim.keymap.set("t", "<C-k>", function()
+		M.cycle(1)
+	end, vim.tbl_extend("force", opts, { desc = "kimi: next session" }))
+	vim.keymap.set("t", "<C-i>", function()
+		M.cycle(-1)
+	end, vim.tbl_extend("force", opts, { desc = "kimi: previous session" }))
 end
 
 ---@param name string|nil prompt when nil
@@ -698,6 +808,7 @@ function M.spawn(name, cmd)
 	M._last = name
 	start_timer()
 	agent.term:toggle()
+	install_terminal_navigation(agent)
 	-- fresh sessions get named inside kimi itself (/title) once the session
 	-- exists — see poll(); resumed sessions already have their title
 	if not cmd then
@@ -719,8 +830,10 @@ function M.toggle(name)
 		make_terminal(agent)
 	end
 	agent.term:toggle()
+	install_terminal_navigation(agent)
 	M._last = name
 	refresh()
+	sidebar_select_agent(name)
 end
 
 function M.toggle_last()
@@ -731,6 +844,57 @@ function M.toggle_last()
 		return
 	end
 	M.toggle(agent.name)
+end
+
+---Switch to the next/previous Kimi session in the current project.
+---@param direction integer 1 for next, -1 for previous
+function M.cycle(direction)
+	local current = agent_in_current_buffer()
+	local root = (current and current.root) or project_root()
+	local agents = project_agents(root)
+	if #agents < 2 then
+		if #agents == 0 then
+			notify("no kimi sessions for " .. root)
+		end
+		return
+	end
+
+	if not current or current.root ~= root then
+		local last = M._last and find(M._last) or nil
+		current = last and last.root == root and last or nil
+	end
+	local index
+	for i, a in ipairs(agents) do
+		if a == current then
+			index = i
+			break
+		end
+	end
+	-- The mapping is normally used from a Kimi terminal. When invoked with no
+	-- current session, choose the first/last entry according to direction.
+	index = index or (direction > 0 and 0 or 1)
+	local target = agents[((index - 1 + direction) % #agents) + 1]
+
+	-- Floats are independent in toggleterm, so close the source explicitly
+	-- before opening the target. This makes navigation behave as a true switch
+	-- rather than stacking Kimi terminals on top of one another.
+	if current and current ~= target and current.term and current.term:is_open() then
+		current.term:close()
+	end
+	if
+		target.term
+		and target.term:is_open()
+		and target.term.window
+		and vim.api.nvim_win_is_valid(target.term.window)
+	then
+		vim.api.nvim_set_current_win(target.term.window)
+		vim.cmd("startinsert")
+		M._last = target.name
+		refresh()
+		sidebar_select_agent(target.name)
+		return
+	end
+	M.toggle(target.name)
 end
 
 ---@param name string agent name (sidebar always passes one)
@@ -870,6 +1034,7 @@ end
 function M.setup()
 	M.restore_registry()
 	vim.api.nvim_create_autocmd("VimLeavePre", { callback = M.save_registry })
+	vim.api.nvim_create_autocmd("VimResized", { callback = update_agent_float_layout })
 	local map = vim.keymap.set
 	map("n", "<leader>k", M.toggle_last, { desc = "kimi: toggle last agent" })
 	map("n", "<leader>kn", function()
