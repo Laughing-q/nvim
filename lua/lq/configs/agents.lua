@@ -548,6 +548,23 @@ function M._render_sidebar()
 	sidebar_highlight_current()
 end
 
+---Keep the sidebar cursor and its selection highlight in sync with the
+---terminal session that was just activated, without stealing focus.
+---@param name string
+local function sidebar_select_agent(name)
+	local sb = M._sidebar
+	if not sb.win or not vim.api.nvim_win_is_valid(sb.win) then
+		return
+	end
+	for line, agent_name in pairs(sb.line_map) do
+		if agent_name == name then
+			vim.api.nvim_win_set_cursor(sb.win, { line, 0 })
+			sidebar_highlight_current()
+			return
+		end
+	end
+end
+
 local function sidebar_agent_at_cursor()
 	local sb = M._sidebar
 	local line = vim.api.nvim_win_get_cursor(0)[1]
@@ -763,6 +780,7 @@ function M.toggle(name)
 	install_terminal_navigation(agent)
 	M._last = name
 	refresh()
+	sidebar_select_agent(name)
 end
 
 function M.toggle_last()
@@ -820,6 +838,7 @@ function M.cycle(direction)
 		vim.cmd("startinsert")
 		M._last = target.name
 		refresh()
+		sidebar_select_agent(target.name)
 		return
 	end
 	M.toggle(target.name)
