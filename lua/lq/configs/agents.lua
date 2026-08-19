@@ -124,6 +124,31 @@ local function visible_agents()
 	return out
 end
 
+---Live agents that belong to the project of the current buffer.
+---@param root string|nil
+---@return KimiAgent[]
+local function project_agents(root)
+	root = root or project_root()
+	local out = {}
+	for _, a in ipairs(visible_agents()) do
+		if a.root == root then
+			table.insert(out, a)
+		end
+	end
+	return out
+end
+
+---@return KimiAgent|nil
+local function agent_in_current_buffer()
+	local buf = vim.api.nvim_get_current_buf()
+	for _, a in ipairs(M.agents) do
+		if a.term and a.term.bufnr == buf then
+			return a
+		end
+	end
+	return nil
+end
+
 local function next_count()
 	local n = M._next_count
 	M._next_count = M._next_count + 1
@@ -665,6 +690,21 @@ local function make_terminal(agent)
 	return agent.term
 end
 
+---Install navigation only in Kimi-managed terminal buffers. Other terminal
+---buffers retain their normal Ctrl-I/Ctrl-K behavior.
+local function install_terminal_navigation(agent)
+	if not agent.term or not agent.term.bufnr or not vim.api.nvim_buf_is_valid(agent.term.bufnr) then
+		return
+	end
+	local opts = { buffer = agent.term.bufnr, silent = true }
+	vim.keymap.set("t", "<C-k>", function()
+		M.cycle(1)
+	end, vim.tbl_extend("force", opts, { desc = "kimi: next session" }))
+	vim.keymap.set("t", "<C-i>", function()
+		M.cycle(-1)
+	end, vim.tbl_extend("force", opts, { desc = "kimi: previous session" }))
+end
+
 ---@param name string|nil prompt when nil
 ---@param cmd string|nil defaults to "kimi"
 function M.spawn(name, cmd)
@@ -698,6 +738,7 @@ function M.spawn(name, cmd)
 	M._last = name
 	start_timer()
 	agent.term:toggle()
+	install_terminal_navigation(agent)
 	-- fresh sessions get named inside kimi itself (/title) once the session
 	-- exists — see poll(); resumed sessions already have their title
 	if not cmd then
@@ -719,6 +760,7 @@ function M.toggle(name)
 		make_terminal(agent)
 	end
 	agent.term:toggle()
+	install_terminal_navigation(agent)
 	M._last = name
 	refresh()
 end
@@ -731,6 +773,56 @@ function M.toggle_last()
 		return
 	end
 	M.toggle(agent.name)
+end
+
+---Switch to the next/previous Kimi session in the current project.
+---@param direction integer 1 for next, -1 for previous
+function M.cycle(direction)
+	local current = agent_in_current_buffer()
+	local root = (current and current.root) or project_root()
+	local agents = project_agents(root)
+	if #agents < 2 then
+		if #agents == 0 then
+			notify("no kimi sessions for " .. root)
+		end
+		return
+	end
+
+	if not current or current.root ~= root then
+		local last = M._last and find(M._last) or nil
+		current = last and last.root == root and last or nil
+	end
+	local index
+	for i, a in ipairs(agents) do
+		if a == current then
+			index = i
+			break
+		end
+	end
+	-- The mapping is normally used from a Kimi terminal. When invoked with no
+	-- current session, choose the first/last entry according to direction.
+	index = index or (direction > 0 and 0 or 1)
+	local target = agents[((index - 1 + direction) % #agents) + 1]
+
+	-- Floats are independent in toggleterm, so close the source explicitly
+	-- before opening the target. This makes navigation behave as a true switch
+	-- rather than stacking Kimi terminals on top of one another.
+	if current and current ~= target and current.term and current.term:is_open() then
+		current.term:close()
+	end
+	if
+		target.term
+		and target.term:is_open()
+		and target.term.window
+		and vim.api.nvim_win_is_valid(target.term.window)
+	then
+		vim.api.nvim_set_current_win(target.term.window)
+		vim.cmd("startinsert")
+		M._last = target.name
+		refresh()
+		return
+	end
+	M.toggle(target.name)
 end
 
 ---@param name string agent name (sidebar always passes one)
