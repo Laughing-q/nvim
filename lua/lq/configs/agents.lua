@@ -614,7 +614,9 @@ local function sidebar_float_layout()
 	return {
 		row = position[1],
 		col = 0,
-		width = math.max(1, position[2]),
+		-- ToggleTerm's float border occupies one cell beyond its configured
+		-- interior width; reserve that cell so it ends before the sidebar.
+		width = math.max(1, position[2] - 1),
 		height = math.max(1, vim.api.nvim_win_get_height(sb.win)),
 	}
 end
