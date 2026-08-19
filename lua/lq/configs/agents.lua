@@ -603,6 +603,54 @@ local function sidebar_jump(direction)
 	sidebar_highlight_current()
 end
 
+---The free editor area to the left of the right-hand sidebar, if visible.
+---@return { row: integer, col: integer, width: integer, height: integer }|nil
+local function sidebar_float_layout()
+	local sb = M._sidebar
+	if not sb.win or not vim.api.nvim_win_is_valid(sb.win) then
+		return nil
+	end
+	local position = vim.api.nvim_win_get_position(sb.win)
+	return {
+		row = position[1],
+		col = 0,
+		width = math.max(1, position[2]),
+		height = math.max(1, vim.api.nvim_win_get_height(sb.win)),
+	}
+end
+
+---Float options that use the standard ToggleTerm layout until the sidebar is
+---visible, then fill the editor area immediately to its left.
+local function agent_float_opts()
+	return {
+		width = function()
+			local layout = sidebar_float_layout()
+			return layout and layout.width or nil
+		end,
+		height = function()
+			local layout = sidebar_float_layout()
+			return layout and layout.height or nil
+		end,
+		row = function()
+			local layout = sidebar_float_layout()
+			return layout and layout.row or nil
+		end,
+		col = function()
+			local layout = sidebar_float_layout()
+			return layout and layout.col or nil
+		end,
+	}
+end
+
+---Reflow any visible Kimi floats after the sidebar geometry changes.
+local function update_agent_float_layout()
+	for _, agent in ipairs(M.agents) do
+		if agent.term and agent.term:is_open() then
+			agent.term:update_float()
+		end
+	end
+end
+
 local function sidebar_close()
 	local sb = M._sidebar
 	if sb.win and vim.api.nvim_win_is_valid(sb.win) then
@@ -615,6 +663,7 @@ function M.sidebar_toggle()
 	local sb = M._sidebar
 	if sb.win and vim.api.nvim_win_is_valid(sb.win) then
 		sidebar_close()
+		update_agent_float_layout()
 		return
 	end
 	if not sb.buf or not vim.api.nvim_buf_is_valid(sb.buf) then
@@ -682,6 +731,7 @@ function M.sidebar_toggle()
 	vim.wo[sb.win].spell = false
 	vim.wo[sb.win].winhl = "EndOfBuffer:KimiAgentsEndOfBuffer"
 	M._render_sidebar()
+	update_agent_float_layout()
 end
 
 -- -------------------------------------------------------------- lifecycle --
@@ -694,6 +744,7 @@ local function make_terminal(agent)
 	agent.term = Terminal:new({
 		cmd = agent.cmd or "kimi",
 		direction = "float",
+		float_opts = agent_float_opts(),
 		count = next_count(),
 		display_name = agent.name,
 		dir = agent.root or project_root(),
@@ -981,6 +1032,7 @@ end
 function M.setup()
 	M.restore_registry()
 	vim.api.nvim_create_autocmd("VimLeavePre", { callback = M.save_registry })
+	vim.api.nvim_create_autocmd("VimResized", { callback = update_agent_float_layout })
 	local map = vim.keymap.set
 	map("n", "<leader>k", M.toggle_last, { desc = "kimi: toggle last agent" })
 	map("n", "<leader>kn", function()
