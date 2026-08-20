@@ -137,6 +137,35 @@ local function find_by_session(session_id)
 	return nil
 end
 
+---Codex command hooks receive a session id but do not inherit ToggleTerm's
+---per-agent environment. Bind their first status update to the closest recent
+---unidentified Codex terminal in the same project; later updates use the id.
+---@param status table
+---@return Agent|nil
+local function find_pending_codex_agent(status)
+	if not status.session_id or status.session_id == "" or not status.cwd or status.cwd == "" or not status.ts then
+		return nil
+	end
+	local candidate
+	local closest_age
+	for _, agent in ipairs(M.agents) do
+		if
+			agent_provider(agent) == "codex"
+			and not agent.session_id
+			and agent.state ~= "exited"
+			and agent.root == status.cwd
+			and agent.spawned_at
+		then
+			local age = status.ts - agent.spawned_at
+			if age >= 0 and age <= 60 and (not closest_age or age < closest_age) then
+				candidate = agent
+				closest_age = age
+			end
+		end
+	end
+	return candidate
+end
+
 ---Agents that are still alive (exited ones are hidden from all UI).
 ---@return Agent[]
 local function visible_agents()
@@ -216,9 +245,12 @@ local function poll()
 					if agent and agent_provider(agent) ~= status_provider then
 						agent = nil
 					end
-					-- ignore status written no later than this agent's spawn (stale
+					if not agent and status_provider == "codex" then
+						agent = find_pending_codex_agent(status)
+					end
+					-- ignore status written before this agent's spawn (stale
 					-- file from a previous life under the same name/session)
-					if agent and status.ts and agent.spawned_at and status.ts <= agent.spawned_at then
+					if agent and status.ts and agent.spawned_at and status.ts < agent.spawned_at then
 						agent = nil
 					end
 					-- ignore status from a different session or a different project
