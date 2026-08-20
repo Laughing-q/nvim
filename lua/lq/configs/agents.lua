@@ -32,6 +32,7 @@ local M = {}
 ---@field root string|nil project root at spawn, used to ignore status from other projects
 ---@field _want_title boolean|nil pending /title send (fresh and restored agents)
 ---@field _suppress_exit boolean|nil restored agents: ignore "exited" until the first live status
+---@field _auto_name boolean|nil rename a Codex picker entry after its session id is known
 
 ---@type Agent[]
 M.agents = {}
@@ -109,6 +110,13 @@ local function status_path(provider, name)
 	return (STATUS_DIRS[provider] or STATUS_DIRS.kimi) .. "/" .. name .. ".json"
 end
 
+local function status_file_name(agent)
+	if agent_provider(agent) == "codex" and agent.session_id then
+		return agent.session_id
+	end
+	return agent.name
+end
+
 local function resume_command(provider, session_id)
 	if provider == "codex" then
 		return "codex resume --no-alt-screen " .. vim.fn.shellescape(session_id)
@@ -127,6 +135,19 @@ local function find(name)
 		end
 	end
 	return nil, nil
+end
+
+local function unique_name(base)
+	if not find(base) then
+		return base
+	end
+	local n = 2
+	local name
+	repeat
+		name = base .. "-" .. n
+		n = n + 1
+	until not find(name)
+	return name
 end
 
 local function find_by_session(session_id)
@@ -302,6 +323,14 @@ local function poll()
 						end
 						if status.session_id and status.session_id ~= "" and not agent.session_id then
 							agent.session_id = status.session_id
+							if agent._auto_name then
+								local previous_name = agent.name
+								agent.name = unique_name("codex-" .. status.session_id:sub(1, 12))
+								agent._auto_name = nil
+								if M._last == previous_name then
+									M._last = agent.name
+								end
+							end
 							-- persist right away; without this a crash before
 							-- VimLeavePre would lose the agent
 							need_save = true
@@ -845,7 +874,7 @@ local function make_terminal(agent)
 		count = next_count(),
 		display_name = (PROVIDER_LABEL[provider] or provider) .. ": " .. agent.name,
 		dir = agent.root or project_root(),
-		env = provider == "codex" and { CODEX_AGENT_NAME = agent.name } or { KIMI_AGENT_NAME = agent.name },
+		env = provider == "kimi" and { KIMI_AGENT_NAME = agent.name } or nil,
 		on_exit = function()
 			-- Closing Neovim terminates its child terminals, but the underlying
 			-- Kimi/Codex conversation remains resumable. Keep its saved session
@@ -1049,7 +1078,7 @@ function M.kill(name, force)
 	if M._last == name then
 		M._last = nil
 	end
-	vim.fn.delete(status_path(agent_provider(agent), name))
+	vim.fn.delete(status_path(agent_provider(agent), status_file_name(agent)))
 	M.save_registry()
 	refresh()
 end
@@ -1143,7 +1172,10 @@ end
 ---Open Codex's native resume picker in a managed terminal. Once selected,
 ---the lifecycle hook records its session id for direct future restores.
 function M.resume_codex()
-	M.spawn_codex(nil, "codex resume --no-alt-screen")
+	local agent = M.spawn_codex(unique_name("codex-resume"), "codex resume --no-alt-screen")
+	if agent then
+		agent._auto_name = true
+	end
 end
 
 -- -------------------------------------------------------------- statusline --

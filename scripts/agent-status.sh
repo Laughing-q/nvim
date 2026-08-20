@@ -29,7 +29,9 @@ kimi)
 	;;
 codex)
 	agent_home="${CODEX_HOME:-$HOME/.codex}"
-	name="${CODEX_AGENT_NAME:-}"
+	# Codex hooks do not inherit a terminal-specific agent name. Its session id
+	# is both the hook status file name and the manager's durable identity.
+	name=""
 	;;
 esac
 status_dir="$agent_home/agent-status"
@@ -39,8 +41,7 @@ payload="$(cat)"
 session_id="$(printf '%s' "$payload" | jq -r '.session_id // empty')"
 cwd="$(printf '%s' "$payload" | jq -r '.cwd // empty')"
 
-# Agents spawned from Neovim carry the provider-specific agent name; fall back
-# to the session id for sessions opened outside the manager.
+# Kimi hooks inherit their managed name; Codex and outside sessions use the id.
 name="${name:-$session_id}"
 name="$(printf '%s' "$name" | sed 's#[/\\]#-#g; s/^[[:space:]]*//; s/[[:space:]]*$//')"
 [ -n "$name" ] || exit 0

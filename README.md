@@ -75,7 +75,7 @@ Codex session belong to the same project.
 | `<leader>` `k` `n`| new named agent                        | `n`  |
 | `<leader>` `k` `r`| resume an existing kimi session        | `n`  |
 | `<leader>` `k` `c`| new named Codex agent                  | `n`  |
-| `<leader>` `k` `C`| open Codex's native resume picker      | `n`  |
+| `<leader>` `k` `C`| open Codex's native resume picker (no name prompt) | `n`  |
 | `<leader>` `k` `a`| toggle the agents sidebar              | `n`  |
 | `Alt` `k`         | switch to next managed session in this project | `t` |
 | `Alt` `i`         | switch to previous managed session in this project | `t` |
