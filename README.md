@@ -10,45 +10,79 @@ cd ~/.config/nvim
 ./install.sh
 ```
 
-## Kimi agent manager🤖
-Manage multiple [kimi-code](https://github.com/MoonshotAI/kimi-code) CLI agents inside neovim: named agents in float terminals, a sidebar listing them with live status (`<leader>ka`), a `🤖 running/total` statusline component, and per-project agent persistence across neovim restarts.
+## Kimi + Codex agent manager🤖
+Manage [kimi-code](https://github.com/MoonshotAI/kimi-code) and [Codex](https://developers.openai.com/codex/cli) CLI agents inside neovim: named agents in float terminals, a shared sidebar with live status (`<leader>ka`), a `🤖 running/total` statusline component, and per-project session persistence across neovim restarts.
 
-Requirements: [kimi-code CLI](https://moonshotai.github.io/kimi-code/en/) and `jq`.
+Requirements: the desired CLI(s) and `jq`.
 
 Agent status (running/idle/interrupted/exited) is reported by kimi-code [hooks](https://moonshotai.github.io/kimi-code/en/customization/hooks.html) via [scripts/agent-status.sh](./scripts/agent-status.sh). To enable it, append this to your kimi-code config (`$KIMI_CODE_HOME/config.toml`, default `~/.kimi-code/config.toml`):
 
 ```toml
 [[hooks]]
 event = "UserPromptSubmit"
-command = "~/.config/nvim/scripts/agent-status.sh running"
+command = "~/.config/nvim/scripts/agent-status.sh kimi running"
 
 [[hooks]]
 event = "Stop"
-command = "~/.config/nvim/scripts/agent-status.sh idle"
+command = "~/.config/nvim/scripts/agent-status.sh kimi idle"
 
 [[hooks]]
 event = "Interrupt"
-command = "~/.config/nvim/scripts/agent-status.sh interrupted"
+command = "~/.config/nvim/scripts/agent-status.sh kimi interrupted"
 
 [[hooks]]
 event = "SessionEnd"
-command = "~/.config/nvim/scripts/agent-status.sh exited"
+command = "~/.config/nvim/scripts/agent-status.sh kimi exited"
 ```
 
 Validate with `kimi doctor`. Without these hooks everything still works, but agents will always show as `idle`.
+
+For Codex status, add these hooks to `$CODEX_HOME/config.toml` (default `~/.codex/config.toml`) and trust them with `/hooks` in the Codex CLI:
+
+```toml
+[[hooks.SessionStart]]
+matcher = "startup|resume"
+[[hooks.SessionStart.hooks]]
+type = "command"
+command = "~/.config/nvim/scripts/agent-status.sh codex idle"
+timeout = 3
+
+[[hooks.UserPromptSubmit]]
+[[hooks.UserPromptSubmit.hooks]]
+type = "command"
+command = "~/.config/nvim/scripts/agent-status.sh codex running"
+timeout = 3
+
+[[hooks.Stop]]
+[[hooks.Stop.hooks]]
+type = "command"
+command = "~/.config/nvim/scripts/agent-status.sh codex idle"
+timeout = 3
+
+[[hooks.SessionEnd]]
+[[hooks.SessionEnd.hooks]]
+type = "command"
+command = "~/.config/nvim/scripts/agent-status.sh codex exited"
+timeout = 3
+```
+
+Agent names are shared across providers, so choose distinct names if a Kimi and
+Codex session belong to the same project.
 
 | shortcut          | action                                 | mode |
 |-------------------|----------------------------------------|------|
 | `<leader>` `k`    | toggle last active agent float         | `n`  |
 | `<leader>` `k` `n`| new named agent                        | `n`  |
 | `<leader>` `k` `r`| resume an existing kimi session        | `n`  |
+| `<leader>` `k` `c`| new named Codex agent                  | `n`  |
+| `<leader>` `k` `C`| open Codex's native resume picker (no name prompt) | `n`  |
 | `<leader>` `k` `a`| toggle the agents sidebar              | `n`  |
-| `Alt` `k`         | switch to next Kimi session in this project | `t` |
-| `Alt` `i`         | switch to previous Kimi session in this project | `t` |
+| `Alt` `k`         | switch to next managed session in this project | `t` |
+| `Alt` `i`         | switch to previous managed session in this project | `t` |
 
 Sidebar buffer mappings: `<CR>` toggle agent float, `i`/`k` jump between agents, `n` new, `r` resume, `d`/`x` kill, `q` close.
 
-The session mappings are available only while focused in a Kimi terminal. They close the current ToggleTerm float and open the next/previous live session for the current project; restored sessions are resumed on first visit. Tab is left unmodified for Kimi command completion. When the sidebar is open, Kimi floats fill the editor area to its left instead of overlapping it.
+The Alt mappings are available only while focused in a managed terminal. They close the current ToggleTerm float and open the next/previous Kimi or Codex session for the current project; restored sessions are resumed on first visit. Tab is left unmodified for command completion. Codex's native picker is used for sessions not yet known to the manager. When the sidebar is open, agent floats fill the editor area to its left instead of overlapping it.
 
 ## Screenshots🖼️
 ![demo1](https://user-images.githubusercontent.com/61612323/153551187-156189ea-9e52-407c-8888-743439f5bf4c.png)

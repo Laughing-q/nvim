@@ -1,9 +1,10 @@
--- Multi-agent manager for kimi-code CLI sessions running in toggleterm floats.
+-- Multi-agent manager for Kimi and Codex CLI sessions running in toggleterm
+-- floats.
 --
 -- Each agent is a named toggleterm Terminal (float). Status (running / idle /
--- interrupted / exited) comes from kimi-code hooks (see scripts/agent-status.sh),
--- which write $KIMI_CODE_HOME/agent-status/<name>.json; a timer polls that
--- directory and refreshes the sidebar and the heirline component.
+-- interrupted / exited) comes from provider hooks (see scripts/agent-status.sh),
+-- which write per-provider status files; a timer polls them and refreshes the
+-- sidebar and the heirline component.
 -- Exited agents stay in the registry (so their float can still be toggled)
 -- but are hidden from the sidebar, picker and statusline.
 --
@@ -19,7 +20,8 @@
 
 local M = {}
 
----@class KimiAgent
+---@class Agent
+---@field provider "kimi"|"codex"
 ---@field name string
 ---@field term table|nil toggleterm Terminal (nil until first toggle for restored agents)
 ---@field cmd string|nil terminal command (nil means plain "kimi")
@@ -30,12 +32,35 @@ local M = {}
 ---@field root string|nil project root at spawn, used to ignore status from other projects
 ---@field _want_title boolean|nil pending /title send (fresh and restored agents)
 ---@field _suppress_exit boolean|nil restored agents: ignore "exited" until the first live status
+---@field _auto_name boolean|nil rename a Codex picker entry after its session id is known
 
----@type KimiAgent[]
+---@type Agent[]
 M.agents = {}
 
 local KIMI_HOME = vim.env.KIMI_CODE_HOME or (vim.fn.expand("~/.kimi-code"))
-local STATUS_DIR = KIMI_HOME .. "/agent-status"
+local CODEX_HOME = vim.env.CODEX_HOME or (vim.fn.expand("~/.codex"))
+local PROVIDERS = {
+	kimi = {
+		label = "Kimi",
+		status_dir = KIMI_HOME .. "/agent-status",
+		launch_cmd = "kimi",
+		resume_format = "kimi --session %s",
+		env_name = "KIMI_AGENT_NAME",
+		uses_title = true,
+		status_file_name = function(agent)
+			return agent.name
+		end,
+	},
+	codex = {
+		label = "Codex",
+		status_dir = CODEX_HOME .. "/agent-status",
+		launch_cmd = "codex --no-alt-screen",
+		resume_format = "codex resume --no-alt-screen %s",
+		status_file_name = function(agent)
+			return agent.session_id or agent.name
+		end,
+	},
+}
 local INDEX_FILE = KIMI_HOME .. "/session_index.jsonl"
 local REGISTRY_DIR = KIMI_HOME .. "/agent-registry"
 
@@ -54,7 +79,6 @@ local STATE_HL = {
 	interrupted = "DiagnosticWarn",
 	exited = "DiagnosticError",
 }
-
 ---Namespaced, colorscheme-following highlight groups (default = user can override).
 local function set_hls()
 	local hls = {
@@ -79,15 +103,36 @@ vim.api.nvim_create_autocmd("ColorScheme", { callback = set_hls })
 M._last = nil ---@type string|nil
 M._next_count = 101
 M._timer = nil
+M._leaving = false
 M._dead_sessions = {} ---@type table<string, boolean> session ids killed here; their hook writes are ignored
 M._sidebar = { buf = nil, win = nil, line_map = {}, block_map = {} }
 
 local function notify(msg, level)
-	vim.notify(msg, level or vim.log.levels.INFO, { title = "kimi agents" })
+	vim.notify(msg, level or vim.log.levels.INFO, { title = "AI agents" })
 end
 
 local function sanitize(name)
 	return (name:gsub("[/\\]", "-"):gsub("^%s+", ""):gsub("%s+$", ""))
+end
+
+local function agent_provider(agent)
+	return agent.provider or "kimi"
+end
+
+local function provider_config(provider)
+	return PROVIDERS[provider] or PROVIDERS.kimi
+end
+
+local function status_path(provider, name)
+	return provider_config(provider).status_dir .. "/" .. name .. ".json"
+end
+
+local function status_file_name(agent)
+	return provider_config(agent_provider(agent)).status_file_name(agent)
+end
+
+local function resume_command(provider, session_id)
+	return provider_config(provider).resume_format:format(vim.fn.shellescape(session_id))
 end
 
 local function project_root()
@@ -103,6 +148,19 @@ local function find(name)
 	return nil, nil
 end
 
+local function unique_name(base)
+	if not find(base) then
+		return base
+	end
+	local n = 2
+	local name
+	repeat
+		name = base .. "-" .. n
+		n = n + 1
+	until not find(name)
+	return name
+end
+
 local function find_by_session(session_id)
 	for _, a in ipairs(M.agents) do
 		if a.session_id == session_id then
@@ -112,8 +170,37 @@ local function find_by_session(session_id)
 	return nil
 end
 
+---Codex command hooks receive a session id but do not inherit ToggleTerm's
+---per-agent environment. Bind their first status update to the closest recent
+---unidentified Codex terminal in the same project; later updates use the id.
+---@param status table
+---@return Agent|nil
+local function find_pending_codex_agent(status)
+	if not status.session_id or status.session_id == "" or not status.cwd or status.cwd == "" or not status.ts then
+		return nil
+	end
+	local candidate
+	local closest_age
+	for _, agent in ipairs(M.agents) do
+		if
+			agent_provider(agent) == "codex"
+			and not agent.session_id
+			and agent.state ~= "exited"
+			and agent.root == status.cwd
+			and agent.spawned_at
+		then
+			local age = status.ts - agent.spawned_at
+			if age >= 0 and age <= 60 and (not closest_age or age < closest_age) then
+				candidate = agent
+				closest_age = age
+			end
+		end
+	end
+	return candidate
+end
+
 ---Agents that are still alive (exited ones are hidden from all UI).
----@return KimiAgent[]
+---@return Agent[]
 local function visible_agents()
 	local out = {}
 	for _, a in ipairs(M.agents) do
@@ -126,7 +213,7 @@ end
 
 ---Live agents that belong to the project of the current buffer.
 ---@param root string|nil
----@return KimiAgent[]
+---@return Agent[]
 local function project_agents(root)
 	root = root or project_root()
 	local out = {}
@@ -138,7 +225,7 @@ local function project_agents(root)
 	return out
 end
 
----@return KimiAgent|nil
+---@return Agent|nil
 local function agent_in_current_buffer()
 	local buf = vim.api.nvim_get_current_buf()
 	for _, a in ipairs(M.agents) do
@@ -147,6 +234,16 @@ local function agent_in_current_buffer()
 		end
 	end
 	return nil
+end
+
+---A provider can emit a delayed SessionEnd for an older client of the same
+---session. While this ToggleTerm job is still alive, on_exit is authoritative.
+local function terminal_is_alive(agent)
+	if not agent.term or not agent.term.job_id then
+		return false
+	end
+	local ok, result = pcall(vim.fn.jobwait, { agent.term.job_id }, 0)
+	return ok and result[1] == -1
 end
 
 local function next_count()
@@ -173,106 +270,128 @@ local function poll()
 	end
 	local changed = false
 	local need_save = false
-	for _, entry in ipairs(vim.fn.glob(STATUS_DIR .. "/*.json", false, true)) do
-		local ok, lines = pcall(vim.fn.readfile, entry)
-		if ok and lines[1] then
-			local ok2, status = pcall(vim.json.decode, table.concat(lines, "\n"))
-			if ok2 and type(status) == "table" then
-				-- tombstoned sessions (killed here) must never update anything:
-				-- a killed agent's late hook writes can otherwise leak into a
-				-- same-named respawn whose session_id isn't known yet
-				if status.session_id and M._dead_sessions[status.session_id] then
-					goto continue
-				end
-				local agent = (status.name and find(status.name))
-					or (status.session_id and find_by_session(status.session_id))
-				-- ignore status written no later than this agent's spawn (stale
-				-- file from a previous life under the same name/session)
-				if agent and status.ts and agent.spawned_at and status.ts <= agent.spawned_at then
-					agent = nil
-				end
-				-- ignore status from a different session or a different project
-				-- (the status dir is shared across all nvim instances)
-				if
-					agent
-					and agent.session_id
-					and status.session_id
-					and status.session_id ~= ""
-					and status.session_id ~= agent.session_id
-				then
-					agent = nil
-				end
-				if agent and agent.root and status.cwd and status.cwd ~= "" and status.cwd ~= agent.root then
-					agent = nil
-				end
-				if agent then
-					-- a restored agent must not be hidden by a stale "exited"
-					-- (written when the previous nvim killed the session): it
-					-- stays resumable in the sidebar. The suppression holds
-					-- until the first live (non-exited) status arrives after
-					-- resume; genuine exits are covered by on_exit instead.
-					local new_state = status.state
-					if new_state == "exited" and (not agent.term or agent._suppress_exit) then
-						new_state = nil
+	for provider, config in pairs(PROVIDERS) do
+		local status_dir = config.status_dir
+		for _, entry in ipairs(vim.fn.glob(status_dir .. "/*.json", false, true)) do
+			local ok, lines = pcall(vim.fn.readfile, entry)
+			if ok and lines[1] then
+				local ok2, status = pcall(vim.json.decode, table.concat(lines, "\n"))
+				if ok2 and type(status) == "table" then
+					local status_provider = status.provider or provider
+					-- tombstoned sessions (killed here) must never update anything:
+					-- a killed agent's late hook writes can otherwise leak into a
+					-- same-named respawn whose session_id isn't known yet
+					if status.session_id and M._dead_sessions[status.session_id] then
+						goto continue
 					end
-					if new_state and new_state ~= "exited" then
-						-- first live status: genuine "exited" writes are
-						-- meaningful again from here on
-						agent._suppress_exit = nil
+					local agent = (status.name and find(status.name))
+						or (status.session_id and find_by_session(status.session_id))
+					if agent and agent_provider(agent) ~= status_provider then
+						agent = nil
 					end
-					if new_state and agent.state ~= new_state then
-						agent.state = new_state
-						changed = true
+					if not agent and status_provider == "codex" then
+						agent = find_pending_codex_agent(status)
 					end
-					if status.session_id and status.session_id ~= "" and not agent.session_id then
-						agent.session_id = status.session_id
-						-- persist right away; without this a crash before
-						-- VimLeavePre would lose the agent
-						need_save = true
-						changed = true
+					-- ignore status written before this agent's spawn (stale
+					-- file from a previous life under the same name/session)
+					if agent and status.ts and agent.spawned_at and status.ts < agent.spawned_at then
+						agent = nil
 					end
-					if status.title and status.title ~= "" then
-						-- titles come from lastPrompt and may contain newlines,
-						-- which nvim_buf_set_lines would reject
-						local title = status.title:gsub("\n", " ")
-						if agent.title ~= title then
-							agent.title = title
+					-- ignore status from a different session or a different project
+					-- (the status dir is shared across all nvim instances)
+					if
+						agent
+						and agent.session_id
+						and status.session_id
+						and status.session_id ~= ""
+						and status.session_id ~= agent.session_id
+					then
+						agent = nil
+					end
+					if agent and agent.root and status.cwd and status.cwd ~= "" and status.cwd ~= agent.root then
+						agent = nil
+					end
+					if agent then
+						-- a restored agent must not be hidden by a stale "exited"
+						-- (written when the previous nvim killed the session): it
+						-- stays resumable in the sidebar. The suppression holds
+						-- until the first live (non-exited) status arrives after
+						-- resume; genuine exits are covered by on_exit instead.
+						local new_state = status.state
+						if
+							new_state == "exited"
+							and (M._leaving or not agent.term or agent._suppress_exit or terminal_is_alive(agent))
+						then
+							new_state = nil
+						end
+						if new_state and new_state ~= "exited" then
+							-- first live status: genuine "exited" writes are
+							-- meaningful again from here on
+							agent._suppress_exit = nil
+						end
+						if new_state and agent.state ~= new_state then
+							agent.state = new_state
 							changed = true
 						end
-					end
-					-- name the kimi session itself. Sessions are created lazily
-					-- on the first prompt and /title only works while the agent
-					-- is idle, so this must wait for the first turn to end.
-					if
-						agent._want_title
-						and agent.session_id
-						and (agent.state == "idle" or agent.state == "interrupted")
-						and agent.term
-						and agent.term.job_id
-					then
-						agent._want_title = false
-						-- raw chansend: term:send would steal window focus. Text
-						-- and Enter must go in separate chunks — in one chunk the
-						-- TUI drops the Enter (verified experimentally).
-						local job = agent.term.job_id
-						local function send(chunk)
-							-- the agent may have been killed since; send only if
-							-- the same agent is registered and the job is alive
-							pcall(function()
-								if find(agent.name) == agent and vim.fn.jobwait({ job }, 0)[1] == -1 then
-									vim.api.nvim_chan_send(job, chunk)
+						if status.session_id and status.session_id ~= "" and not agent.session_id then
+							agent.session_id = status.session_id
+							if agent._auto_name then
+								local previous_name = agent.name
+								agent.name = unique_name("codex-" .. status.session_id:sub(1, 12))
+								agent._auto_name = nil
+								if M._last == previous_name then
+									M._last = agent.name
 								end
-							end)
+							end
+							-- persist right away; without this a crash before
+							-- VimLeavePre would lose the agent
+							need_save = true
+							changed = true
 						end
-						send("/title " .. agent.name)
-						vim.defer_fn(function()
-							send("\r")
-						end, 300)
+						if status.title and status.title ~= "" then
+							-- titles come from lastPrompt and may contain newlines,
+							-- which nvim_buf_set_lines would reject
+							local title = status.title:gsub("\n", " ")
+							if agent.title ~= title then
+								agent.title = title
+								changed = true
+							end
+						end
+						-- name the kimi session itself. Sessions are created lazily
+						-- on the first prompt and /title only works while the agent
+						-- is idle, so this must wait for the first turn to end.
+						if
+							agent_provider(agent) == "kimi"
+							and agent._want_title
+							and agent.session_id
+							and (agent.state == "idle" or agent.state == "interrupted")
+							and agent.term
+							and agent.term.job_id
+						then
+							agent._want_title = false
+							-- raw chansend: term:send would steal window focus. Text
+							-- and Enter must go in separate chunks — in one chunk the
+							-- TUI drops the Enter (verified experimentally).
+							local job = agent.term.job_id
+							local function send(chunk)
+								-- the agent may have been killed since; send only if
+								-- the same agent is registered and the job is alive
+								pcall(function()
+									if find(agent.name) == agent and vim.fn.jobwait({ job }, 0)[1] == -1 then
+										vim.api.nvim_chan_send(job, chunk)
+									end
+								end)
+							end
+							send("/title " .. agent.name)
+							vim.defer_fn(function()
+								send("\r")
+							end, 300)
+						end
 					end
 				end
 			end
+			::continue::
 		end
-		::continue::
 	end
 	if need_save then
 		M.save_registry()
@@ -318,6 +437,7 @@ local function valid_entry(e)
 	return type(e) == "table"
 		and type(e.name) == "string"
 		and type(e.session_id) == "string"
+		and (e.provider == nil or PROVIDERS[e.provider] ~= nil)
 		and (e.title == nil or type(e.title) == "string")
 end
 
@@ -335,7 +455,12 @@ local function write_registry(root)
 		if ok and type(data) == "table" and type(data.agents) == "table" then
 			for _, e in ipairs(data.agents) do
 				if valid_entry(e) and not M._dead_sessions[e.session_id] then
-					merged[e.session_id] = { name = e.name, session_id = e.session_id, title = e.title or "" }
+					merged[e.session_id] = {
+						provider = e.provider or "kimi",
+						name = e.name,
+						session_id = e.session_id,
+						title = e.title or "",
+					}
 				end
 			end
 		end
@@ -343,7 +468,12 @@ local function write_registry(root)
 	for _, a in ipairs(M.agents) do
 		if a.session_id and a.root == root then
 			if a.state ~= "exited" then
-				merged[a.session_id] = { name = a.name, session_id = a.session_id, title = a.title }
+				merged[a.session_id] = {
+					provider = agent_provider(a),
+					name = a.name,
+					session_id = a.session_id,
+					title = a.title,
+				}
 			else
 				merged[a.session_id] = nil
 			end
@@ -415,6 +545,7 @@ function M.restore_registry()
 	local restored = 0
 	for _, e in ipairs(data.agents) do
 		if valid_entry(e) and not find_by_session(e.session_id) then
+			local provider = e.provider or "kimi"
 			-- two nvim instances may have persisted same-named agents with
 			-- different sessions; make the name unique instead of dropping one
 			local name = e.name
@@ -426,9 +557,10 @@ function M.restore_registry()
 				until not find(name)
 			end
 			table.insert(M.agents, {
+				provider = provider,
 				name = name,
 				term = nil,
-				cmd = "kimi --session " .. vim.fn.shellescape(e.session_id),
+				cmd = resume_command(provider, e.session_id),
 				state = "idle",
 				title = e.title or "",
 				session_id = e.session_id,
@@ -436,8 +568,8 @@ function M.restore_registry()
 				root = root,
 				-- ignore stale "exited" writes until a live status arrives
 				_suppress_exit = true,
-				-- also name sessions restored from before /title existed
-				_want_title = true,
+				-- also name Kimi sessions restored from before /title existed
+				_want_title = provider_config(provider).uses_title,
 			})
 			restored = restored + 1
 		end
@@ -504,7 +636,7 @@ function M._render_sidebar()
 		return
 	end
 	local agents = visible_agents()
-	local lines = { "Kimi Agents (" .. #agents .. ")", "" }
+	local lines = { "AI Agents (" .. #agents .. ")", "" }
 	-- highlight segments: { line (0-based), hl_group, col_start, col_end }
 	local segs = { { 0, "KimiAgentsHeader", 0, -1 } }
 	sb.line_map = {}
@@ -515,14 +647,17 @@ function M._render_sidebar()
 	end
 	for _, a in ipairs(agents) do
 		local icon = STATE_ICON[a.state] or "?"
-		local header = string.format("%s %s [%s]", icon, a.name, a.state)
+		local provider = "[" .. provider_config(agent_provider(a)).label .. "]"
+		local header = string.format("%s %s %s [%s]", icon, provider, a.name, a.state)
 		local first = #lines + 1
 		sb.line_map[first] = a.name
 		table.insert(lines, header)
 		local line0 = #lines - 1
+		local name_start = #icon + 1 + #provider + 1
 		table.insert(segs, { line0, STATE_HL[a.state] or "Comment", 0, #icon })
-		table.insert(segs, { line0, "KimiAgentsName", #icon + 1, #icon + 1 + #a.name })
-		table.insert(segs, { line0, "KimiAgentsMuted", #icon + 1 + #a.name, -1 })
+		table.insert(segs, { line0, "KimiAgentsMuted", #icon + 1, name_start - 1 })
+		table.insert(segs, { line0, "KimiAgentsName", name_start, name_start + #a.name })
+		table.insert(segs, { line0, "KimiAgentsMuted", name_start + #a.name, -1 })
 		if a.title ~= "" then
 			table.insert(segs, { #lines, "KimiAgentsMuted", 0, -1 })
 			table.insert(lines, "  " .. a.title)
@@ -742,16 +877,24 @@ end
 ---first toggle for agents restored from the registry.
 local function make_terminal(agent)
 	local Terminal = require("toggleterm.terminal").Terminal
+	local provider = agent_provider(agent)
+	local config = provider_config(provider)
 	agent.spawned_at = os.time()
 	agent.term = Terminal:new({
-		cmd = agent.cmd or "kimi",
+		cmd = agent.cmd or config.launch_cmd,
 		direction = "float",
 		float_opts = agent_float_opts(),
 		count = next_count(),
-		display_name = agent.name,
+		display_name = config.label .. ": " .. agent.name,
 		dir = agent.root or project_root(),
-		env = { KIMI_AGENT_NAME = agent.name },
+		env = config.env_name and { [config.env_name] = agent.name } or nil,
 		on_exit = function()
+			-- Closing Neovim terminates its child terminals, but the underlying
+			-- Kimi/Codex conversation remains resumable. Keep its saved session
+			-- instead of treating that expected shutdown as an agent exit.
+			if M._leaving then
+				return
+			end
 			agent.state = "exited"
 			refresh()
 			M.save_registry()
@@ -760,9 +903,9 @@ local function make_terminal(agent)
 	return agent.term
 end
 
----Install navigation only in Kimi-managed terminal buffers. Use Alt-I/Alt-K:
+---Install navigation only in managed terminal buffers. Use Alt-I/Alt-K:
 ---Ctrl-I is the same terminal input as Tab, which must remain available for
----shell and Kimi command completion.
+---shell and agent command completion.
 local function install_terminal_navigation(agent)
 	if not agent.term or not agent.term.bufnr or not vim.api.nvim_buf_is_valid(agent.term.bufnr) then
 		return
@@ -770,19 +913,22 @@ local function install_terminal_navigation(agent)
 	local opts = { buffer = agent.term.bufnr, silent = true }
 	vim.keymap.set("t", "<M-k>", function()
 		M.cycle(1)
-	end, vim.tbl_extend("force", opts, { desc = "kimi: next session" }))
+	end, vim.tbl_extend("force", opts, { desc = "agent: next session" }))
 	vim.keymap.set("t", "<M-i>", function()
 		M.cycle(-1)
-	end, vim.tbl_extend("force", opts, { desc = "kimi: previous session" }))
+	end, vim.tbl_extend("force", opts, { desc = "agent: previous session" }))
 end
 
 ---@param name string|nil prompt when nil
 ---@param cmd string|nil defaults to "kimi"
-function M.spawn(name, cmd)
+---@param provider "kimi"|"codex"|nil defaults to "kimi"
+function M.spawn(name, cmd, provider)
+	provider = provider or "kimi"
 	if not name then
-		vim.ui.input({ prompt = "Agent name: " }, function(input)
+		local label = provider_config(provider).label
+		vim.ui.input({ prompt = label .. " agent name: " }, function(input)
 			if input and vim.trim(input) ~= "" then
-				M.spawn(input, cmd)
+				M.spawn(input, cmd, provider)
 			end
 		end)
 		return
@@ -794,16 +940,31 @@ function M.spawn(name, cmd)
 	end
 	local existing = find(name)
 	if existing then
+		if agent_provider(existing) ~= provider then
+			notify(
+				("agent name '%s' is already used by %s"):format(name, provider_config(agent_provider(existing)).label),
+				vim.log.levels.WARN
+			)
+			return existing
+		end
 		M.toggle(name)
 		return existing
 	end
 	local root = project_root()
-	local agent =
-		{ name = name, cmd = cmd, state = "idle", title = "", session_id = nil, spawned_at = nil, root = root }
+	local agent = {
+		provider = provider,
+		name = name,
+		cmd = cmd,
+		state = "idle",
+		title = "",
+		session_id = nil,
+		spawned_at = nil,
+		root = root,
+	}
 	-- drop any stale status file from a previous life under the same name,
 	-- otherwise the poll would immediately mark the fresh agent with the
 	-- old state (e.g. "exited")
-	vim.fn.delete(STATUS_DIR .. "/" .. name .. ".json")
+	vim.fn.delete(status_path(provider, name))
 	make_terminal(agent)
 	table.insert(M.agents, agent)
 	M._last = name
@@ -812,12 +973,19 @@ function M.spawn(name, cmd)
 	install_terminal_navigation(agent)
 	-- fresh sessions get named inside kimi itself (/title) once the session
 	-- exists — see poll(); resumed sessions already have their title
-	if not cmd then
+	if provider_config(provider).uses_title and not cmd then
 		agent._want_title = true
 	end
 	M.save_registry()
 	refresh()
 	return agent
+end
+
+---Start a named Codex session in a managed float.
+---@param name string|nil prompt when nil
+---@param cmd string|nil defaults to a fresh Codex session
+function M.spawn_codex(name, cmd)
+	return M.spawn(name, cmd, "codex")
 end
 
 function M.toggle(name)
@@ -827,7 +995,7 @@ function M.toggle(name)
 		return
 	end
 	if not agent.term then
-		-- restored agent: first toggle resumes its kimi session
+		-- restored agent: first toggle resumes its saved provider session
 		make_terminal(agent)
 	end
 	agent.term:toggle()
@@ -847,7 +1015,7 @@ function M.toggle_last()
 	M.toggle(agent.name)
 end
 
----Switch to the next/previous Kimi session in the current project.
+---Switch to the next/previous managed session in the current project.
 ---@param direction integer 1 for next, -1 for previous
 function M.cycle(direction)
 	local current = agent_in_current_buffer()
@@ -855,7 +1023,7 @@ function M.cycle(direction)
 	local agents = project_agents(root)
 	if #agents < 2 then
 		if #agents == 0 then
-			notify("no kimi sessions for " .. root)
+			notify("no managed sessions for " .. root)
 		end
 		return
 	end
@@ -871,14 +1039,14 @@ function M.cycle(direction)
 			break
 		end
 	end
-	-- The mapping is normally used from a Kimi terminal. When invoked with no
+	-- The mapping is normally used from a managed terminal. When invoked with no
 	-- current session, choose the first/last entry according to direction.
 	index = index or (direction > 0 and 0 or 1)
 	local target = agents[((index - 1 + direction) % #agents) + 1]
 
 	-- Floats are independent in toggleterm, so close the source explicitly
 	-- before opening the target. This makes navigation behave as a true switch
-	-- rather than stacking Kimi terminals on top of one another.
+	-- rather than stacking agent terminals on top of one another.
 	if current and current ~= target and current.term and current.term:is_open() then
 		current.term:close()
 	end
@@ -920,7 +1088,7 @@ function M.kill(name, force)
 	if M._last == name then
 		M._last = nil
 	end
-	vim.fn.delete(STATUS_DIR .. "/" .. name .. ".json")
+	vim.fn.delete(status_path(agent_provider(agent), status_file_name(agent)))
 	M.save_registry()
 	refresh()
 end
@@ -995,7 +1163,7 @@ function M.resume()
 				n = n + 1
 			end
 		end
-		local agent = M.spawn(name, "kimi --session " .. vim.fn.shellescape(choice.id))
+		local agent = M.spawn(name, resume_command("kimi", choice.id), "kimi")
 		if agent then
 			agent.session_id = choice.id
 			-- a previously killed session may be tombstoned; resurrect it
@@ -1004,11 +1172,20 @@ function M.resume()
 			-- sessions previously run outside nvim (no KIMI_AGENT_NAME) leave a
 			-- stale status file keyed by session id; the poll matches on
 			-- session id too, so drop it to keep the resumed agent visible
-			vim.fn.delete(STATUS_DIR .. "/" .. choice.id .. ".json")
+			vim.fn.delete(status_path("kimi", choice.id))
 			M.save_registry()
 			refresh()
 		end
 	end)
+end
+
+---Open Codex's native resume picker in a managed terminal. Once selected,
+---the lifecycle hook records its session id for direct future restores.
+function M.resume_codex()
+	local agent = M.spawn_codex(unique_name("codex-resume"), "codex resume --no-alt-screen")
+	if agent then
+		agent._auto_name = true
+	end
 end
 
 -- -------------------------------------------------------------- statusline --
@@ -1030,11 +1207,18 @@ function M.status()
 	return running, #agents
 end
 
+---Persist live sessions before Neovim shuts down. Terminal on_exit callbacks
+---and provider SessionEnd hooks during shutdown must not remove them.
+function M.prepare_exit()
+	M._leaving = true
+	M.save_registry()
+end
+
 -- ------------------------------------------------------------------- setup --
 
 function M.setup()
 	M.restore_registry()
-	vim.api.nvim_create_autocmd("VimLeavePre", { callback = M.save_registry })
+	vim.api.nvim_create_autocmd("VimLeavePre", { callback = M.prepare_exit })
 	vim.api.nvim_create_autocmd("VimResized", { callback = update_agent_float_layout })
 	local map = vim.keymap.set
 	map("n", "<leader>k", M.toggle_last, { desc = "kimi: toggle last agent" })
@@ -1042,6 +1226,8 @@ function M.setup()
 		M.spawn()
 	end, { desc = "kimi: new agent" })
 	map("n", "<leader>kr", M.resume, { desc = "kimi: resume session" })
+	map("n", "<leader>kc", M.spawn_codex, { desc = "codex: new agent" })
+	map("n", "<leader>kC", M.resume_codex, { desc = "codex: resume session" })
 	map("n", "<leader>ka", M.sidebar_toggle, { desc = "kimi: agents sidebar" })
 end
 

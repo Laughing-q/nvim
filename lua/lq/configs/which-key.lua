@@ -72,8 +72,8 @@ leader_key = {
 			remap = false,
 		},
 
-		-- kimi agent manager (bindings in lq.configs.agents)
-		{ "<leader>k", group = "kimi agents", nowait = true, remap = false },
+		-- Kimi/Codex agent manager (bindings in lq.configs.agents)
+		{ "<leader>k", group = "AI agents", nowait = true, remap = false },
 		-- CopilotChat (bindings in plugin/keymappings.lua)
 		{ "<leader>K", group = "CopilotChat", nowait = true, remap = false },
 
