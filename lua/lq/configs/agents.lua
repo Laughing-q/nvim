@@ -760,17 +760,18 @@ local function make_terminal(agent)
 	return agent.term
 end
 
----Install navigation only in Kimi-managed terminal buffers. Other terminal
----buffers retain their normal Ctrl-I/Ctrl-K behavior.
+---Install navigation only in Kimi-managed terminal buffers. Use Alt-I/Alt-K:
+---Ctrl-I is the same terminal input as Tab, which must remain available for
+---shell and Kimi command completion.
 local function install_terminal_navigation(agent)
 	if not agent.term or not agent.term.bufnr or not vim.api.nvim_buf_is_valid(agent.term.bufnr) then
 		return
 	end
 	local opts = { buffer = agent.term.bufnr, silent = true }
-	vim.keymap.set("t", "<C-k>", function()
+	vim.keymap.set("t", "<M-k>", function()
 		M.cycle(1)
 	end, vim.tbl_extend("force", opts, { desc = "kimi: next session" }))
-	vim.keymap.set("t", "<C-i>", function()
+	vim.keymap.set("t", "<M-i>", function()
 		M.cycle(-1)
 	end, vim.tbl_extend("force", opts, { desc = "kimi: previous session" }))
 end
