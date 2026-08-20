@@ -204,6 +204,16 @@ local function agent_in_current_buffer()
 	return nil
 end
 
+---A provider can emit a delayed SessionEnd for an older client of the same
+---session. While this ToggleTerm job is still alive, on_exit is authoritative.
+local function terminal_is_alive(agent)
+	if not agent.term or not agent.term.job_id then
+		return false
+	end
+	local ok, result = pcall(vim.fn.jobwait, { agent.term.job_id }, 0)
+	return ok and result[1] == -1
+end
+
 local function next_count()
 	local n = M._next_count
 	M._next_count = M._next_count + 1
@@ -275,7 +285,10 @@ local function poll()
 						-- until the first live (non-exited) status arrives after
 						-- resume; genuine exits are covered by on_exit instead.
 						local new_state = status.state
-						if new_state == "exited" and (M._leaving or not agent.term or agent._suppress_exit) then
+						if
+							new_state == "exited"
+							and (M._leaving or not agent.term or agent._suppress_exit or terminal_is_alive(agent))
+						then
 							new_state = nil
 						end
 						if new_state and new_state ~= "exited" then
