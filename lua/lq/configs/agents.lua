@@ -89,6 +89,7 @@ vim.api.nvim_create_autocmd("ColorScheme", { callback = set_hls })
 M._last = nil ---@type string|nil
 M._next_count = 101
 M._timer = nil
+M._leaving = false
 M._dead_sessions = {} ---@type table<string, boolean> session ids killed here; their hook writes are ignored
 M._sidebar = { buf = nil, win = nil, line_map = {}, block_map = {} }
 
@@ -274,7 +275,7 @@ local function poll()
 						-- until the first live (non-exited) status arrives after
 						-- resume; genuine exits are covered by on_exit instead.
 						local new_state = status.state
-						if new_state == "exited" and (not agent.term or agent._suppress_exit) then
+						if new_state == "exited" and (M._leaving or not agent.term or agent._suppress_exit) then
 							new_state = nil
 						end
 						if new_state and new_state ~= "exited" then
@@ -833,6 +834,12 @@ local function make_terminal(agent)
 		dir = agent.root or project_root(),
 		env = provider == "codex" and { CODEX_AGENT_NAME = agent.name } or { KIMI_AGENT_NAME = agent.name },
 		on_exit = function()
+			-- Closing Neovim terminates its child terminals, but the underlying
+			-- Kimi/Codex conversation remains resumable. Keep its saved session
+			-- instead of treating that expected shutdown as an agent exit.
+			if M._leaving then
+				return
+			end
 			agent.state = "exited"
 			refresh()
 			M.save_registry()
@@ -1145,11 +1152,18 @@ function M.status()
 	return running, #agents
 end
 
+---Persist live sessions before Neovim shuts down. Terminal on_exit callbacks
+---and provider SessionEnd hooks during shutdown must not remove them.
+function M.prepare_exit()
+	M._leaving = true
+	M.save_registry()
+end
+
 -- ------------------------------------------------------------------- setup --
 
 function M.setup()
 	M.restore_registry()
-	vim.api.nvim_create_autocmd("VimLeavePre", { callback = M.save_registry })
+	vim.api.nvim_create_autocmd("VimLeavePre", { callback = M.prepare_exit })
 	vim.api.nvim_create_autocmd("VimResized", { callback = update_agent_float_layout })
 	local map = vim.keymap.set
 	map("n", "<leader>k", M.toggle_last, { desc = "kimi: toggle last agent" })
