@@ -43,12 +43,12 @@ Validate with `kimi doctor`. Without these hooks everything still works, but age
 | `<leader>` `k` `n`| new named agent                        | `n`  |
 | `<leader>` `k` `r`| resume an existing kimi session        | `n`  |
 | `<leader>` `k` `a`| toggle the agents sidebar              | `n`  |
-| `Ctrl` `k`        | switch to next Kimi session in this project | `t` |
-| `Ctrl` `i`        | switch to previous Kimi session in this project | `t` |
+| `Alt` `k`         | switch to next Kimi session in this project | `t` |
+| `Alt` `i`         | switch to previous Kimi session in this project | `t` |
 
 Sidebar buffer mappings: `<CR>` toggle agent float, `i`/`k` jump between agents, `n` new, `r` resume, `d`/`x` kill, `q` close.
 
-The Ctrl mappings are available only while focused in a Kimi terminal. They close the current ToggleTerm float and open the next/previous live session for the current project; restored sessions are resumed on first visit. When the sidebar is open, Kimi floats fill the editor area to its left instead of overlapping it.
+The session mappings are available only while focused in a Kimi terminal. They close the current ToggleTerm float and open the next/previous live session for the current project; restored sessions are resumed on first visit. Tab is left unmodified for Kimi command completion. When the sidebar is open, Kimi floats fill the editor area to its left instead of overlapping it.
 
 ## Screenshots🖼️
 ![demo1](https://user-images.githubusercontent.com/61612323/153551187-156189ea-9e52-407c-8888-743439f5bf4c.png)
