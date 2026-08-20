@@ -39,9 +39,27 @@ M.agents = {}
 
 local KIMI_HOME = vim.env.KIMI_CODE_HOME or (vim.fn.expand("~/.kimi-code"))
 local CODEX_HOME = vim.env.CODEX_HOME or (vim.fn.expand("~/.codex"))
-local STATUS_DIRS = {
-	kimi = KIMI_HOME .. "/agent-status",
-	codex = CODEX_HOME .. "/agent-status",
+local PROVIDERS = {
+	kimi = {
+		label = "Kimi",
+		status_dir = KIMI_HOME .. "/agent-status",
+		launch_cmd = "kimi",
+		resume_format = "kimi --session %s",
+		env_name = "KIMI_AGENT_NAME",
+		uses_title = true,
+		status_file_name = function(agent)
+			return agent.name
+		end,
+	},
+	codex = {
+		label = "Codex",
+		status_dir = CODEX_HOME .. "/agent-status",
+		launch_cmd = "codex --no-alt-screen",
+		resume_format = "codex resume --no-alt-screen %s",
+		status_file_name = function(agent)
+			return agent.session_id or agent.name
+		end,
+	},
 }
 local INDEX_FILE = KIMI_HOME .. "/session_index.jsonl"
 local REGISTRY_DIR = KIMI_HOME .. "/agent-registry"
@@ -61,11 +79,6 @@ local STATE_HL = {
 	interrupted = "DiagnosticWarn",
 	exited = "DiagnosticError",
 }
-local PROVIDER_LABEL = {
-	kimi = "Kimi",
-	codex = "Codex",
-}
-
 ---Namespaced, colorscheme-following highlight groups (default = user can override).
 local function set_hls()
 	local hls = {
@@ -106,22 +119,20 @@ local function agent_provider(agent)
 	return agent.provider or "kimi"
 end
 
+local function provider_config(provider)
+	return PROVIDERS[provider] or PROVIDERS.kimi
+end
+
 local function status_path(provider, name)
-	return (STATUS_DIRS[provider] or STATUS_DIRS.kimi) .. "/" .. name .. ".json"
+	return provider_config(provider).status_dir .. "/" .. name .. ".json"
 end
 
 local function status_file_name(agent)
-	if agent_provider(agent) == "codex" and agent.session_id then
-		return agent.session_id
-	end
-	return agent.name
+	return provider_config(agent_provider(agent)).status_file_name(agent)
 end
 
 local function resume_command(provider, session_id)
-	if provider == "codex" then
-		return "codex resume --no-alt-screen " .. vim.fn.shellescape(session_id)
-	end
-	return "kimi --session " .. vim.fn.shellescape(session_id)
+	return provider_config(provider).resume_format:format(vim.fn.shellescape(session_id))
 end
 
 local function project_root()
@@ -259,7 +270,8 @@ local function poll()
 	end
 	local changed = false
 	local need_save = false
-	for provider, status_dir in pairs(STATUS_DIRS) do
+	for provider, config in pairs(PROVIDERS) do
+		local status_dir = config.status_dir
 		for _, entry in ipairs(vim.fn.glob(status_dir .. "/*.json", false, true)) do
 			local ok, lines = pcall(vim.fn.readfile, entry)
 			if ok and lines[1] then
@@ -425,7 +437,7 @@ local function valid_entry(e)
 	return type(e) == "table"
 		and type(e.name) == "string"
 		and type(e.session_id) == "string"
-		and (e.provider == nil or e.provider == "kimi" or e.provider == "codex")
+		and (e.provider == nil or PROVIDERS[e.provider] ~= nil)
 		and (e.title == nil or type(e.title) == "string")
 end
 
@@ -557,7 +569,7 @@ function M.restore_registry()
 				-- ignore stale "exited" writes until a live status arrives
 				_suppress_exit = true,
 				-- also name Kimi sessions restored from before /title existed
-				_want_title = provider == "kimi",
+				_want_title = provider_config(provider).uses_title,
 			})
 			restored = restored + 1
 		end
@@ -635,7 +647,7 @@ function M._render_sidebar()
 	end
 	for _, a in ipairs(agents) do
 		local icon = STATE_ICON[a.state] or "?"
-		local provider = "[" .. (PROVIDER_LABEL[agent_provider(a)] or agent_provider(a)) .. "]"
+		local provider = "[" .. provider_config(agent_provider(a)).label .. "]"
 		local header = string.format("%s %s %s [%s]", icon, provider, a.name, a.state)
 		local first = #lines + 1
 		sb.line_map[first] = a.name
@@ -866,15 +878,16 @@ end
 local function make_terminal(agent)
 	local Terminal = require("toggleterm.terminal").Terminal
 	local provider = agent_provider(agent)
+	local config = provider_config(provider)
 	agent.spawned_at = os.time()
 	agent.term = Terminal:new({
-		cmd = agent.cmd or (provider == "codex" and "codex --no-alt-screen" or "kimi"),
+		cmd = agent.cmd or config.launch_cmd,
 		direction = "float",
 		float_opts = agent_float_opts(),
 		count = next_count(),
-		display_name = (PROVIDER_LABEL[provider] or provider) .. ": " .. agent.name,
+		display_name = config.label .. ": " .. agent.name,
 		dir = agent.root or project_root(),
-		env = provider == "kimi" and { KIMI_AGENT_NAME = agent.name } or nil,
+		env = config.env_name and { [config.env_name] = agent.name } or nil,
 		on_exit = function()
 			-- Closing Neovim terminates its child terminals, but the underlying
 			-- Kimi/Codex conversation remains resumable. Keep its saved session
@@ -912,7 +925,7 @@ end
 function M.spawn(name, cmd, provider)
 	provider = provider or "kimi"
 	if not name then
-		local label = PROVIDER_LABEL[provider] or provider
+		local label = provider_config(provider).label
 		vim.ui.input({ prompt = label .. " agent name: " }, function(input)
 			if input and vim.trim(input) ~= "" then
 				M.spawn(input, cmd, provider)
@@ -929,10 +942,7 @@ function M.spawn(name, cmd, provider)
 	if existing then
 		if agent_provider(existing) ~= provider then
 			notify(
-				("agent name '%s' is already used by %s"):format(
-					name,
-					PROVIDER_LABEL[agent_provider(existing)] or agent_provider(existing)
-				),
+				("agent name '%s' is already used by %s"):format(name, provider_config(agent_provider(existing)).label),
 				vim.log.levels.WARN
 			)
 			return existing
@@ -963,7 +973,7 @@ function M.spawn(name, cmd, provider)
 	install_terminal_navigation(agent)
 	-- fresh sessions get named inside kimi itself (/title) once the session
 	-- exists — see poll(); resumed sessions already have their title
-	if provider == "kimi" and not cmd then
+	if provider_config(provider).uses_title and not cmd then
 		agent._want_title = true
 	end
 	M.save_registry()
