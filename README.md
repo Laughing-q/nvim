@@ -13,7 +13,13 @@ cd ~/.config/nvim
 ## Kimi + Codex agent manager🤖
 Manage [kimi-code](https://github.com/MoonshotAI/kimi-code) and [Codex](https://developers.openai.com/codex/cli) CLI agents inside neovim: named agents in float terminals, a shared sidebar with live status (`<leader>ka`), a `🤖 running/total` statusline component, and per-project session persistence across neovim restarts.
 
-Requirements: the desired CLI(s) and `jq`.
+Requirements: the desired CLI(s) and `jq` (used by the status hook script — without it agents never learn their session id, so session persistence across neovim restarts silently breaks):
+
+```shell
+sudo pacman -S jq      # arch
+sudo apt install jq    # debian/ubuntu
+brew install jq        # macos
+```
 
 Agent status (running/idle/interrupted/exited) is reported by kimi-code [hooks](https://moonshotai.github.io/kimi-code/en/customization/hooks.html) via [scripts/agent-status.sh](./scripts/agent-status.sh). To enable it, append this to your kimi-code config (`$KIMI_CODE_HOME/config.toml`, default `~/.kimi-code/config.toml`):
 
