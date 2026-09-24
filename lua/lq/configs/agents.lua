@@ -1,5 +1,5 @@
--- Multi-agent manager for Kimi and Codex CLI sessions running in toggleterm
--- floats.
+-- Multi-agent manager for Kimi, Codex and MiMo CLI sessions running in
+-- toggleterm floats.
 --
 -- Each agent is a named toggleterm Terminal (float). Status (running / idle /
 -- interrupted / exited) comes from provider hooks (see scripts/agent-status.sh),
@@ -21,10 +21,10 @@
 local M = {}
 
 ---@class Agent
----@field provider "kimi"|"codex"
+---@field provider "kimi"|"codex"|"mimo"
 ---@field name string
 ---@field term table|nil toggleterm Terminal (nil until first toggle for restored agents)
----@field cmd string|nil terminal command (nil means plain "kimi")
+---@field cmd string|nil terminal command (nil means the provider default)
 ---@field state "running"|"idle"|"interrupted"|"exited"
 ---@field title string
 ---@field session_id string|nil
@@ -39,6 +39,7 @@ M.agents = {}
 
 local KIMI_HOME = vim.env.KIMI_CODE_HOME or (vim.fn.expand("~/.kimi-code"))
 local CODEX_HOME = vim.env.CODEX_HOME or (vim.fn.expand("~/.codex"))
+local MIMOCODE_HOME = vim.env.MIMOCODE_HOME or (vim.fn.expand("~/.local/share/mimocode"))
 local PROVIDERS = {
 	kimi = {
 		label = "Kimi",
@@ -56,6 +57,17 @@ local PROVIDERS = {
 		status_dir = CODEX_HOME .. "/agent-status",
 		launch_cmd = "codex --no-alt-screen",
 		resume_format = "codex resume --no-alt-screen %s",
+		status_file_name = function(agent)
+			return agent.session_id or agent.name
+		end,
+	},
+	mimo = {
+		label = "MiMo",
+		status_dir = MIMOCODE_HOME .. "/agent-status",
+		launch_cmd = "mimo",
+		resume_format = "mimo --session %s",
+		env_name = "MIMO_AGENT_NAME",
+		uses_title = false,
 		status_file_name = function(agent)
 			return agent.session_id or agent.name
 		end,
@@ -404,6 +416,58 @@ end
 -- exposed for the headless test suite
 M._poll = poll
 
+---Discover MiMo session ids for live agents that don't have one yet.
+---MiMo has no lifecycle hooks; we poll `mimo session list` and match
+---sessions to agents by project root + recency (most recently updated first).
+local function discover_mimo_sessions()
+	local root = project_root()
+	local pending = {}
+	for _, a in ipairs(M.agents) do
+		if agent_provider(a) == "mimo" and not a.session_id and a.state ~= "exited" and a.root == root then
+			table.insert(pending, a)
+		end
+	end
+	if #pending == 0 then
+		return
+	end
+	local ok, result = pcall(vim.fn.system, { "mimo", "session", "list", "--format", "json" })
+	if not ok or vim.v.shell_error ~= 0 then
+		return
+	end
+	local ok2, sessions = pcall(vim.json.decode, result)
+	if not ok2 or type(sessions) ~= "table" then
+		return
+	end
+	local candidates = {}
+	for _, rec in ipairs(sessions) do
+		if type(rec) == "table" and rec.id and rec.directory == root and not M._dead_sessions[rec.id] and not find_by_session(rec.id) then
+			table.insert(candidates, {
+				id = rec.id,
+				title = rec.title or "",
+				mtime = rec.updated or 0,
+			})
+		end
+	end
+	table.sort(candidates, function(a, b)
+		return a.mtime > b.mtime
+	end)
+	local changed = false
+	for i, agent in ipairs(pending) do
+		local c = candidates[i]
+		if c then
+			agent.session_id = c.id
+			if c.title ~= "" then
+				agent.title = vim.fn.strcharpart(c.title:gsub("\n", " "), 0, 80)
+			end
+			changed = true
+		end
+	end
+	if changed then
+		M.save_registry()
+		refresh()
+	end
+end
+
 local function start_timer()
 	if M._timer then
 		return
@@ -422,6 +486,7 @@ local function start_timer()
 				return
 			end
 			pcall(poll)
+			pcall(discover_mimo_sessions)
 		end)
 	)
 end
@@ -830,6 +895,12 @@ function M.sidebar_toggle()
 		vim.keymap.set("n", "r", function()
 			M.resume()
 		end, vim.tbl_extend("force", opts, { desc = "resume kimi session" }))
+		vim.keymap.set("n", "m", function()
+			M.spawn_mimo()
+		end, vim.tbl_extend("force", opts, { desc = "new mimo agent" }))
+		vim.keymap.set("n", "R", function()
+			M.resume_mimo()
+		end, vim.tbl_extend("force", opts, { desc = "resume mimo session" }))
 		vim.keymap.set("n", "q", sidebar_close, vim.tbl_extend("force", opts, { desc = "close sidebar" }))
 		-- jump between agents with one up/down (this config maps i=up, k=down)
 		vim.keymap.set("n", "i", function()
@@ -920,8 +991,8 @@ local function install_terminal_navigation(agent)
 end
 
 ---@param name string|nil prompt when nil
----@param cmd string|nil defaults to "kimi"
----@param provider "kimi"|"codex"|nil defaults to "kimi"
+---@param cmd string|nil defaults to the provider's launch command
+---@param provider "kimi"|"codex"|"mimo"|nil defaults to "kimi"
 function M.spawn(name, cmd, provider)
 	provider = provider or "kimi"
 	if not name then
@@ -986,6 +1057,13 @@ end
 ---@param cmd string|nil defaults to a fresh Codex session
 function M.spawn_codex(name, cmd)
 	return M.spawn(name, cmd, "codex")
+end
+
+---Start a named MiMo session in a managed float.
+---@param name string|nil prompt when nil
+---@param cmd string|nil defaults to a fresh MiMo session
+function M.spawn_mimo(name, cmd)
+	return M.spawn(name, cmd, "mimo")
 end
 
 function M.toggle(name)
@@ -1188,6 +1266,74 @@ function M.resume_codex()
 	end
 end
 
+---Resume an existing MiMo session of this project in a new agent float.
+function M.resume_mimo()
+	local root = project_root()
+	local ok, result = pcall(vim.fn.system, { "mimo", "session", "list", "--format", "json" })
+	if not ok or vim.v.shell_error ~= 0 then
+		notify("failed to list mimo sessions", vim.log.levels.WARN)
+		return
+	end
+	local ok2, sessions = pcall(vim.json.decode, result)
+	if not ok2 or type(sessions) ~= "table" then
+		notify("no mimo sessions found", vim.log.levels.WARN)
+		return
+	end
+	local items = {}
+	for _, rec in ipairs(sessions) do
+		if type(rec) == "table" and rec.id and rec.directory == root then
+			table.insert(items, {
+				id = rec.id,
+				title = rec.title or "",
+				mtime = math.floor((rec.updated or 0) / 1000),
+			})
+		end
+	end
+	if #items == 0 then
+		notify("no mimo sessions for " .. root)
+		return
+	end
+	table.sort(items, function(a, b)
+		return a.mtime > b.mtime
+	end)
+	vim.ui.select(items, {
+		prompt = "Resume mimo session",
+		format_item = function(it)
+			local label = it.title ~= "" and it.title or it.id:sub(5, 20)
+			label = vim.fn.strcharpart(label:gsub("\n", " "), 0, 50)
+			local when = it.mtime > 0 and os.date("%m-%d %H:%M", it.mtime) or "?"
+			return string.format("%s  (%s)", label, when)
+		end,
+	}, function(choice)
+		if not choice then
+			return
+		end
+		local open = find_by_session(choice.id)
+		if open then
+			M.toggle(open.name)
+			return
+		end
+		local name = vim.fn.strcharpart((choice.title ~= "" and choice.title or choice.id:sub(5, 20)):gsub("\n", " "), 0, 30)
+		if find(name) then
+			local base = vim.fn.strcharpart(name, 0, 24)
+			name = base .. "-" .. choice.id:sub(5, 12)
+			local n = 2
+			while find(name) do
+				name = base .. "-" .. n
+				n = n + 1
+			end
+		end
+		local agent = M.spawn(name, resume_command("mimo", choice.id), "mimo")
+		if agent then
+			agent.session_id = choice.id
+			M._dead_sessions[choice.id] = nil
+			agent.title = vim.fn.strcharpart(choice.title:gsub("\n", " "), 0, 80)
+			M.save_registry()
+			refresh()
+		end
+	end)
+end
+
 -- -------------------------------------------------------------- statusline --
 
 ---Number of live (non-exited) agents; used by the heirline condition.
@@ -1228,6 +1374,8 @@ function M.setup()
 	map("n", "<leader>kr", M.resume, { desc = "kimi: resume session" })
 	map("n", "<leader>kc", M.spawn_codex, { desc = "codex: new agent" })
 	map("n", "<leader>kC", M.resume_codex, { desc = "codex: resume session" })
+	map("n", "<leader>km", M.spawn_mimo, { desc = "mimo: new agent" })
+	map("n", "<leader>kM", M.resume_mimo, { desc = "mimo: resume session" })
 	map("n", "<leader>ka", M.sidebar_toggle, { desc = "kimi: agents sidebar" })
 end
 

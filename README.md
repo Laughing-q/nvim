@@ -10,8 +10,8 @@ cd ~/.config/nvim
 ./install.sh
 ```
 
-## Kimi + Codex agent manager🤖
-Manage [kimi-code](https://github.com/MoonshotAI/kimi-code) and [Codex](https://developers.openai.com/codex/cli) CLI agents inside neovim: named agents in float terminals, a shared sidebar with live status (`<leader>ka`), a `🤖 running/total` statusline component, and per-project session persistence across neovim restarts.
+## Kimi + Codex + MiMo agent manager🤖
+Manage [kimi-code](https://github.com/MoonshotAI/kimi-code), [Codex](https://developers.openai.com/codex/cli) and [MiMo](https://mimo.xiaomi.com) CLI agents inside neovim: named agents in float terminals, a shared sidebar with live status (`<leader>ka`), a `🤖 running/total` statusline component, and per-project session persistence across neovim restarts.
 
 Requirements: the desired CLI(s) and `jq` (used by the status hook script — without it agents never learn their session id, so session persistence across neovim restarts silently breaks):
 
@@ -72,23 +72,29 @@ command = "~/.config/nvim/scripts/agent-status.sh codex exited"
 timeout = 3
 ```
 
-Agent names are shared across providers, so choose distinct names if a Kimi and
-Codex session belong to the same project.
+Agent names are shared across providers, so choose distinct names if Kimi, Codex and
+MiMo sessions belong to the same project.
+
+MiMo status is discovered automatically by polling `mimo session list` — no hooks needed. Session titles and ids are picked up within a few seconds of the session becoming active.
+
+**Plain UI tip**: MiMo ships with a fancy visual mode (star field, meteors, animations). For a plain interface like Kimi's, type `/vivid` inside the MiMo TUI to toggle to **Minimal** mode (quiet visuals, stable indicators). You can also set it from `ctrl+p` settings.
 
 | shortcut          | action                                 | mode |
 |-------------------|----------------------------------------|------|
 | `<leader>` `k`    | toggle last active agent float         | `n`  |
-| `<leader>` `k` `n`| new named agent                        | `n`  |
+| `<leader>` `k` `n`| new named Kimi agent                   | `n`  |
 | `<leader>` `k` `r`| resume an existing kimi session        | `n`  |
 | `<leader>` `k` `c`| new named Codex agent                  | `n`  |
 | `<leader>` `k` `C`| open Codex's native resume picker (no name prompt) | `n`  |
+| `<leader>` `k` `m`| new named MiMo agent                   | `n`  |
+| `<leader>` `k` `M`| resume an existing MiMo session        | `n`  |
 | `<leader>` `k` `a`| toggle the agents sidebar              | `n`  |
 | `Alt` `k`         | switch to next managed session in this project | `t` |
 | `Alt` `i`         | switch to previous managed session in this project | `t` |
 
-Sidebar buffer mappings: `<CR>` toggle agent float, `i`/`k` jump between agents, `n` new, `r` resume, `d`/`x` kill, `q` close.
+Sidebar buffer mappings: `<CR>` toggle agent float, `i`/`k` jump between agents, `n` new kimi, `m` new mimo, `r` resume kimi, `R` resume mimo, `d`/`x` kill, `q` close.
 
-The Alt mappings are available only while focused in a managed terminal. They close the current ToggleTerm float and open the next/previous Kimi or Codex session for the current project; restored sessions are resumed on first visit. Tab is left unmodified for command completion. Codex's native picker is used for sessions not yet known to the manager. When the sidebar is open, agent floats fill the editor area to its left instead of overlapping it.
+The Alt mappings are available only while focused in a managed terminal. They close the current ToggleTerm float and open the next/previous Kimi, Codex or MiMo session for the current project; restored sessions are resumed on first visit. Tab is left unmodified for command completion. Codex's native picker is used for sessions not yet known to the manager. When the sidebar is open, agent floats fill the editor area to its left instead of overlapping it.
 
 ## Screenshots🖼️
 ![demo1](https://user-images.githubusercontent.com/61612323/153551187-156189ea-9e52-407c-8888-743439f5bf4c.png)
