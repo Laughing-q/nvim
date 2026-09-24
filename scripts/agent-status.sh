@@ -1,23 +1,23 @@
 #!/usr/bin/env bash
-# Kimi/Codex lifecycle hook: record per-agent status for the Neovim manager
+# Kimi/Codex/MiMo lifecycle hook: record per-agent status for the Neovim manager
 # (lua/lq/configs/agents.lua). The CLI passes a JSON payload on stdin:
 # { "hook_event_name", "session_id", "cwd", ... }.
 #
-# New form: agent-status.sh <kimi|codex> <running|idle|interrupted|exited>
+# New form: agent-status.sh <kimi|codex|mimo> <running|idle|interrupted|exited>
 # The legacy Kimi form, agent-status.sh <state>, remains supported.
 set -euo pipefail
 
 case "${1:-}" in
-kimi | codex)
+kimi | codex | mimo)
 	provider="$1"
-	state="${2:?usage: agent-status.sh <kimi|codex> <running|idle|interrupted|exited>}"
+	state="${2:?usage: agent-status.sh <kimi|codex|mimo> <running|idle|interrupted|exited>}"
 	;;
 running | idle | interrupted | exited)
 	provider="kimi"
 	state="$1"
 	;;
 *)
-	echo "usage: agent-status.sh <kimi|codex> <running|idle|interrupted|exited>" >&2
+	echo "usage: agent-status.sh <kimi|codex|mimo> <running|idle|interrupted|exited>" >&2
 	exit 2
 	;;
 esac
@@ -32,6 +32,10 @@ codex)
 	# Codex hooks do not inherit a terminal-specific agent name. Its session id
 	# is both the hook status file name and the manager's durable identity.
 	name=""
+	;;
+mimo)
+	agent_home="${MIMOCODE_HOME:-$HOME/.local/share/mimocode}"
+	name="${MIMO_AGENT_NAME:-}"
 	;;
 esac
 status_dir="$agent_home/agent-status"
