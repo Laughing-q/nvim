@@ -141,6 +141,64 @@ map("n", "<C-R>", ":e!<CR>")
 -- make buffer executable
 map("n", "<leader>x", ":!chmod +x %<CR>")
 
+-- switch this tab entirely into a git worktree (cwd + file picker)
+local function list_worktrees()
+	local root = vim.fs.root(0, ".git") or vim.fn.getcwd()
+	local out = vim.fn.system({ "git", "-C", root, "worktree", "list", "--porcelain" })
+	if vim.v.shell_error ~= 0 then
+		return {}
+	end
+	local trees, current = {}, nil
+	for line in out:gmatch("[^\n]+") do
+		local path = line:match("^worktree (.+)$")
+		if path then
+			current = { path = vim.fs.normalize(path) }
+			table.insert(trees, current)
+		elseif current then
+			local branch = line:match("^branch refs/heads/(.+)$")
+			if branch then
+				current.branch = branch
+			elseif line == "detached" or line == "bare" then
+				current.branch = line
+			end
+		end
+	end
+	return trees
+end
+
+local function switch_worktree()
+	local trees = list_worktrees()
+	if #trees == 0 then
+		vim.notify("no git worktrees found", vim.log.levels.WARN)
+		return
+	end
+	local cwd = vim.fs.normalize(vim.fn.getcwd())
+	for _, t in ipairs(trees) do
+		local label = string.format("%s (%s)", vim.fn.fnamemodify(t.path, ":t"), t.branch or "?")
+		if cwd == t.path or vim.startswith(cwd, t.path .. "/") then
+			label = label .. "  [current]"
+		end
+		t.label = label
+	end
+	vim.ui.select(trees, {
+		prompt = "Switch worktree",
+		format_item = function(t)
+			return t.label
+		end,
+	}, function(choice)
+		if not choice then
+			return
+		end
+		vim.cmd("tcd " .. vim.fn.fnameescape(choice.path))
+		vim.notify("worktree → " .. choice.path)
+		local ok, builtin = pcall(require, "telescope.builtin")
+		if ok then
+			builtin.find_files({ cwd = choice.path })
+		end
+	end)
+end
+map("n", "<leader>gw", switch_worktree, { desc = "Git: switch worktree" })
+
 -------------plugins mappings---------------
 -- tmux
 map("n", "<C-G>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
