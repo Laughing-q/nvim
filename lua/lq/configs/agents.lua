@@ -824,6 +824,12 @@ function M.sidebar_toggle()
 		end
 		vim.keymap.set("n", "d", kill_at_cursor, vim.tbl_extend("force", opts, { desc = "kill agent" }))
 		vim.keymap.set("n", "x", kill_at_cursor, vim.tbl_extend("force", opts, { desc = "kill agent" }))
+		vim.keymap.set("n", "f", function()
+			local name = sidebar_agent_at_cursor()
+			if name then
+				M.fork(name)
+			end
+		end, vim.tbl_extend("force", opts, { desc = "fork agent" }))
 		vim.keymap.set("n", "n", function()
 			M.spawn()
 		end, vim.tbl_extend("force", opts, { desc = "new agent" }))
@@ -1091,6 +1097,57 @@ function M.kill(name, force)
 	vim.fn.delete(status_path(agent_provider(agent), status_file_name(agent)))
 	M.save_registry()
 	refresh()
+end
+
+---Fork the agent's kimi session into a new session and list it as a new
+---agent, unloaded until first toggle (same lazy shape as restored agents).
+---kimi-only: Codex has no fork command.
+---@param name string agent name (sidebar always passes one)
+function M.fork(name)
+	local agent = find(name)
+	if not agent then
+		return
+	end
+	if agent_provider(agent) ~= "kimi" then
+		notify("fork is only supported for kimi agents", vim.log.levels.WARN)
+		return
+	end
+	if not agent.session_id then
+		notify("agent '" .. name .. "' has no session yet — send it a prompt first", vim.log.levels.WARN)
+		return
+	end
+	notify("forking " .. name .. "…")
+	vim.system({ "kimi", "fork", agent.session_id, "--yes" }, { cwd = agent.root, text = true }, function(out)
+		vim.schedule(function()
+			if out.code ~= 0 then
+				notify("kimi fork failed: " .. vim.trim(out.stderr or out.stdout or ""), vim.log.levels.ERROR)
+				return
+			end
+			-- 'Forked to session_xxx ("Fork: title") in 123ms'
+			local new_id = out.stdout and out.stdout:match("Forked to (session_%S+)")
+			if not new_id then
+				notify("kimi fork: could not parse the new session id", vim.log.levels.ERROR)
+				return
+			end
+			local fork_name = unique_name(agent.name .. "-fork")
+			table.insert(M.agents, {
+				provider = "kimi",
+				name = fork_name,
+				term = nil,
+				cmd = resume_command("kimi", new_id),
+				state = "idle",
+				title = "Fork: " .. (agent.title ~= "" and agent.title or agent.name),
+				session_id = new_id,
+				spawned_at = nil,
+				root = agent.root,
+				_suppress_exit = true,
+			})
+			start_timer()
+			M.save_registry()
+			refresh()
+			notify(("forked %s → %s"):format(name, fork_name))
+		end)
+	end)
 end
 
 ---Resume an existing kimi-code session of this project in a new agent float.

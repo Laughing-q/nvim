@@ -86,7 +86,7 @@ Codex session belong to the same project.
 | `Alt` `k`         | switch to next managed session in this project | `t` |
 | `Alt` `i`         | switch to previous managed session in this project | `t` |
 
-Sidebar buffer mappings: `<CR>` toggle agent float, `i`/`k` jump between agents, `n` new, `r` resume, `d`/`x` kill, `q` close.
+Sidebar buffer mappings: `<CR>` toggle agent float, `i`/`k` jump between agents, `n` new, `r` resume, `f` fork (kimi only), `d`/`x` kill, `q` close.
 
 The Alt mappings are available only while focused in a managed terminal. They close the current ToggleTerm float and open the next/previous Kimi or Codex session for the current project; restored sessions are resumed on first visit. Tab is left unmodified for command completion. Codex's native picker is used for sessions not yet known to the manager. When the sidebar is open, agent floats fill the editor area to its left instead of overlapping it.
 
