@@ -135,6 +135,28 @@ local function resume_command(provider, session_id)
 	return provider_config(provider).resume_format:format(vim.fn.shellescape(session_id))
 end
 
+---Shared shape for agents added without a live terminal (restored from the
+---registry, forked from another session): the terminal is spawned lazily on
+---first toggle via the provider's resume command.
+---@return Agent
+local function make_lazy_agent(provider, name, session_id, title, root)
+	return {
+		provider = provider,
+		name = name,
+		term = nil,
+		cmd = resume_command(provider, session_id),
+		state = "idle",
+		title = title,
+		session_id = session_id,
+		spawned_at = nil,
+		root = root,
+		-- ignore stale "exited" writes until a live status arrives
+		_suppress_exit = true,
+		-- name the provider session after the agent on the first idle poll
+		_want_title = provider_config(provider).uses_title,
+	}
+end
+
 local function project_root()
 	return vim.fs.root(0, ".git") or vim.fn.getcwd()
 end
@@ -548,29 +570,7 @@ function M.restore_registry()
 			local provider = e.provider or "kimi"
 			-- two nvim instances may have persisted same-named agents with
 			-- different sessions; make the name unique instead of dropping one
-			local name = e.name
-			if find(name) then
-				local base, n = name, 2
-				repeat
-					name = base .. "-" .. n
-					n = n + 1
-				until not find(name)
-			end
-			table.insert(M.agents, {
-				provider = provider,
-				name = name,
-				term = nil,
-				cmd = resume_command(provider, e.session_id),
-				state = "idle",
-				title = e.title or "",
-				session_id = e.session_id,
-				spawned_at = nil,
-				root = root,
-				-- ignore stale "exited" writes until a live status arrives
-				_suppress_exit = true,
-				-- also name Kimi sessions restored from before /title existed
-				_want_title = provider_config(provider).uses_title,
-			})
+			table.insert(M.agents, make_lazy_agent(provider, unique_name(e.name), e.session_id, e.title or "", root))
 			restored = restored + 1
 		end
 	end
@@ -1119,6 +1119,11 @@ function M.fork(name)
 	notify("forking " .. name .. "…")
 	vim.system({ "kimi", "fork", agent.session_id, "--yes" }, { cwd = agent.root, text = true }, function(out)
 		vim.schedule(function()
+			-- the source agent may have been killed (or its name reused)
+			-- while kimi fork was running; don't register an orphan
+			if find(name) ~= agent then
+				return
+			end
 			if out.code ~= 0 then
 				notify("kimi fork failed: " .. vim.trim(out.stderr or out.stdout or ""), vim.log.levels.ERROR)
 				return
@@ -1130,18 +1135,8 @@ function M.fork(name)
 				return
 			end
 			local fork_name = unique_name(agent.name .. "-fork")
-			table.insert(M.agents, {
-				provider = "kimi",
-				name = fork_name,
-				term = nil,
-				cmd = resume_command("kimi", new_id),
-				state = "idle",
-				title = "Fork: " .. (agent.title ~= "" and agent.title or agent.name),
-				session_id = new_id,
-				spawned_at = nil,
-				root = agent.root,
-				_suppress_exit = true,
-			})
+			local fork_title = "Fork: " .. (agent.title ~= "" and agent.title or agent.name)
+			table.insert(M.agents, make_lazy_agent("kimi", fork_name, new_id, fork_title, agent.root))
 			start_timer()
 			M.save_registry()
 			refresh()
