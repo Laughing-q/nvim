@@ -1272,6 +1272,19 @@ function M.setup()
 	M.restore_registry()
 	vim.api.nvim_create_autocmd("VimLeavePre", { callback = M.prepare_exit })
 	vim.api.nvim_create_autocmd("VimResized", { callback = update_agent_float_layout })
+	-- viewing an agent's terminal marks it reviewed in the tmux status line
+	-- (clears only that session's green dot; the .done file gate keeps this free)
+	vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter" }, {
+		callback = function()
+			local a = agent_in_current_buffer()
+			if not a or not a.session_id then
+				return
+			end
+			if vim.uv.fs_stat("/tmp/kimi-tmux-status/" .. a.session_id .. ".done") then
+				vim.system({ vim.fn.expand("~/.config/tmux/kimi-tmux-status.sh"), "seen", a.session_id })
+			end
+		end,
+	})
 	local map = vim.keymap.set
 	map("n", "<leader>k", M.toggle_last, { desc = "kimi: toggle last agent" })
 	map("n", "<leader>kn", function()
