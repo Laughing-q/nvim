@@ -1184,18 +1184,14 @@ function M.resume()
 	table.sort(items, function(a, b)
 		return a.mtime > b.mtime
 	end)
-	vim.ui.select(items, {
-		prompt = "Resume kimi session",
-		format_item = function(it)
-			local label = it.title ~= "" and it.title or it.id:sub(9, 24)
-			label = vim.fn.strcharpart(label:gsub("\n", " "), 0, 50)
-			local when = it.mtime > 0 and os.date("%m-%d %H:%M", it.mtime) or "?"
-			return string.format("%s  (%s)", label, when)
-		end,
-	}, function(choice)
-		if not choice then
-			return
-		end
+	local function format_item(it)
+		local label = it.title ~= "" and it.title or it.id:sub(9, 24)
+		label = vim.fn.strcharpart(label:gsub("\n", " "), 0, 50)
+		local when = it.mtime > 0 and os.date("%m-%d %H:%M", it.mtime) or "?"
+		return string.format("%s  (%s)", label, when)
+	end
+	---@param choice table an item from the session index
+	local function resume_choice(choice)
 		local open = find_by_session(choice.id)
 		if open then
 			M.toggle(open.name)
@@ -1208,12 +1204,7 @@ function M.resume()
 		-- session_id/title below
 		if find(name) then
 			local base = vim.fn.strcharpart(name, 0, 24)
-			name = base .. "-" .. choice.id:sub(9, 16)
-			local n = 2
-			while find(name) do
-				name = base .. "-" .. n
-				n = n + 1
-			end
+			name = unique_name(base .. "-" .. choice.id:sub(9, 16))
 		end
 		local agent = M.spawn(name, resume_command("kimi", choice.id), "kimi")
 		if agent then
@@ -1228,7 +1219,46 @@ function M.resume()
 			M.save_registry()
 			refresh()
 		end
-	end)
+	end
+	local ok, pickers = pcall(require, "telescope.pickers")
+	if not ok then
+		vim.ui.select(items, { prompt = "Resume kimi session", format_item = format_item }, function(choice)
+			if choice then
+				resume_choice(choice)
+			end
+		end)
+		return
+	end
+	local finders = require("telescope.finders")
+	local conf = require("telescope.config").values
+	local actions = require("telescope.actions")
+	local action_state = require("telescope.actions.state")
+	pickers
+		.new({}, {
+			prompt_title = "Resume kimi session",
+			finder = finders.new_table({
+				results = items,
+				entry_maker = function(it)
+					return {
+						value = it,
+						display = format_item(it),
+						ordinal = it.title:gsub("\n", " ") .. " " .. it.id,
+					}
+				end,
+			}),
+			sorter = conf.generic_sorter({}),
+			attach_mappings = function(prompt_bufnr)
+				actions.select_default:replace(function()
+					local entry = action_state.get_selected_entry()
+					actions.close(prompt_bufnr)
+					if entry then
+						resume_choice(entry.value)
+					end
+				end)
+				return true
+			end,
+		})
+		:find()
 end
 
 ---Open Codex's native resume picker in a managed terminal. Once selected,
