@@ -258,6 +258,28 @@ local function agent_in_current_buffer()
 	return nil
 end
 
+---A turn that finishes while its buffer is being viewed needs no review dot:
+---clear it as soon as the agent goes idle. Runs from the status poll, i.e.
+---after the Stop hooks, so the tmux-side mark is already in place.
+local function mark_current_agent_reviewed(agent)
+	if not agent.session_id or agent_in_current_buffer() ~= agent then
+		return
+	end
+	local pane = vim.env.TMUX_PANE
+	if not pane then
+		return
+	end
+	vim.system(
+		{ "tmux", "display-message", "-p", "-t", pane, "#{?#{&&:#{window_active},#{session_attached}},1,0}" },
+		{ text = true },
+		function(out)
+			if out.code == 0 and vim.trim(out.stdout or "") == "1" then
+				vim.system({ vim.fn.expand("~/.config/tmux/kimi-tmux-status.sh"), "seen", agent.session_id })
+			end
+		end
+	)
+end
+
 ---A provider can emit a delayed SessionEnd for an older client of the same
 ---session. While this ToggleTerm job is still alive, on_exit is authoritative.
 local function terminal_is_alive(agent)
@@ -354,6 +376,9 @@ local function poll()
 						if new_state and agent.state ~= new_state then
 							agent.state = new_state
 							changed = true
+							if new_state == "idle" then
+								mark_current_agent_reviewed(agent)
+							end
 						end
 						if status.session_id and status.session_id ~= "" and not agent.session_id then
 							agent.session_id = status.session_id
