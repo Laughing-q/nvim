@@ -135,6 +135,28 @@ local function resume_command(provider, session_id)
 	return provider_config(provider).resume_format:format(vim.fn.shellescape(session_id))
 end
 
+---Shared shape for agents added without a live terminal (restored from the
+---registry, forked from another session): the terminal is spawned lazily on
+---first toggle via the provider's resume command.
+---@return Agent
+local function make_lazy_agent(provider, name, session_id, title, root)
+	return {
+		provider = provider,
+		name = name,
+		term = nil,
+		cmd = resume_command(provider, session_id),
+		state = "idle",
+		title = title,
+		session_id = session_id,
+		spawned_at = nil,
+		root = root,
+		-- ignore stale "exited" writes until a live status arrives
+		_suppress_exit = true,
+		-- name the provider session after the agent on the first idle poll
+		_want_title = provider_config(provider).uses_title,
+	}
+end
+
 local function project_root()
 	return vim.fs.root(0, ".git") or vim.fn.getcwd()
 end
@@ -236,6 +258,28 @@ local function agent_in_current_buffer()
 	return nil
 end
 
+---A turn that finishes while its buffer is being viewed needs no review dot:
+---clear it as soon as the agent goes idle. Runs from the status poll, i.e.
+---after the Stop hooks, so the tmux-side mark is already in place.
+local function mark_current_agent_reviewed(agent)
+	if not agent.session_id or agent_in_current_buffer() ~= agent then
+		return
+	end
+	local pane = vim.env.TMUX_PANE
+	if not pane then
+		return
+	end
+	vim.system(
+		{ "tmux", "display-message", "-p", "-t", pane, "#{?#{&&:#{window_active},#{session_attached}},1,0}" },
+		{ text = true },
+		function(out)
+			if out.code == 0 and vim.trim(out.stdout or "") == "1" then
+				vim.system({ vim.fn.expand("~/.config/tmux/kimi-tmux-status.sh"), "seen", agent.session_id })
+			end
+		end
+	)
+end
+
 ---A provider can emit a delayed SessionEnd for an older client of the same
 ---session. While this ToggleTerm job is still alive, on_exit is authoritative.
 local function terminal_is_alive(agent)
@@ -332,6 +376,9 @@ local function poll()
 						if new_state and agent.state ~= new_state then
 							agent.state = new_state
 							changed = true
+							if new_state == "idle" then
+								mark_current_agent_reviewed(agent)
+							end
 						end
 						if status.session_id and status.session_id ~= "" and not agent.session_id then
 							agent.session_id = status.session_id
@@ -548,29 +595,7 @@ function M.restore_registry()
 			local provider = e.provider or "kimi"
 			-- two nvim instances may have persisted same-named agents with
 			-- different sessions; make the name unique instead of dropping one
-			local name = e.name
-			if find(name) then
-				local base, n = name, 2
-				repeat
-					name = base .. "-" .. n
-					n = n + 1
-				until not find(name)
-			end
-			table.insert(M.agents, {
-				provider = provider,
-				name = name,
-				term = nil,
-				cmd = resume_command(provider, e.session_id),
-				state = "idle",
-				title = e.title or "",
-				session_id = e.session_id,
-				spawned_at = nil,
-				root = root,
-				-- ignore stale "exited" writes until a live status arrives
-				_suppress_exit = true,
-				-- also name Kimi sessions restored from before /title existed
-				_want_title = provider_config(provider).uses_title,
-			})
+			table.insert(M.agents, make_lazy_agent(provider, unique_name(e.name), e.session_id, e.title or "", root))
 			restored = restored + 1
 		end
 	end
@@ -824,6 +849,12 @@ function M.sidebar_toggle()
 		end
 		vim.keymap.set("n", "d", kill_at_cursor, vim.tbl_extend("force", opts, { desc = "kill agent" }))
 		vim.keymap.set("n", "x", kill_at_cursor, vim.tbl_extend("force", opts, { desc = "kill agent" }))
+		vim.keymap.set("n", "f", function()
+			local name = sidebar_agent_at_cursor()
+			if name then
+				M.fork(name)
+			end
+		end, vim.tbl_extend("force", opts, { desc = "fork agent" }))
 		vim.keymap.set("n", "n", function()
 			M.spawn()
 		end, vim.tbl_extend("force", opts, { desc = "new agent" }))
@@ -1093,6 +1124,52 @@ function M.kill(name, force)
 	refresh()
 end
 
+---Fork the agent's kimi session into a new session and list it as a new
+---agent, unloaded until first toggle (same lazy shape as restored agents).
+---kimi-only: Codex has no fork command.
+---@param name string agent name (sidebar always passes one)
+function M.fork(name)
+	local agent = find(name)
+	if not agent then
+		return
+	end
+	if agent_provider(agent) ~= "kimi" then
+		notify("fork is only supported for kimi agents", vim.log.levels.WARN)
+		return
+	end
+	if not agent.session_id then
+		notify("agent '" .. name .. "' has no session yet — send it a prompt first", vim.log.levels.WARN)
+		return
+	end
+	notify("forking " .. name .. "…")
+	vim.system({ "kimi", "fork", agent.session_id, "--yes" }, { cwd = agent.root, text = true }, function(out)
+		vim.schedule(function()
+			-- the source agent may have been killed (or its name reused)
+			-- while kimi fork was running; don't register an orphan
+			if find(name) ~= agent then
+				return
+			end
+			if out.code ~= 0 then
+				notify("kimi fork failed: " .. vim.trim(out.stderr or out.stdout or ""), vim.log.levels.ERROR)
+				return
+			end
+			-- 'Forked to session_xxx ("Fork: title") in 123ms'
+			local new_id = out.stdout and out.stdout:match("Forked to (session_%S+)")
+			if not new_id then
+				notify("kimi fork: could not parse the new session id", vim.log.levels.ERROR)
+				return
+			end
+			local fork_name = unique_name(agent.name .. "-fork")
+			local fork_title = "Fork: " .. (agent.title ~= "" and agent.title or agent.name)
+			table.insert(M.agents, make_lazy_agent("kimi", fork_name, new_id, fork_title, agent.root))
+			start_timer()
+			M.save_registry()
+			refresh()
+			notify(("forked %s → %s"):format(name, fork_name))
+		end)
+	end)
+end
+
 ---Resume an existing kimi-code session of this project in a new agent float.
 function M.resume()
 	local root = project_root()
@@ -1132,18 +1209,14 @@ function M.resume()
 	table.sort(items, function(a, b)
 		return a.mtime > b.mtime
 	end)
-	vim.ui.select(items, {
-		prompt = "Resume kimi session",
-		format_item = function(it)
-			local label = it.title ~= "" and it.title or it.id:sub(9, 24)
-			label = vim.fn.strcharpart(label:gsub("\n", " "), 0, 50)
-			local when = it.mtime > 0 and os.date("%m-%d %H:%M", it.mtime) or "?"
-			return string.format("%s  (%s)", label, when)
-		end,
-	}, function(choice)
-		if not choice then
-			return
-		end
+	local function format_item(it)
+		local label = it.title ~= "" and it.title or it.id:sub(9, 24)
+		label = vim.fn.strcharpart(label:gsub("\n", " "), 0, 50)
+		local when = it.mtime > 0 and os.date("%m-%d %H:%M", it.mtime) or "?"
+		return string.format("%s  (%s)", label, when)
+	end
+	---@param choice table an item from the session index
+	local function resume_choice(choice)
 		local open = find_by_session(choice.id)
 		if open then
 			M.toggle(open.name)
@@ -1156,12 +1229,7 @@ function M.resume()
 		-- session_id/title below
 		if find(name) then
 			local base = vim.fn.strcharpart(name, 0, 24)
-			name = base .. "-" .. choice.id:sub(9, 16)
-			local n = 2
-			while find(name) do
-				name = base .. "-" .. n
-				n = n + 1
-			end
+			name = unique_name(base .. "-" .. choice.id:sub(9, 16))
 		end
 		local agent = M.spawn(name, resume_command("kimi", choice.id), "kimi")
 		if agent then
@@ -1176,7 +1244,46 @@ function M.resume()
 			M.save_registry()
 			refresh()
 		end
-	end)
+	end
+	local ok, pickers = pcall(require, "telescope.pickers")
+	if not ok then
+		vim.ui.select(items, { prompt = "Resume kimi session", format_item = format_item }, function(choice)
+			if choice then
+				resume_choice(choice)
+			end
+		end)
+		return
+	end
+	local finders = require("telescope.finders")
+	local conf = require("telescope.config").values
+	local actions = require("telescope.actions")
+	local action_state = require("telescope.actions.state")
+	pickers
+		.new({}, {
+			prompt_title = "Resume kimi session",
+			finder = finders.new_table({
+				results = items,
+				entry_maker = function(it)
+					return {
+						value = it,
+						display = format_item(it),
+						ordinal = it.title:gsub("\n", " ") .. " " .. it.id,
+					}
+				end,
+			}),
+			sorter = conf.generic_sorter({}),
+			attach_mappings = function(prompt_bufnr)
+				actions.select_default:replace(function()
+					local entry = action_state.get_selected_entry()
+					actions.close(prompt_bufnr)
+					if entry then
+						resume_choice(entry.value)
+					end
+				end)
+				return true
+			end,
+		})
+		:find()
 end
 
 ---Open Codex's native resume picker in a managed terminal. Once selected,
@@ -1220,6 +1327,19 @@ function M.setup()
 	M.restore_registry()
 	vim.api.nvim_create_autocmd("VimLeavePre", { callback = M.prepare_exit })
 	vim.api.nvim_create_autocmd("VimResized", { callback = update_agent_float_layout })
+	-- viewing an agent's terminal marks it reviewed in the tmux status line
+	-- (clears only that session's green dot; the .done file gate keeps this free)
+	vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter" }, {
+		callback = function()
+			local a = agent_in_current_buffer()
+			if not a or not a.session_id then
+				return
+			end
+			if vim.uv.fs_stat("/tmp/kimi-tmux-status/" .. a.session_id .. ".done") then
+				vim.system({ vim.fn.expand("~/.config/tmux/kimi-tmux-status.sh"), "seen", a.session_id })
+			end
+		end,
+	})
 	local map = vim.keymap.set
 	map("n", "<leader>k", M.toggle_last, { desc = "kimi: toggle last agent" })
 	map("n", "<leader>kn", function()
