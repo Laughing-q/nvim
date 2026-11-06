@@ -75,16 +75,16 @@ timeout = 3
 Agent names are shared across providers, so choose distinct names if a Kimi and
 Codex session belong to the same project.
 
-| shortcut          | action                                 | mode |
-|-------------------|----------------------------------------|------|
-| `<leader>` `k`    | toggle last active agent float         | `n`  |
-| `<leader>` `k` `n`| new named agent                        | `n`  |
-| `<leader>` `k` `r`| resume an existing kimi session        | `n`  |
-| `<leader>` `k` `c`| new named Codex agent                  | `n`  |
-| `<leader>` `k` `C`| open Codex's native resume picker (no name prompt) | `n`  |
-| `<leader>` `k` `a`| toggle the agents sidebar              | `n`  |
-| `Alt` `k`         | switch to next managed session in this project | `t` |
-| `Alt` `i`         | switch to previous managed session in this project | `t` |
+| shortcut           | action                                             | mode |
+|--------------------|----------------------------------------------------|------|
+| `<leader>` `k`     | toggle last active agent float                     | `n`  |
+| `<leader>` `k` `n` | new named agent                                    | `n`  |
+| `<leader>` `k` `r` | resume an existing kimi session                    | `n`  |
+| `<leader>` `k` `c` | new named Codex agent                              | `n`  |
+| `<leader>` `k` `C` | open Codex's native resume picker (no name prompt) | `n`  |
+| `<leader>` `k` `a` | toggle the agents sidebar                          | `n`  |
+| `Alt` `k`          | switch to next managed session in this project     | `t`  |
+| `Alt` `i`          | switch to previous managed session in this project | `t`  |
 
 Sidebar buffer mappings: `<CR>` toggle agent float, `i`/`k` jump between agents, `n` new, `r` resume, `f` fork (kimi only), `d`/`x` kill, `q` close.
 
@@ -175,15 +175,16 @@ If you guys want `hjkl` style, just checkout branch `hjkl`. I actually don't tes
 
 
 - others
-  | shortcut           | action                   | mode |
-  |--------------------|--------------------------|------|
-  | `<ESC>`            | set nohighlight          | `n`  |
-  | `\p`               | current file path        | `n`  |
-  | `\w`               | current work path        | `n`  |
-  | `<leader>` `s` `s` | set spell                | `n`  |
-  | `<leader>` `s` `w` | set wrap                 | `n`  |
-  | `<leader>` `r`     | compile code(python ...) | `n`  |
-  | `<leader>` `o`     | fold code                | `n`  |
+  | shortcut           | action                              | mode |
+  |--------------------|-------------------------------------|------|
+  | `<ESC>`            | set nohighlight                     | `n`  |
+  | `\p`               | current file path                   | `n`  |
+  | `\w`               | current work path                   | `n`  |
+  | `<leader>` `s` `s` | set spell                           | `n`  |
+  | `<leader>` `s` `w` | set wrap                            | `n`  |
+  | `<leader>` `r`     | compile code(python ...)            | `n`  |
+  | `<leader>` `o`     | fold code                           | `n`  |
+  | `<leader>` `g` `w` | switch this tab into a git worktree | `n`  |
 
 
 ### Plugin mappings⌨️

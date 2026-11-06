@@ -141,6 +141,11 @@ map("n", "<C-R>", ":e!<CR>")
 -- make buffer executable
 map("n", "<leader>x", ":!chmod +x %<CR>")
 
+-- switch this tab entirely into a git worktree (lq.configs.worktree)
+map("n", "<leader>gw", function()
+	require("lq.configs.worktree").switch_worktree()
+end, { desc = "Git: switch worktree" })
+
 -------------plugins mappings---------------
 -- tmux
 map("n", "<C-G>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
