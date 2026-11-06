@@ -184,6 +184,7 @@ If you guys want `hjkl` style, just checkout branch `hjkl`. I actually don't tes
   | `<leader>` `s` `w` | set wrap                 | `n`  |
   | `<leader>` `r`     | compile code(python ...) | `n`  |
   | `<leader>` `o`     | fold code                | `n`  |
+  | `<leader>` `g` `w` | switch this tab into a git worktree | `n`  |
 
 
 ### Plugin mappings⌨️
