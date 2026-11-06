@@ -10,11 +10,21 @@
 
 local M = {}
 
+---@class Worktree
+---@field path string worktree directory
+---@field branch string branch name, or "detached" / "bare"
+---@field name string directory basename, set in open_worktree_picker
+---@field current boolean tab cwd is inside this worktree, set in open_worktree_picker
+---@field dirty boolean has uncommitted changes, set in worktree_activity
+---@field age integer seconds since the newest change, set in worktree_activity
+
+---List the worktrees of the repo containing the current buffer.
+---@return Worktree[]? trees nil when git fails
 local function list_worktrees()
 	local root = vim.fs.root(0, ".git") or vim.fn.getcwd()
 	local out = vim.fn.system({ "git", "-C", root, "worktree", "list", "--porcelain" })
 	if vim.v.shell_error ~= 0 then
-		return {}
+		return nil
 	end
 	local trees, current = {}, nil
 	for line in out:gmatch("[^\n]+") do
@@ -34,7 +44,10 @@ local function list_worktrees()
 	return trees
 end
 
--- uncommitted edits count toward recency too, not just commits
+---Record `dirty` and `age` for one worktree; uncommitted edits count toward
+---recency too, not just commits. `done` fires once both git scans landed.
+---@param t Worktree
+---@param done fun()
 local function worktree_activity(t, done)
 	local pending = 2
 	local commit, status, status_ok
@@ -60,12 +73,17 @@ local function worktree_activity(t, done)
 		commit = tonumber(obj.stdout) or 0
 		finish()
 	end)
-	vim.system({ "git", "-C", t.path, "-c", "core.quotePath=false", "status", "--porcelain" }, {}, function(obj)
+	-- --no-optional-locks: this scan runs in the background and must not fight
+	-- a foreground git command over the repo's index.lock
+	vim.system({ "git", "--no-optional-locks", "-C", t.path, "-c", "core.quotePath=false", "status", "--porcelain" }, {}, function(obj)
 		status, status_ok = obj.stdout, obj.code == 0
 		finish()
 	end)
 end
 
+---Human label for an age in seconds, e.g. "just now" / "3m ago" / "2mo ago".
+---@param age integer
+---@return string
 local function age_label(age)
 	if age < 60 then
 		return "just now"
@@ -81,6 +99,9 @@ local function age_label(age)
 	return math.floor(age / 31536000) .. "y ago"
 end
 
+---Annotate `trees` with display fields and open the telescope picker, most
+---recently changed first.
+---@param trees Worktree[]
 local function open_worktree_picker(trees)
 	local cwd = vim.fs.normalize(vim.fn.getcwd())
 	local name_width, branch_width = 0, 0
@@ -162,6 +183,10 @@ local function open_worktree_picker(trees)
 				actions.select_default:replace(function()
 					local t = action_state.get_selected_entry().value
 					actions.close(prompt_bufnr)
+					if vim.fn.isdirectory(t.path) == 0 then
+						vim.notify("worktree directory is gone: " .. t.path .. " (run git worktree prune)", vim.log.levels.WARN)
+						return
+					end
 					vim.cmd("tcd " .. vim.fn.fnameescape(t.path))
 					vim.notify("worktree → " .. t.path)
 					require("telescope.builtin").find_files({ cwd = t.path })
@@ -172,11 +197,12 @@ local function open_worktree_picker(trees)
 		:find()
 end
 
--- scan every worktree at once, open the picker when the slowest scan finishes
+---Switch this tab into a picked git worktree. Scans every worktree at once
+---and opens the picker when the slowest scan finishes.
 function M.switch_worktree()
 	local trees = list_worktrees()
-	if #trees == 0 then
-		vim.notify("no git worktrees found", vim.log.levels.WARN)
+	if not trees then
+		vim.notify("git worktree list failed (not a git repository?)", vim.log.levels.WARN)
 		return
 	end
 	local remaining = #trees
