@@ -63,6 +63,9 @@ local PROVIDERS = {
 }
 local INDEX_FILE = KIMI_HOME .. "/session_index.jsonl"
 local REGISTRY_DIR = KIMI_HOME .. "/agent-registry"
+-- expanded once at module load: vim.fn.* is not allowed in fast event
+-- contexts (e.g. vim.system callbacks)
+local TMUX_STATUS_SCRIPT = vim.fn.expand("~/.config/tmux/kimi-tmux-status.sh")
 
 local NS_STATE = vim.api.nvim_create_namespace("kimi_agents_state")
 local NS_CURSOR = vim.api.nvim_create_namespace("kimi_agents_cursor")
@@ -274,7 +277,7 @@ local function mark_current_agent_reviewed(agent)
 		{ text = true },
 		function(out)
 			if out.code == 0 and vim.trim(out.stdout or "") == "1" then
-				vim.system({ vim.fn.expand("~/.config/tmux/kimi-tmux-status.sh"), "seen", agent.session_id })
+				vim.system({ TMUX_STATUS_SCRIPT, "seen", agent.session_id })
 			end
 		end
 	)
@@ -1336,7 +1339,7 @@ function M.setup()
 				return
 			end
 			if vim.uv.fs_stat("/tmp/kimi-tmux-status/" .. a.session_id .. ".done") then
-				vim.system({ vim.fn.expand("~/.config/tmux/kimi-tmux-status.sh"), "seen", a.session_id })
+				vim.system({ TMUX_STATUS_SCRIPT, "seen", a.session_id })
 			end
 		end,
 	})
