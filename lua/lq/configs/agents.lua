@@ -874,7 +874,19 @@ function M.sidebar_toggle()
 		end, vim.tbl_extend("force", opts, { desc = "next agent" }))
 		vim.api.nvim_create_autocmd("CursorMoved", {
 			buffer = sb.buf,
-			callback = sidebar_highlight_current,
+			callback = function()
+				sidebar_highlight_current()
+				-- browsing an agent's preview in the sidebar counts as reviewing it
+				local name = sidebar_agent_at_cursor()
+				local a = name and find(name)
+				if
+					a
+					and a.session_id
+					and vim.uv.fs_stat("/tmp/kimi-tmux-status/" .. a.session_id .. ".done")
+				then
+					vim.system({ TMUX_STATUS_SCRIPT, "seen", a.session_id })
+				end
+			end,
 		})
 		-- selection highlight only while the sidebar has focus
 		vim.api.nvim_create_autocmd({ "WinLeave", "BufLeave" }, {
@@ -1321,6 +1333,9 @@ end
 ---and provider SessionEnd hooks during shutdown must not remove them.
 function M.prepare_exit()
 	M._leaving = true
+	if vim.env.TMUX_PANE then
+		os.remove("/tmp/kimi-tmux-status/focused." .. vim.env.TMUX_PANE)
+	end
 	M.save_registry()
 end
 
@@ -1335,6 +1350,21 @@ function M.setup()
 	vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter" }, {
 		callback = function()
 			local a = agent_in_current_buffer()
+			-- publish the focused agent per tmux pane: the tmux hook skips marking
+			-- green when a turn finishes in the buffer being viewed
+			local pane = vim.env.TMUX_PANE
+			if pane then
+				local f = "/tmp/kimi-tmux-status/focused." .. pane
+				if a and a.session_id then
+					local fd = io.open(f, "w")
+					if fd then
+						fd:write(a.session_id)
+						fd:close()
+					end
+				else
+					os.remove(f)
+				end
+			end
 			if not a or not a.session_id then
 				return
 			end
