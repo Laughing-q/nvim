@@ -90,6 +90,45 @@ Sidebar buffer mappings: `<CR>` toggle agent float, `i`/`k` jump between agents,
 
 The Alt mappings are available only while focused in a managed terminal. They close the current ToggleTerm float and open the next/previous Kimi or Codex session for the current project; restored sessions are resumed on first visit. Tab is left unmodified for command completion. Codex's native picker is used for sessions not yet known to the manager. When the sidebar is open, agent floats fill the editor area to its left instead of overlapping it.
 
+## PR queue and review
+
+| Binding / command | Action |
+| --- | --- |
+| `<leader>gq` / `:PRQueue` | Saved PR preparation queue |
+| `<leader>gD` / `:CodeDiff` | Unified local changes with changed-file tree |
+
+[CodeDiff](https://github.com/esmuellert/codediff.nvim) defaults to an inline (unified) diff with unchanged regions folded. Select files in the left tree; use `]c` / `[c` for hunks, `]f` / `[f` for files, `gc` for context folding, `t` to toggle split/inline layout, and `q` to close the diff tab. It displays one selected file at a time, rather than GitHub's continuous multi-file page. The existing Gitsigns `<leader>gd` mapping still compares the current file.
+
+Press `q` or `Q` from either the file tree or diff pane to close the review tab and return to the previous editing tab. To keep the review open, use `gT` / `gt` to switch tabs. `gf` opens the selected diff file in the previous tab; it does not restore the original buffer.
+
+The diff tree preserves the custom movement keys: `i` up, `k` down, `j` left, `l` right, and `I/J/K/L` window navigation. The plugin's conflicting `i` action has moved to `gv` (toggle tree/list), and its `K` path hover has moved to `gK`. History uses `gV` for tree/list. `<CR>` opens a file or expands a directory, `<leader>e` focuses the tree, and `g?` shows the active diff mappings.
+
+CodeDiff reads local Git changes and revisions. The configured shortcuts do not fetch remote PRs. It downloads its native diff library on first use.
+
+### Saved preparation state
+
+The queue reads `~/.local/state/agents/prs/<host>/<owner>/<repo>/<number>/state.json`, matching the `prepare-pr` skill. Override the root with `vim.g.pr_queue_dir`. Open the picker again to refresh; it does not poll GitHub, dispatch agents, or change readiness. Invalid state files are skipped with a warning. An empty queue is expected until an agent saves a PR.
+
+Inside the picker: `<CR>` opens worktree files, `<C-r>` resumes the owner in the existing agent manager, `<C-d>` opens the saved committed PR range in CodeDiff, and `<C-s>` opens the raw state read-only. The preview shows saved findings, checks, timestamps, and next action. Saved diffs require the commits to exist locally and do not include uncommitted edits; use `<leader>gD` from the worktree for those.
+
+For interoperability, use these concrete keys within the skill's state contract (other fields such as findings and checks are preserved and previewed):
+
+```json
+{
+  "repository": { "host": "github.com", "owner": "owner", "name": "repo", "number": 123 },
+  "workspace": { "worktree": "/absolute/path/to/worktree", "branch": "feature" },
+  "revisions": { "base": "BASE_COMMIT_SHA", "head": "HEAD_COMMIT_SHA" },
+  "sessions": { "owner": { "provider": "codex", "id": "OWNER_CLI_SESSION_ID" } },
+  "status": "reviewing",
+  "next_action": "Validate the accepted fixes",
+  "updated_at": "2026-11-17T10:00:00Z",
+  "findings": [],
+  "checks": []
+}
+```
+
+Replace the revision placeholders with real commit SHAs. Owner IDs are resumable CLI sessions, not provider-internal subagent IDs. Use `kimi` instead of `codex` for a Kimi owner. Missing worktrees or session IDs leave the other queue actions available.
+
 ## Screenshots🖼️
 ![demo1](https://user-images.githubusercontent.com/61612323/153551187-156189ea-9e52-407c-8888-743439f5bf4c.png)
 ![demo2](https://user-images.githubusercontent.com/61612323/153551199-e7c6896f-a125-4622-ab19-03277cd32a28.png)

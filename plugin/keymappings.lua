@@ -146,6 +146,11 @@ map("n", "<leader>gw", function()
 	require("lq.configs.worktree").switch_worktree()
 end, { desc = "Git: switch worktree" })
 
+vim.api.nvim_create_user_command("PRQueue", function()
+	require("lq.configs.pr_queue").open()
+end, { desc = "Open saved PR preparation queue" })
+map("n", "<leader>gq", "<cmd>PRQueue<CR>", { desc = "Git: PR preparation queue" })
+
 -------------plugins mappings---------------
 -- tmux
 map("n", "<C-G>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")

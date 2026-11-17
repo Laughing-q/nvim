@@ -1034,6 +1034,43 @@ function M.spawn_codex(name, cmd)
 	return M.spawn(name, cmd, "codex")
 end
 
+---Resume an owner from a PR state file without changing the caller's cwd.
+function M.resume_session(provider, session_id, root, name)
+	if not PROVIDERS[provider] or type(session_id) ~= "string" or session_id == "" then
+		notify("PR owner needs a supported provider and session id", vim.log.levels.WARN)
+		return
+	end
+	if type(root) ~= "string" or vim.fn.isdirectory(root) == 0 then
+		notify("PR owner worktree is missing", vim.log.levels.WARN)
+		return
+	end
+	if vim.fn.executable(PROVIDERS[provider].launch_cmd:match("^%S+")) == 0 then
+		notify(provider .. " CLI is not installed", vim.log.levels.WARN)
+		return
+	end
+	local existing = find_by_session(session_id)
+	if existing and agent_provider(existing) == provider and existing.state ~= "exited" then
+		if existing.root ~= root then
+			notify("That owner session is already attached to another worktree", vim.log.levels.WARN)
+			return
+		end
+		M.toggle(existing.name)
+		return existing
+	end
+	local agent = make_lazy_agent(provider, unique_name(sanitize(name or "PR owner")), session_id, "", root)
+	M._dead_sessions[session_id] = nil
+	if existing and agent_provider(existing) == provider then
+		local _, index = find(existing.name)
+		M.agents[index] = agent
+	else
+		table.insert(M.agents, agent)
+	end
+	start_timer()
+	M.toggle(agent.name)
+	M.save_registry()
+	return agent
+end
+
 function M.toggle(name)
 	local agent = find(name)
 	if not agent then
