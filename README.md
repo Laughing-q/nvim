@@ -109,7 +109,17 @@ CodeDiff reads local Git changes and revisions. The configured shortcuts do not 
 
 The queue reads `~/.local/state/agents/prs/<host>/<owner>/<repo>/<number>/state.json`, matching the `prepare-pr` skill. Override the root with `vim.g.pr_queue_dir`. Open the picker again to refresh; it does not poll GitHub, dispatch agents, or change readiness. Invalid state files are skipped with a warning. An empty queue is expected until an agent saves a PR.
 
-Inside the picker: `<CR>` opens worktree files, `<C-r>` resumes the owner in the existing agent manager, `<C-d>` opens the saved committed PR range in CodeDiff, and `<C-s>` opens the raw state read-only. The preview shows saved findings, checks, timestamps, and next action. Saved diffs require the commits to exist locally and do not include uncommitted edits; use `<leader>gD` from the worktree for those.
+Inside the picker: `<CR>` opens worktree files, `<C-p>` opens a formatted progress dashboard, `<C-d>` opens the saved committed PR range in CodeDiff, and `<C-s>` opens the raw JSON read-only. On the dashboard, `r` refreshes from disk, `d` shows/hides detailed evidence, and `q` / `Q` returns to the previous tab. Saved diffs require the commits to exist locally and do not include uncommitted edits; use `<leader>gD` from the worktree for those.
+
+The preview and dashboard render `state.json` directly using theme highlights and short summaries, without Markdown syntax or a rendering plugin. The overview shows next action, blockers, recent activity, skills, fixes, current-head checks, and the latest review. Older checks and long evidence stay behind `d` so historical failures do not overwhelm current progress. Older records remain readable but do not gain invented activity history. These are agent-reported checkpoints, not proof of compliance or live readiness.
+
+After saving each meaningful stage, the PR owner runs the skill's renderer (Python standard library only):
+
+```bash
+python3 ~/.config/agents/skills/prepare-pr/scripts/render_status.py /absolute/path/to/state.json
+```
+
+The generated `progress.md` is a compact export of the same information for use outside Neovim. Use `--stdout` to print it without writing a file, or `--details --stdout` for the full recorded evidence. Agents should record `skill_usage` (name, path, role, loaded time, application, evidence) and chronological `activity` (time, actor/provider, stage, summary, skills, evidence) as work happens. Record concrete actions and outcomes; a skill name alone does not establish that its instructions were followed.
 
 For interoperability, use these concrete keys within the skill's state contract (other fields such as findings and checks are preserved and previewed):
 
@@ -127,7 +137,7 @@ For interoperability, use these concrete keys within the skill's state contract 
 }
 ```
 
-Replace the revision placeholders with real commit SHAs. Owner IDs are resumable CLI sessions, not provider-internal subagent IDs. Use `kimi` instead of `codex` for a Kimi owner. Missing worktrees or session IDs leave the other queue actions available.
+Replace the revision placeholders with real commit SHAs. Owner/session metadata remains useful for progress tracking, but the PR queue does not launch or resume agents. Use the separate agent manager for sessions. A missing worktree still allows progress and JSON inspection.
 
 ## Screenshots🖼️
 ![demo1](https://user-images.githubusercontent.com/61612323/153551187-156189ea-9e52-407c-8888-743439f5bf4c.png)

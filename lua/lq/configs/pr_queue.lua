@@ -17,40 +17,43 @@ function M.root()
 	return vim.fn.expand(vim.g.pr_queue_dir or "~/.local/state/agents/prs")
 end
 
+local function read_entry(path)
+	local file = assert(io.open(path, "rb"))
+	local raw = file:read("*a")
+	file:close()
+	local state = vim.json.decode(raw)
+	assert(
+		type(state) == "table" and type(state.repository) == "table",
+		"Expected repository.owner/name/number in state.json"
+	)
+	local repo = state.repository
+	local number = tonumber(repo.number)
+	assert(number and number > 0 and number % 1 == 0, "Invalid PR number")
+	assert(type(repo.owner) == "string" and type(repo.name) == "string", "Invalid repository identity")
+	return {
+		path = path,
+		state = state,
+		label = repo.owner .. "/" .. repo.name .. " #" .. number,
+		updated = str(state.updated_at),
+	}
+end
+
 ---Read states afresh on each picker open; malformed/partial writes are skipped.
 function M.read()
-	local entries, invalid = {}, 0
+	local entries, invalid, errors = {}, 0, {}
 	for _, path in ipairs(vim.fn.glob(M.root() .. "/**/state.json", false, true)) do
-		local ok, state = pcall(function()
-			return vim.json.decode(table.concat(vim.fn.readfile(path), "\n"))
-		end)
-		if ok and type(state) == "table" and type(state.repository) == "table" then
-			local repo = state.repository
-			local number = tonumber(repo.number)
-			if
-				number
-				and number > 0
-				and number % 1 == 0
-				and type(repo.owner) == "string"
-				and type(repo.name) == "string"
-			then
-				table.insert(entries, {
-					path = path,
-					state = state,
-					label = repo.owner .. "/" .. repo.name .. " #" .. number,
-					updated = str(state.updated_at),
-				})
-			else
-				invalid = invalid + 1
-			end
+		local ok, entry = pcall(read_entry, path)
+		if ok then
+			table.insert(entries, entry)
 		else
 			invalid = invalid + 1
+			table.insert(errors, path .. ": " .. tostring(entry))
 		end
 	end
 	table.sort(entries, function(a, b)
 		return a.updated == b.updated and a.label < b.label or a.updated > b.updated
 	end)
-	return entries, invalid
+	return entries, invalid, errors
 end
 
 local function worktree(entry)
@@ -77,19 +80,6 @@ function M.open_worktree(entry)
 	end
 end
 
-function M.resume_owner(entry)
-	local path = worktree(entry)
-	if not path then
-		return
-	end
-	local owner = object(object(entry.state.sessions).owner)
-	if type(owner.id) ~= "string" or (owner.provider ~= "codex" and owner.provider ~= "kimi") then
-		notify("Save sessions.owner = { provider = 'codex' or 'kimi', id = '<CLI session ID>' } first")
-		return
-	end
-	require("lq.configs.agents").resume_session(owner.provider, owner.id, path, entry.label)
-end
-
 function M.open_diff(entry)
 	local path = worktree(entry)
 	if not path then
@@ -104,43 +94,47 @@ function M.open_diff(entry)
 	command("CodeDiff", { "--repo", path, base .. "..." .. head })
 end
 
-local function preview(entry)
-	local state = entry.state
-	local owner = object(object(state.sessions).owner)
-	local lines = {
-		"# " .. entry.label,
-		"",
-		"Status: " .. str(state.status, "unknown") .. " (saved)",
-		"Updated: " .. entry.updated,
-		"Owner: " .. str(owner.provider, "not recorded"),
-		"Worktree: " .. str(object(state.workspace).worktree, "not recorded"),
-		"",
-		"## Next action",
-		str(state.next_action, "Not recorded"),
-	}
-	for _, section in ipairs({
-		{ "Findings", state.findings },
-		{ "Checks", state.checks },
-		{ "Blockers", state.blockers },
-	}) do
-		vim.list_extend(lines, { "", "## " .. section[1] })
-		local items = object(section[2])
-		if #items == 0 then
-			table.insert(lines, "None recorded")
-		end
-		for _, item in ipairs(items) do
-			local text = type(item) == "string" and item or vim.inspect(item)
-			vim.list_extend(lines, vim.split(text, "\n", { plain = true }))
-			table.insert(lines, "")
-		end
+function M.open_progress(entry)
+	local ok, current = pcall(read_entry, entry.path)
+	if not ok then
+		notify("Cannot read the current PR state: " .. tostring(current))
+		return
 	end
-	return lines
+	vim.cmd("tabnew")
+	local buf = vim.api.nvim_get_current_buf()
+	vim.bo[buf].buftype = "nofile"
+	vim.bo[buf].bufhidden = "wipe"
+	vim.bo[buf].swapfile = false
+	vim.bo[buf].filetype = "prprogress"
+	local expanded = false
+	local function refresh()
+		local loaded, latest = pcall(read_entry, entry.path)
+		if not loaded then
+			notify("Cannot refresh PR state: " .. tostring(latest))
+			return
+		end
+		require("lq.configs.pr_progress").draw(buf, latest, expanded)
+	end
+	refresh()
+	vim.wo.wrap = true
+	vim.wo.linebreak = true
+	vim.wo.number = false
+	vim.wo.relativenumber = false
+	vim.wo.winbar = "PR progress (saved) — r refresh · d evidence · q/Q return"
+	for _, key in ipairs({ "q", "Q" }) do
+		vim.keymap.set("n", key, "<cmd>tabclose<CR>", { buffer = buf, desc = "Return from PR progress" })
+	end
+	vim.keymap.set("n", "r", refresh, { buffer = buf, desc = "Refresh saved PR progress" })
+	vim.keymap.set("n", "d", function()
+		expanded = not expanded
+		refresh()
+	end, { buffer = buf, desc = "Toggle detailed PR evidence" })
 end
 
 function M.open()
-	local entries, invalid = M.read()
+	local entries, invalid, errors = M.read()
 	if invalid > 0 then
-		notify("Skipped " .. invalid .. " invalid state file(s) in " .. M.root())
+		notify("Skipped " .. invalid .. " invalid state file(s):\n" .. table.concat(errors, "\n"))
 	end
 	if #entries == 0 then
 		vim.notify("No saved PRs. Ask prepare-pr to write state.json under " .. M.root(), vim.log.levels.INFO)
@@ -152,7 +146,7 @@ function M.open()
 	require("telescope.pickers")
 		.new({}, {
 			prompt_title = "PR queue (saved agent state)",
-			results_title = "Enter worktree · C-r owner · C-d diff · C-s state",
+			results_title = "Enter worktree · C-p progress · C-d diff · C-s JSON",
 			finder = require("telescope.finders").new_table({
 				results = entries,
 				entry_maker = function(entry)
@@ -163,10 +157,10 @@ function M.open()
 			}),
 			sorter = require("telescope.config").values.generic_sorter({}),
 			previewer = previewers.new_buffer_previewer({
-				title = "Findings, checks, and next action (not live GitHub verification)",
+				title = "Saved progress and evidence (agent-reported)",
 				define_preview = function(self, selected)
-					vim.api.nvim_buf_set_lines(self.state.bufnr, 0, -1, false, preview(selected.value))
-					vim.bo[self.state.bufnr].filetype = "markdown"
+					require("lq.configs.pr_progress").draw(self.state.bufnr, selected.value, false)
+					vim.bo[self.state.bufnr].filetype = "prprogress"
 				end,
 			}),
 			attach_mappings = function(prompt_bufnr, map)
@@ -182,7 +176,7 @@ function M.open()
 				end
 				actions.select_default:replace(act(M.open_worktree))
 				for key, fn in pairs({
-					["<C-r>"] = M.resume_owner,
+					["<C-p>"] = M.open_progress,
 					["<C-d>"] = M.open_diff,
 					["<C-s>"] = function(entry)
 						vim.cmd("view " .. vim.fn.fnameescape(entry.path))
