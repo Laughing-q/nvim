@@ -1,85 +1,65 @@
-return {
-	{ -- Additional text objects via treesitter
-		"nvim-treesitter/nvim-treesitter-textobjects",
-		event = "VimEnter",
-		dependencies = {
-			"nvim-treesitter/nvim-treesitter",
-			build = ":TSUpdate",
-			event = "VimEnter",
-			config = function()
-				require("nvim-treesitter.configs").setup({
-					ensure_installed = {
-						"python",
-						-- "c",
-						-- "cpp",
-						-- "cmake",
-						-- "make",
-						-- "cuda",
-						"dockerfile",
-						"lua",
-						"vim",
-						"vimdoc",
-						"bash",
-						"yaml",
-						-- "bibtex",
-						-- "latex",
-						"markdown",
-					}, -- one of "all", "maintained" (parsers with maintainers), or a list of languages
-					ignore_install = {},
-					highlight = {
-						enable = true, -- false will disable the whole extension
-						additional_vim_regex_highlighting = true,
-						use_languagetree = true,
-						-- disable = { "latex" },
-					},
+local parsers = {
+	"python",
+	"dockerfile",
+	"lua",
+	"vim",
+	"vimdoc",
+	"bash",
+	"yaml",
+	"markdown",
+}
 
-					textobjects = {
-						select = {
-							enable = true,
-							lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
-							keymaps = {
-								-- You can use the capture groups defined in textobjects.scm
-								["aa"] = "@parameter.outer",
-								["ha"] = "@parameter.inner",
-								["af"] = "@function.outer",
-								["hf"] = "@function.inner",
-								["ac"] = "@class.outer",
-								["hc"] = "@class.inner",
-							},
-						},
-						move = {
-							enable = false,
-							set_jumps = true, -- whether to set jumps in the jumplist
-							goto_next_start = {
-								["]]"] = "@function.outer",
-								["]c"] = "@class.outer",
-							},
-							goto_next_end = {
-								["]["] = "@function.outer",
-								["]C"] = "@class.outer",
-							},
-							goto_previous_start = {
-								["[["] = "@function.outer",
-								["[c"] = "@class.outer",
-							},
-							goto_previous_end = {
-								["[]"] = "@function.outer",
-								["[C"] = "@class.outer",
-							},
-						},
-						swap = {
-							enable = true,
-							swap_next = {
-								["<leader>s"] = "@parameter.inner",
-							},
-							swap_previous = {
-								["<leader>S"] = "@parameter.inner",
-							},
-						},
-					},
-				})
-			end,
-			dependencies = { "nvim-lua/plenary.nvim" },
-		},
+return {
+	{
+		"nvim-treesitter/nvim-treesitter",
+		branch = "main",
+		lazy = false,
+		build = ":TSUpdate",
+		config = function()
+			require("nvim-treesitter").install(parsers)
+			vim.api.nvim_create_autocmd("FileType", {
+				callback = function(args)
+					local lang = vim.treesitter.language.get_lang(args.match)
+					if lang and vim.tbl_contains(parsers, lang) then
+						vim.treesitter.start(args.buf, lang)
+						vim.bo[args.buf].syntax = "ON"
+					end
+				end,
+			})
+		end,
+	},
+	{
+		"nvim-treesitter/nvim-treesitter-textobjects",
+		branch = "main",
+		event = "VimEnter",
+		dependencies = { "nvim-treesitter/nvim-treesitter" },
+		config = function()
+			require("nvim-treesitter-textobjects").setup({
+				select = { lookahead = true },
+			})
+
+			local select = require("nvim-treesitter-textobjects.select")
+			local keymaps = {
+				aa = "@parameter.outer",
+				ha = "@parameter.inner",
+				af = "@function.outer",
+				hf = "@function.inner",
+				ac = "@class.outer",
+				hc = "@class.inner",
+			}
+			for lhs, query in pairs(keymaps) do
+				vim.keymap.set({ "x", "o" }, lhs, function()
+					select.select_textobject(query, "textobjects")
+				end)
+			end
+
+			local swap = require("nvim-treesitter-textobjects.swap")
+			vim.keymap.set("n", "<leader>s", function()
+				swap.swap_next("@parameter.inner")
+			end)
+			vim.keymap.set("n", "<leader>S", function()
+				swap.swap_previous("@parameter.inner")
+			end)
+		end,
 	},
 }
