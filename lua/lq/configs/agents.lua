@@ -344,17 +344,26 @@ local function poll()
 					if agent and status.ts and agent.spawned_at and status.ts < agent.spawned_at then
 						agent = nil
 					end
-					-- ignore status from a different session or a different project
-					-- (the status dir is shared across all nvim instances)
-					if
-						agent
-						and agent.session_id
-						and status.session_id
-						and status.session_id ~= ""
-						and status.session_id ~= agent.session_id
-					then
-						agent = nil
-					end
+						-- ignore status from a different session or a different project
+						-- (the status dir is shared across all nvim instances) — except a
+						-- resumed/forked kimi session: it keeps the agent name but the
+						-- provider assigns a NEW session id, which must be adopted or state,
+						-- focused-publish and tmux seen keep targeting the dead id
+						if
+							agent
+							and agent.session_id
+							and status.session_id
+							and status.session_id ~= ""
+							and status.session_id ~= agent.session_id
+						then
+							if status_provider == "kimi" and status.name and find(status.name) == agent then
+								agent.session_id = status.session_id
+								need_save = true
+								changed = true
+							else
+								agent = nil
+							end
+						end
 					if agent and agent.root and status.cwd and status.cwd ~= "" and status.cwd ~= agent.root then
 						agent = nil
 					end
