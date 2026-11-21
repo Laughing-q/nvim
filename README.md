@@ -90,6 +90,55 @@ Sidebar buffer mappings: `<CR>` toggle agent float, `i`/`k` jump between agents,
 
 The Alt mappings are available only while focused in a managed terminal. They close the current ToggleTerm float and open the next/previous Kimi or Codex session for the current project; restored sessions are resumed on first visit. Tab is left unmodified for command completion. Codex's native picker is used for sessions not yet known to the manager. When the sidebar is open, agent floats fill the editor area to its left instead of overlapping it.
 
+## PR queue and review
+
+| Binding / command | Action |
+| --- | --- |
+| `<leader>gq` / `:PRQueue` | Saved PR preparation queue |
+| `<leader>gD` / `:CodeDiff` | Unified local changes with changed-file tree |
+
+[CodeDiff](https://github.com/esmuellert/codediff.nvim) defaults to an inline (unified) diff with unchanged regions folded. Select files in the left tree; use `]c` / `[c` for hunks, `]f` / `[f` for files, `gc` for context folding, `t` to toggle split/inline layout, and `q` to close the diff tab. It displays one selected file at a time, rather than GitHub's continuous multi-file page. The existing Gitsigns `<leader>gd` mapping still compares the current file.
+
+Press `q` or `Q` from either the file tree or diff pane to close the review tab and return to the previous editing tab. To keep the review open, use `gT` / `gt` to switch tabs. `gf` opens the selected diff file in the previous tab; it does not restore the original buffer.
+
+The diff tree preserves the custom movement keys: `i` up, `k` down, `j` left, `l` right, and `I/J/K/L` window navigation. The plugin's conflicting `i` action has moved to `gv` (toggle tree/list), and its `K` path hover has moved to `gK`. History uses `gV` for tree/list. `<CR>` opens a file or expands a directory, `<leader>e` focuses the tree, and `g?` shows the active diff mappings.
+
+CodeDiff reads local Git changes and revisions. The configured shortcuts do not fetch remote PRs. It downloads its native diff library on first use.
+
+### Saved preparation state
+
+The queue reads `~/.local/state/agents/prs/<host>/<owner>/<repo>/<number>/state.json`, matching the `prepare-pr` skill. Override the root with `vim.g.pr_queue_dir`. Open the picker again to refresh; it does not poll GitHub, dispatch agents, or change readiness. Invalid state files are skipped with a warning. An empty queue is expected until an agent saves a PR.
+
+Inside the picker: `<CR>` opens worktree files, `<C-p>` opens a formatted progress dashboard, `<C-d>` opens the saved committed PR range in CodeDiff, and `<C-s>` opens the raw JSON read-only. On the dashboard, `r` refreshes from disk, `d` shows/hides detailed evidence, and `q` / `Q` returns to the previous tab. Saved diffs require the commits to exist locally and do not include uncommitted edits; use `<leader>gD` from the worktree for those.
+
+The preview and dashboard render `state.json` directly using theme highlights and short summaries, without Markdown syntax or a rendering plugin. The overview shows next action, blockers, recent activity, skills, fixes, current-head checks, and the latest review. Older checks and long evidence stay behind `d` so historical failures do not overwhelm current progress. Older records remain readable but do not gain invented activity history. These are agent-reported checkpoints, not proof of compliance or live readiness.
+
+After saving each meaningful stage, the PR owner runs the skill's renderer (Python standard library only):
+
+```bash
+python3 ~/.config/agents/skills/prepare-pr/scripts/render_status.py /absolute/path/to/state.json
+```
+
+The generated `progress.md` is a compact export of the same information for use outside Neovim. Use `--stdout` to print it without writing a file, or `--details --stdout` for the full recorded evidence. Agents should record `skill_usage` (name, path, role, loaded time, application, evidence) and chronological `activity` (time, actor/provider, stage, summary, skills, evidence) as work happens. Record concrete actions and outcomes; a skill name alone does not establish that its instructions were followed.
+
+For interoperability, use these concrete keys within the skill's state contract (other fields such as findings and checks are preserved and previewed):
+
+```json
+{
+  "repository": { "host": "github.com", "owner": "owner", "name": "repo", "number": 123 },
+  "workspace": { "worktree": "/absolute/path/to/worktree", "branch": "feature" },
+  "revisions": { "base": "BASE_COMMIT_SHA", "head": "HEAD_COMMIT_SHA" },
+  "sessions": { "owner": { "provider": "codex", "id": "OWNER_CLI_SESSION_ID" } },
+  "status": "reviewing",
+  "next_action": "Validate the accepted fixes",
+  "updated_at": "2026-11-17T10:00:00Z",
+  "findings": [],
+  "checks": []
+}
+```
+
+Replace the revision placeholders with real commit SHAs. Owner/session metadata remains useful for progress tracking, but the PR queue does not launch or resume agents. Use the separate agent manager for sessions. A missing worktree still allows progress and JSON inspection.
+
 ## Screenshots🖼️
 ![demo1](https://user-images.githubusercontent.com/61612323/153551187-156189ea-9e52-407c-8888-743439f5bf4c.png)
 ![demo2](https://user-images.githubusercontent.com/61612323/153551199-e7c6896f-a125-4622-ab19-03277cd32a28.png)
